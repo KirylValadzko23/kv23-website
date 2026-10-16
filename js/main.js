@@ -1297,7 +1297,8 @@
     };
     const smoothstep = (t) => (t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t));
     const camera = (s) => {
-      if (reduced) return 0;
+      // phones: no sway. On a narrow screen the swell repeats every few hundred px of scroll and reads as bobbing
+      if (reduced || innerWidth < 760) return 0;
       const b = bend || 1, amp = Math.min(innerHeight * 0.025, 20), len = innerWidth * 1.2; // one swell per ~1.2 screens of travel
       return amp * Math.sin((s / len) * Math.PI * 2) * smoothstep(s / b) * smoothstep((dist - s) / b); // flat through the corners
     };
