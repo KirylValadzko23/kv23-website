@@ -165,6 +165,12 @@ body.menu-open .tower { opacity: 0; pointer-events: none; }
   transition: transform .6s var(--ease-out);
 }
 .header.is-hidden, body.is-loading .header { transform: translateY(-110%); }
+/* phones: a solid, always-visible bar. The colour-inverting blend flickers on mobile browsers and made the logo vanish on light sections */
+@media (max-width: 900px) {
+  .header { mix-blend-mode: normal; color: var(--fg); background: rgba(7, 6, 10, .78); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(244, 241, 236, .08); }
+  .header.is-hidden { transform: none; }
+  body.menu-open .header { background: transparent; border-bottom-color: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
 .header__logo img { width: 54px; height: auto; }
 .header__nav { display: flex; gap: clamp(18px, 3vw, 44px); font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: .06em; }
 .header__menu { display: inline-flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: .06em; }
@@ -1123,6 +1129,10 @@ section, footer { position: relative; }
 @keyframes flash { 0% { color: var(--hot); text-shadow: 0 0 30px rgba(255,45,85,.9); } }
 
 .ir-pen { fill: #fff; stroke: var(--hot); stroke-width: 3; opacity: 0; filter: drop-shadow(0 0 8px rgba(255,45,85,.9)); }
+/* while the line draws, skip the glows: re-blurring them every frame stutters on phones */
+.irchart.is-drawing .ir-line, .irchart.is-drawing .ir-pen { filter: none; }
+.irchart.is-drawing .irchart__now b { text-shadow: none; }
+.irchart__now b { transition: text-shadow .8s ease; }
 .ir-live, .ir-live-ring { fill: var(--hot); opacity: 0; transform-box: fill-box; transform-origin: center; }
 .irchart__plot.is-drawn .ir-live { opacity: 1; }
 .irchart__plot.is-drawn .ir-live-ring { animation: ring 1.8s var(--ease-out) infinite; }

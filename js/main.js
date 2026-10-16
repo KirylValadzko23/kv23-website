@@ -643,7 +643,11 @@
       const path = $('.ir-line', svg), pen = $('.ir-pen', svg), len = path.getTotalLength();
       const now = $('#irNow'), when = $('#irNowDate'), finalNow = now.textContent, finalWhen = when.textContent;
       // a glowing pen draws the line, and the big number reads the iRating at its tip as it goes
-      const o = { p: 0 };
+      const o = { p: 0 }, chart = plot.closest('.irchart');
+      let lastNow = '', lastWhen = '';
+      // glows (drop-shadow / big text-shadow) are switched off while the line draws: repainting them every frame is
+      // what made phones stutter here. They fade back in once the line is done.
+      chart.classList.add('is-drawing');
       gsap.set(pen, { opacity: 1 });
       gsap.to(o, {
         p: 1, duration: 2.4, ease: 'power2.inOut',
@@ -651,14 +655,17 @@
           const L = len * o.p, pt = path.getPointAtLength(L), g = geo;
           path.style.strokeDashoffset = len - L;
           pen.setAttribute('cx', pt.x); pen.setAttribute('cy', pt.y);
-          now.textContent = Math.round(g.vMin + (1 - (pt.y - g.m.t) / (g.H - g.m.t - g.m.b)) * (g.vMax - g.vMin));
-          when.textContent = dateFmt.format(g.t0 + ((pt.x - g.m.l) / (g.W - g.m.l - g.m.r)) * (g.t1 - g.t0));
+          const n = String(Math.round(g.vMin + (1 - (pt.y - g.m.t) / (g.H - g.m.t - g.m.b)) * (g.vMax - g.vMin)));
+          const d = dateFmt.format(g.t0 + ((pt.x - g.m.l) / (g.W - g.m.l - g.m.r)) * (g.t1 - g.t0));
+          if (n !== lastNow) now.textContent = lastNow = n; // only touch the text when it actually changes
+          if (d !== lastWhen) when.textContent = lastWhen = d;
         },
         onComplete: () => {
           path.style.strokeDasharray = 'none';
           now.textContent = finalNow; when.textContent = finalWhen;
           gsap.to(pen, { opacity: 0, duration: 0.4 });
           plot.classList.add('is-drawn');
+          chart.classList.remove('is-drawing');
         },
       });
       gsap.to($('.ir-area', svg), { opacity: 1, duration: 1.2, delay: 1.2 });
@@ -685,7 +692,13 @@
 
     build();
     let rt;
-    addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(build, 150); });
+    // only rebuild when the chart's width really changes: phones fire "resize" every time the address bar slides,
+    // and rebuilding mid-draw is what made the chart hitch as you scrolled into it
+    let builtW = plot.clientWidth;
+    addEventListener('resize', () => {
+      clearTimeout(rt);
+      rt = setTimeout(() => { if (plot.clientWidth !== builtW) { builtW = plot.clientWidth; build(); } }, 150);
+    });
     new IntersectionObserver(([e], io) => { if (e.isIntersecting) { draw(); io.disconnect(); } }, { threshold: 0.4 }).observe(plot);
   }
 
@@ -1230,7 +1243,9 @@
     const floaters = $$('[data-speed]', track);
     const items = $$('.evo__item', track);
     const rulerBtns = $$('#evoRuler button'), fill = $('#evoFill'), hint = $('.evo__hint', evo), sign = $('.evo__sign', evo);
-    const pinned = hasGSAP && window.ScrollTrigger && !reduced;
+    // the gallery always rides the vertical scroll (phones included): it only moves when you scroll, so it stays on
+    // even with "reduce motion" switched on; only the decorative camera sway is dropped then
+    const pinned = true;
     let centers = [], lay = [], dist = 0, active = -1, pin = null, bend = 0, lastS = NaN;
 
     const measure = () => {
@@ -1282,6 +1297,7 @@
     };
     const smoothstep = (t) => (t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t));
     const camera = (s) => {
+      if (reduced) return 0;
       const b = bend || 1, amp = Math.min(innerHeight * 0.025, 20), len = innerWidth * 1.2; // one swell per ~1.2 screens of travel
       return amp * Math.sin((s / len) * Math.PI * 2) * smoothstep(s / b) * smoothstep((dist - s) / b); // flat through the corners
     };
@@ -1343,8 +1359,10 @@
     }
     measure();
     if (pinned) {
-      ScrollTrigger.addEventListener('refreshInit', measure);
-      gsap.ticker.add(tick); // runs after Lenis moves the page, so nothing lags a frame
+      if (window.ScrollTrigger) ScrollTrigger.addEventListener('refreshInit', measure);
+      else addEventListener('resize', measure);
+      if (hasGSAP) gsap.ticker.add(tick); // runs after Lenis moves the page, so nothing lags a frame
+      else { const loop = () => { tick(); requestAnimationFrame(loop); }; requestAnimationFrame(loop); }
     } else {
       evo.addEventListener('scroll', () => update(-evo.scrollLeft), { passive: true });
       addEventListener('resize', () => { measure(); update(-evo.scrollLeft); });
