@@ -29,7 +29,8 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+/* no sideways wiggle on phones: clip at the root too (clip, not hidden, so nothing becomes a scroll box and the sticky gallery keeps working) */
+html { -webkit-text-size-adjust: 100%; overflow-x: hidden; overflow-x: clip; overscroll-behavior-x: none; }
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 .lenis.lenis-stopped { overflow: hidden; }
@@ -368,6 +369,8 @@ section, footer { position: relative; }
   transform: rotateX(var(--rx)) rotateY(calc(var(--ry) + var(--flip)));
 }
 .licence.is-tilting { transition: transform .15s linear; }
+.licence { touch-action: pan-y; } /* sideways drags turn the card; up/down still scrolls the page */
+.licence.is-dragging { transition: none; }
 .licence.is-flipped { --flip: 180deg; }
 .licence__face {
   position: absolute; inset: 0; border-radius: 18px; overflow: hidden;

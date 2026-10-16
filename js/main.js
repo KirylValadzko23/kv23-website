@@ -442,6 +442,7 @@
     const card = $('#licence'), wrap = $('.licence-wrap');
     if (!card || !wrap) return;
     wrap.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse' || drag) return; // the hover tilt is for mice; fingers drag the card instead
       const r = card.getBoundingClientRect();
       const px = clamp((e.clientX - r.left) / r.width, 0, 1), py = clamp((e.clientY - r.top) / r.height, 0, 1);
       card.classList.add('is-tilting');
@@ -454,9 +455,49 @@
       card.classList.remove('is-tilting');
       card.style.setProperty('--rx', '0deg'); card.style.setProperty('--ry', '0deg');
     });
-    const flip = () => { card.classList.remove('is-tilting'); card.classList.toggle('is-flipped'); };
-    card.addEventListener('click', flip);
+    // the card's turn is kept as an angle, so a swipe can turn it either way and it always lands face-up or back-up
+    let turn = 0;
+    const setTurn = (deg) => {
+      turn = deg;
+      card.style.setProperty('--flip', `${turn}deg`);
+      card.classList.toggle('is-flipped', Math.round(turn / 180) % 2 !== 0);
+    };
+    const flip = (dir = 1) => { card.classList.remove('is-tilting'); setTurn(turn + 180 * dir); };
+    let swallowClick = false;
+    card.addEventListener('click', () => { if (swallowClick) { swallowClick = false; return; } flip(); });
     card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); } });
+
+    // touch: drag sideways and the card turns under your finger; let go past ~50px and it flips over that way
+    let drag = null;
+    card.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse') return;
+      drag = { id: e.pointerId, x: e.clientX, y: e.clientY, moved: false };
+    });
+    card.addEventListener('pointermove', (e) => {
+      if (!drag || e.pointerId !== drag.id) return;
+      const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+      if (!drag.moved) {
+        if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+        if (Math.abs(dy) > Math.abs(dx)) { drag = null; return; } // that's a scroll, not a swipe
+        drag.moved = true;
+        card.classList.add('is-dragging');
+        try { card.setPointerCapture(e.pointerId); } catch (err) {}
+      }
+      card.style.setProperty('--ry', `${clamp(dx * 0.6, -170, 170)}deg`);
+    });
+    const endDrag = (e) => {
+      if (!drag || e.pointerId !== drag.id) return;
+      const { moved, x } = drag;
+      drag = null;
+      if (!moved) return; // a tap: the click handler flips it
+      const dx = e.clientX - x;
+      card.classList.remove('is-dragging');
+      card.style.setProperty('--ry', '0deg');
+      if (Math.abs(dx) > 50) flip(dx > 0 ? 1 : -1);
+      swallowClick = true; setTimeout(() => (swallowClick = false), 400);
+    };
+    card.addEventListener('pointerup', endDrag);
+    card.addEventListener('pointercancel', endDrag);
   }
 
   /* ------------------------------------------------------------------------
