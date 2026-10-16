@@ -62,14 +62,17 @@
     const newLine = () => { const l = document.createElement('span'); l.className = 'split-line'; frag.appendChild(l); return l; };
     let line = newLine();
     let i = 0;
+    // letters are grouped per word, so a heading can only wrap between words (never "RIDE WIT / H")
     const add = (text, parent) => {
+      let word = null;
       for (const ch of text) {
-        if (/\s/.test(ch)) { if (parent.childNodes.length) parent.appendChild(document.createTextNode(' ')); continue; }
+        if (/\s/.test(ch)) { word = null; if (parent.childNodes.length) parent.appendChild(document.createTextNode(' ')); continue; }
+        if (!word) { word = document.createElement('span'); word.className = 'split-word'; parent.appendChild(word); }
         const s = document.createElement('span');
         s.className = 'split-char';
         s.textContent = ch;
         s.style.setProperty('--i', i++);
-        parent.appendChild(s);
+        word.appendChild(s);
       }
     };
     el.childNodes.forEach((n) => {

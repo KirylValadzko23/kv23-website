@@ -60,6 +60,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 
 /* ---------- split text ---------- */
 .split-line { display: block; overflow: hidden; padding-bottom: 0.04em; margin-bottom: -0.04em; }
+.split-word { display: inline-block; white-space: nowrap; }
 .split-char { display: inline-block; will-change: transform; }
 
 /* ---------- text roll (hover) ---------- */
@@ -743,8 +744,8 @@ section, footer { position: relative; }
    PARTNERS
    ========================================================================== */
 .partners { position: relative; padding: 160px var(--gutter) 140px; background: radial-gradient(70% 50% at 100% 0%, rgba(225,6,44,.22), transparent 60%), var(--ink); overflow: hidden; }
-.partners__head { display: grid; grid-template-columns: 1.1fr .9fr; gap: 30px 60px; align-items: end; margin-bottom: 60px; }
-.partners__title { margin: 0; display: flex; flex-wrap: wrap; gap: 0 .2em; font-family: var(--f-display); font-weight: 900; text-transform: uppercase; font-size: clamp(72px, 13vw, 220px); line-height: .82; }
+.partners__head { display: grid; gap: 30px; margin-bottom: 60px; } /* title gets the full width, the pitch sits under it */
+.partners__title { margin: 0; display: flex; flex-wrap: wrap; gap: 0 .2em; font-family: var(--f-display); font-weight: 900; text-transform: uppercase; font-size: clamp(60px, 15vw, 240px); line-height: .82; }
 .partners__lead { margin: 0; max-width: 44ch; justify-self: end; color: var(--mute); font-size: 18px; }
 
 .audience { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -1174,7 +1175,7 @@ section, footer { position: relative; }
   .kteaser__media { width: 100%; max-width: 440px; justify-self: center; }
   .kteaser__stats, .kpage__stats { grid-template-columns: repeat(2, auto); gap: 16px 34px; }
   .kpage__intro { grid-template-columns: 1fr; }
-  .partners__head, .audience { grid-template-columns: 1fr; }
+  .audience { grid-template-columns: 1fr; }
   .partners__lead { justify-self: start; }
   .offers { grid-template-columns: 1fr 1fr; }
   .offers li:nth-child(3) { padding-left: 0; border-left: 0; }
