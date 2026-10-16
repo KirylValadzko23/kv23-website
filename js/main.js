@@ -1438,8 +1438,20 @@
     intro();
     scrollAnimations();
     if (window.ScrollTrigger) ScrollTrigger.refresh();
-    // arriving from another page with a #section (e.g. karting.html → index.html#r2r): land on it once the layout is final
+    // arriving with a #section (e.g. karting.html → index.html#partners): land on it once the layout is final,
+    // i.e. after the web fonts (which change heading heights) and the page have loaded
     const hash = location.hash && location.hash.length > 1 ? location.hash : null;
-    if (hash && /^#[\w-]+$/.test(hash) && has(hash)) scrollToTarget(hash, { immediate: true, duration: 0 });
+    if (hash && /^#[\w-]+$/.test(hash) && has(hash)) {
+      const land = () => {
+        if (window.ScrollTrigger) ScrollTrigger.refresh();
+        if (lenis) lenis.resize(); // Lenis still has the pre-pin page height and would stop short of the section
+        scrollToTarget(hash, { immediate: true, duration: 0, force: true });
+      };
+      land();
+      Promise.all([
+        document.fonts ? document.fonts.ready : Promise.resolve(),
+        new Promise((r) => (document.readyState === 'complete' ? r() : addEventListener('load', r, { once: true }))),
+      ]).then(() => requestAnimationFrame(land));
+    }
   });
 })();

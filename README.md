@@ -14,6 +14,14 @@ powershell -ExecutionPolicy Bypass -File serve.ps1
 
 Then open http://localhost:5173.
 
+## Before you push a CSS or JS change
+
+Run this so visitors' browsers fetch the new files straight away instead of a cached copy (GitHub Pages lets browsers cache for 10 minutes):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/bump-version.ps1
+```
+
 ## Keep the YouTube section fresh
 
 `scripts/update-youtube.ps1` reads the channel's public feeds and writes `data/youtube.json`, which the Road to Racing section renders on load. The GitHub Action in `.github/workflows/youtube.yml` runs it every 6 hours and commits any changes.
