@@ -59,12 +59,15 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 }
 
 /* ---------- split text ---------- */
-.split-line { display: block; overflow: hidden; padding-bottom: 0.04em; margin-bottom: -0.04em; }
+/* each line hides the letters while they slide up into place; the clip reaches a little past the line box
+   on every side so tall glyphs, outlines and descenders (#, 2, g, commas) are never trimmed, and layout doesn't move */
+.split-line { display: block; clip-path: inset(-0.25em -0.15em -0.35em -0.15em); }
 .split-word { display: inline-block; white-space: nowrap; }
 .split-char { display: inline-block; will-change: transform; }
 
 /* ---------- text roll (hover) ---------- */
-[data-roll] { display: inline-flex; overflow: hidden; vertical-align: top; line-height: 1.15; }
+/* a sliver of extra room under each label so descenders (g, p, y) aren't trimmed; the negative margin keeps layout unchanged */
+[data-roll] { display: inline-flex; overflow: hidden; vertical-align: top; line-height: 1.15; padding-bottom: .1em; margin-bottom: -.1em; }
 .rc {
   display: inline-block; position: relative; white-space: pre;
   transition: transform .55s var(--ease-out); transition-delay: calc(var(--i) * 16ms);
@@ -496,10 +499,11 @@ section, footer { position: relative; }
 .evo__sign {
   display: inline-flex; align-items: baseline; gap: 10px; margin-top: 18px;
   font-family: "Mrs Saint Delafield", cursive; font-size: clamp(54px, 5vw, 88px); line-height: 1; color: var(--red);
-  clip-path: inset(0 100% 0 0); transition: clip-path 1.6s var(--ease-io);
+  /* the "signing" wipe reaches past the box so the script's loops (K, y, l) aren't trimmed */
+  clip-path: inset(-0.45em 100% -0.45em -0.25em); transition: clip-path 1.6s var(--ease-io);
 }
 .evo__sign small { font-family: var(--f-mono); font-size: 12px; color: currentColor; }
-.evo__sign.is-signed { clip-path: inset(0 0 0 0); }
+.evo__sign.is-signed { clip-path: inset(-0.45em -0.25em -0.45em -0.25em); }
 
 .evo__outro { display: grid; gap: 14px; }
 .evo__outro b {
