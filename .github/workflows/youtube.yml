@@ -1,0 +1,28 @@
+# Keeps the Road to Racing section fresh: pulls the latest episodes & Shorts every 6 hours
+# and commits data/youtube.json when anything changed. Can also be run by hand from the Actions tab.
+name: Update YouTube content
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pull latest videos
+        shell: pwsh
+        run: ./scripts/update-youtube.ps1
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add data/youtube.json
+          git diff --cached --quiet || (git commit -m "Update YouTube content" && git push)

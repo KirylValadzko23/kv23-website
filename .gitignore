@@ -1,0 +1,10 @@
+# local tooling
+.claude/
+
+# design inspiration only (third-party images, not used by the site)
+assets/inspo/
+
+# OS clutter
+Thumbs.db
+desktop.ini
+.DS_Store
