@@ -7,6 +7,19 @@
   <meta name="description" content="Kiryl Valadzko — sim racer #23. The evolution of the KV23 rig, from the first lap to the current cockpit." />
   <meta name="theme-color" content="#07060a" />
   <link rel="icon" href="assets/img/kv23-logo.png" />
+  <link rel="canonical" href="https://kirylvaladzko23.github.io/kv23-website/" />
+
+  <!-- link previews (Instagram, iMessage, Discord, X...) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="KV23" />
+  <meta property="og:title" content="Kiryl Valadzko — KV23 Sim Racing" />
+  <meta property="og:description" content="Sim racer #23 on the Road to Racing: from the rig to a real race seat. Destination: GT3." />
+  <meta property="og:url" content="https://kirylvaladzko23.github.io/kv23-website/" />
+  <meta property="og:image" content="https://kirylvaladzko23.github.io/kv23-website/assets/img/og-home.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="The KV23 logo on a dark red background" />
+  <meta name="twitter:card" content="summary_large_image" />
   <script>document.documentElement.classList.add('js');</script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -48,7 +61,7 @@
       <a href="#ontrack" data-roll>On Track</a>
       <a href="#r2r" data-roll>Road to Racing</a>
       <a href="karting.html" data-roll>Karting</a>
-      <a href="#finish" data-roll>Contact</a>
+      <a href="#partners" data-roll>Partners</a>
     </nav>
     <button class="header__menu" id="menuBtn" aria-expanded="false" aria-controls="menu" data-magnetic>
       <span data-roll>Chapters</span>
@@ -66,7 +79,8 @@
         <li><a href="#evolution"><small>02</small><span data-roll>Evolution</span></a></li>
         <li><a href="#ontrack"><small>03</small><span data-roll>On Track</span></a></li>
         <li><a href="#r2r"><small>04</small><span data-roll>Road to Racing</span></a></li>
-        <li><a href="karting.html"><small>05</small><span data-roll>Karting</span></a></li>
+        <li><a href="karting.html"><small>↗</small><span data-roll>Karting</span></a></li>
+        <li><a href="#partners"><small>05</small><span data-roll>Partners</span></a></li>
         <li><a href="#finish"><small>06</small><span data-roll>Chequered Flag</span></a></li>
       </ol>
       <div class="menu__side">
@@ -78,14 +92,15 @@
 
   <!-- ============ TIMING TOWER (section nav) ============ -->
   <aside class="tower" id="tower" aria-label="Section timing">
-    <div class="tower__head mono"><span>LAP</span><b id="lapNo">1</b><span>/6</span></div>
+    <div class="tower__head mono"><span>LAP</span><b id="lapNo">1</b><span>/7</span></div>
     <ol class="tower__list">
       <li data-target="#top"><span class="pos">1</span><span class="bar"></span><span class="code">GRD</span><span class="gap mono">LEADER</span></li>
       <li data-target="#driver"><span class="pos">2</span><span class="bar"></span><span class="code">DRV</span><span class="gap mono">+0.000</span></li>
       <li data-target="#evolution"><span class="pos">3</span><span class="bar"></span><span class="code">EVO</span><span class="gap mono">+0.000</span></li>
       <li data-target="#ontrack"><span class="pos">4</span><span class="bar"></span><span class="code">TRK</span><span class="gap mono">+0.000</span></li>
       <li data-target="#r2r"><span class="pos">5</span><span class="bar"></span><span class="code">R2R</span><span class="gap mono">+0.000</span></li>
-      <li data-target="#finish"><span class="pos">6</span><span class="bar"></span><span class="code">FIN</span><span class="gap mono">+0.000</span></li>
+      <li data-target="#partners"><span class="pos">6</span><span class="bar"></span><span class="code">PTN</span><span class="gap mono">+0.000</span></li>
+      <li data-target="#finish"><span class="pos">7</span><span class="bar"></span><span class="code">FIN</span><span class="gap mono">+0.000</span></li>
     </ol>
   </aside>
 
@@ -497,10 +512,54 @@
       <button class="vmodal__close mono" type="button">Close ✕</button>
     </div>
 
+    <!-- ============ CHAPTER 05 — PARTNERS ============ -->
+    <section class="partners" id="partners" data-section>
+      <div class="chapter-tag mono" data-reveal><span>05</span> Partners</div>
+      <div class="partners__head">
+        <h2 class="partners__title" aria-label="Ride with number 23">
+          <span data-split>RIDE WITH</span>
+          <span class="outline" data-split>#23</span>
+        </h2>
+        <p class="partners__lead" data-reveal>A sim racer turning into a real one, on camera. The audience is new, growing fast, and it actually watches. Here's where a partner shows up along the way.</p>
+      </div>
+
+      <div class="audience">
+        <div class="audience__card audience__card--yt" data-reveal>
+          <span class="mono audience__src-name">YouTube · @KirylValadzko</span>
+          <ul>
+            <li><b data-count="87" data-suffix="K">0</b><small class="mono">total views</small></li>
+            <li><b data-count="20" data-suffix="K">0</b><small class="mono">views in the last 30 days</small></li>
+            <li><b data-count="76">0</b><small class="mono">videos since July 2026</small></li>
+          </ul>
+        </div>
+        <div class="audience__card audience__card--ig" data-reveal>
+          <span class="mono audience__src-name">Instagram · @kirylvaladzkoracing</span>
+          <ul>
+            <li><b data-count="538">0</b><small class="mono">average likes per post</small></li>
+            <li><b data-count="123" data-suffix="%">0</b><small class="mono">engagement rate</small></li>
+            <li><b data-count="443">0</b><small class="mono">followers</small></li>
+          </ul>
+        </div>
+        <p class="mono audience__note">Social Blade, Oct 16, 2026. Posts reach well past the follower count: more likes per post than followers.</p>
+      </div>
+
+      <ol class="offers">
+        <li data-reveal><span class="mono">01</span><b>Helmet &amp; suit</b><small>Your logo on the KV23 helmet and race suit, in every photo, Short and episode.</small></li>
+        <li data-reveal><span class="mono">02</span><b>Livery &amp; rig</b><small>Your brand on my iRacing livery and the KV23 rig screens, in the races I film and stream.</small></li>
+        <li data-reveal><span class="mono">03</span><b>Road to Racing</b><small>A mention or a segment in the series that follows me from the sim to a real race seat.</small></li>
+        <li data-reveal><span class="mono">04</span><b>Shorts &amp; posts</b><small>Content built around your product: tested on the rig, at the kart track, or both.</small></li>
+      </ol>
+
+      <div class="partners__cta" data-reveal>
+        <p>Got a seat, a race, a product or an idea?</p>
+        <a class="partners__btn" href="https://ig.me/m/kirylvaladzkoracing" target="_blank" rel="noopener noreferrer" data-cursor="DM" data-magnetic>Message me on Instagram <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+
     <!-- ============ CHEQUERED FLAG / FOOTER ============ -->
     <footer class="finish" id="finish" data-section>
       <div class="finish__flag" aria-hidden="true"></div>
-      <div class="chapter-tag mono" data-reveal><span>05</span> Chequered Flag</div>
+      <div class="chapter-tag mono" data-reveal><span>06</span> Chequered Flag</div>
       <p class="finish__kicker" data-reveal>Follow the Road to Racing, or get in touch about a race, a partnership or a seat.</p>
       <h2 class="finish__big" aria-label="KV23"><span>K</span><span>V</span><span>2</span><span>3</span></h2>
       <div class="finish__row">

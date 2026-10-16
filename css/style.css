@@ -739,6 +739,45 @@ section, footer { position: relative; }
 .roadmap__line { position: absolute; left: 10px; right: 0; top: 9px; height: 2px; background: rgba(7,6,10,.12); }
 .roadmap__line i { position: absolute; inset: 0; background: var(--red); transform-origin: left; transform: scaleX(var(--p)); }
 
+/* ==========================================================================
+   PARTNERS
+   ========================================================================== */
+.partners { position: relative; padding: 160px var(--gutter) 140px; background: radial-gradient(70% 50% at 100% 0%, rgba(225,6,44,.22), transparent 60%), var(--ink); overflow: hidden; }
+.partners__head { display: grid; grid-template-columns: 1.1fr .9fr; gap: 30px 60px; align-items: end; margin-bottom: 60px; }
+.partners__title { margin: 0; display: flex; flex-wrap: wrap; gap: 0 .2em; font-family: var(--f-display); font-weight: 900; text-transform: uppercase; font-size: clamp(72px, 13vw, 220px); line-height: .82; }
+.partners__lead { margin: 0; max-width: 44ch; justify-self: end; color: var(--mute); font-size: 18px; }
+
+.audience { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.audience__card {
+  position: relative; display: grid; gap: 22px; padding: 28px; border-radius: 18px; overflow: hidden; isolation: isolate;
+  border: 1px solid var(--line); background: linear-gradient(180deg, #120c12, #0b080c);
+}
+.audience__card::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: .5; }
+.audience__card--yt::before { background: radial-gradient(90% 90% at 100% 100%, rgba(255,0,51,.35), transparent 60%); }
+.audience__card--ig::before { background: radial-gradient(80% 90% at 100% 100%, rgba(214,41,118,.4), transparent 60%), radial-gradient(60% 80% at 0% 100%, rgba(254,218,117,.18), transparent 60%); }
+.audience__src-name { font-size: 11px; color: var(--hot); text-transform: uppercase; letter-spacing: .06em; }
+.audience__card ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.audience__card li { display: grid; gap: 6px; align-content: start; }
+.audience__card b { font-family: var(--f-display); font-weight: 900; font-size: clamp(44px, 5vw, 80px); line-height: .85; font-variant-numeric: tabular-nums; }
+.audience__card li:first-child b { color: #fff; text-shadow: 0 0 40px rgba(255,45,85,.45); }
+.audience__card small { font-size: 10px; line-height: 1.4; color: var(--mute); text-transform: uppercase; letter-spacing: .04em; }
+.audience__note { grid-column: 1 / -1; margin: 4px 0 0; font-size: 10px; color: var(--mute); }
+
+.offers { list-style: none; margin: 70px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); }
+.offers li { display: grid; gap: 10px; align-content: start; padding: 26px 22px 30px 0; transition: background .4s; }
+.offers li + li { padding-left: 22px; border-left: 1px solid var(--line); }
+.offers span { color: var(--hot); font-size: 11px; }
+.offers b { font-family: var(--f-display); font-weight: 900; text-transform: uppercase; font-size: clamp(26px, 2.4vw, 38px); line-height: .95; }
+.offers small { color: var(--mute); font-size: 14px; line-height: 1.5; }
+
+.partners__cta { display: flex; justify-content: space-between; align-items: center; gap: 20px 40px; flex-wrap: wrap; margin-top: 60px; padding: 34px; border-radius: 18px; background: var(--red); }
+.partners__cta p { margin: 0; font-family: var(--f-display); font-weight: 900; text-transform: uppercase; font-size: clamp(30px, 3.4vw, 54px); line-height: .95; color: #fff; }
+.partners__btn {
+  display: inline-flex; align-items: center; gap: 12px; padding: 18px 28px; border-radius: 99px; background: #fff; color: var(--ink);
+  font-weight: 600; white-space: nowrap; transition: gap .4s var(--ease-out), background .3s;
+}
+.partners__btn:hover { gap: 20px; background: var(--ink); color: #fff; }
+
 /* ---------- karting teaser (homepage, Road to Racing · step 02) ---------- */
 .kteaser { display: grid; grid-template-columns: 1.1fr .9fr; gap: 40px 60px; align-items: center; margin: 0 0 120px; }
 .kteaser__copy { display: grid; gap: 18px; align-content: start; }
@@ -1135,6 +1174,11 @@ section, footer { position: relative; }
   .kteaser__media { width: 100%; max-width: 440px; justify-self: center; }
   .kteaser__stats, .kpage__stats { grid-template-columns: repeat(2, auto); gap: 16px 34px; }
   .kpage__intro { grid-template-columns: 1fr; }
+  .partners__head, .audience { grid-template-columns: 1fr; }
+  .partners__lead { justify-self: start; }
+  .offers { grid-template-columns: 1fr 1fr; }
+  .offers li:nth-child(3) { padding-left: 0; border-left: 0; }
+  .offers li:nth-child(n+3) { border-top: 1px solid var(--line); }
   .knights__group { overflow-x: auto; }
   .episodes, .socials { grid-template-columns: 1fr; }
 }
@@ -1189,6 +1233,14 @@ section, footer { position: relative; }
   .ktable tbody th span { display: none; }
   .kwall { gap: 18px 14px; }
   .knights { padding: 20px 16px; }
+  .audience__card { padding: 22px 18px; }
+  .audience__card ul { gap: 10px; }
+  .audience__card b { font-size: clamp(30px, 9.5vw, 44px); }
+  .audience__card small { font-size: 9px; }
+  .offers { grid-template-columns: 1fr; }
+  .offers li + li { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); }
+  .partners__cta { padding: 24px; }
+  .partners__btn { width: 100%; justify-content: center; }
   .knights__tabs { display: grid; grid-template-columns: repeat(5, 1fr); width: 100%; }
   .knights__tabs button { padding: 8px 6px; text-align: center; }
   .knights__tabs button b { font-size: 13px; }

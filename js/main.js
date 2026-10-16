@@ -298,7 +298,7 @@
     });
 
     // big outlined titles drift sideways
-    [['.evolution__title .outline', '.evolution__intro', 12], ['.ontrack__title .outline', '.ontrack__head', 10], ['.kpage__title .outline', '.kpage__hero', 10]]
+    [['.evolution__title .outline', '.evolution__intro', 12], ['.ontrack__title .outline', '.ontrack__head', 10], ['.kpage__title .outline', '.kpage__hero', 10], ['.partners__title .outline', '.partners__head', 14]]
       .forEach(([el, trigger, x]) => has(el) && gsap.to(el, { xPercent: x, ease: 'none', scrollTrigger: { trigger, scrub: true } }));
 
     // Road to Racing roadmap: the line fills up to where Kiryl is now
