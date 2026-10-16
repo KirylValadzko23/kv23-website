@@ -592,6 +592,7 @@ section, footer { position: relative; }
 .boxbox small { color: var(--mute); }
 .boxbox:hover { background: var(--red); border-color: var(--red); }
 .boxbox:hover .mono, .boxbox:hover small { color: #fff; }
+.finish__build { opacity: .6; }
 .finish__legal { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; padding-top: 24px; color: var(--mute); }
 
 /* ==========================================================================

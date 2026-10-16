@@ -19,6 +19,8 @@ foreach ($page in Get-ChildItem $root -Filter *.html) {
   foreach ($a in $assets) {
     $html = [regex]::Replace($html, '(["''])' + [regex]::Escape($a) + '(\?v=[0-9a-f]*)?(["''])', ('$1' + $a + '?v=' + $tags[$a] + '$3'))
   }
+  # the footer's "build xxxxxxxx" shows which version a visitor is running (the main.js tag)
+  $html = [regex]::Replace($html, 'build [0-9a-f]{8}', ('build ' + $tags['js/main.js']))
   if ($html -ne $before) { [IO.File]::WriteAllText($page.FullName, $html, $utf8); "updated $($page.Name)" } else { "unchanged $($page.Name)" }
 }
 $tags.GetEnumerator() | ForEach-Object { "{0} -> v={1}" -f $_.Key, $_.Value }
