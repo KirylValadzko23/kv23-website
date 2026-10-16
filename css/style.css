@@ -739,6 +739,71 @@ section, footer { position: relative; }
 .roadmap__line { position: absolute; left: 10px; right: 0; top: 9px; height: 2px; background: rgba(7,6,10,.12); }
 .roadmap__line i { position: absolute; inset: 0; background: var(--red); transform-origin: left; transform: scaleX(var(--p)); }
 
+/* ---------- karting teaser (homepage, Road to Racing · step 02) ---------- */
+.kteaser { display: grid; grid-template-columns: 1.1fr .9fr; gap: 40px 60px; align-items: center; margin: 0 0 120px; }
+.kteaser__copy { display: grid; gap: 18px; align-content: start; }
+.kteaser .karting__lead { justify-self: start; }
+.kteaser__stats { list-style: none; margin: 6px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, auto); justify-content: start; gap: 0 34px; }
+.kteaser__stats li { display: grid; gap: 2px; }
+.kteaser__stats b { font-family: var(--f-display); font-weight: 900; font-size: clamp(40px, 4.4vw, 68px); line-height: .9; }
+.kteaser__stats li:first-child b { color: var(--red); }
+.kteaser__stats small { font-size: 10px; color: rgba(7,6,10,.55); text-transform: uppercase; letter-spacing: .06em; }
+.kteaser__cta {
+  justify-self: start; display: inline-flex; align-items: center; gap: 12px; margin-top: 8px; padding: 16px 26px; border-radius: 99px;
+  background: var(--ink); color: var(--fg); font-weight: 600; transition: background .3s, gap .4s var(--ease-out);
+}
+.kteaser__cta:hover { background: var(--red); gap: 20px; }
+.kteaser__media { position: relative; display: block; aspect-ratio: 1 / 1.1; }
+.kteaser__media img {
+  position: absolute; width: 62%; height: auto; aspect-ratio: 3 / 4; object-fit: cover;
+  border: 8px solid #fff; border-bottom-width: 34px; border-radius: 6px; box-shadow: 0 30px 50px -25px rgba(7,6,10,.6);
+  transition: rotate .7s var(--ease-out), translate .7s var(--ease-out);
+}
+.kteaser__back { left: 0; top: 4%; rotate: -7deg; }
+.kteaser__front { right: 0; bottom: 0; rotate: 5deg; }
+.kteaser__media:hover .kteaser__back { rotate: -11deg; translate: -14px 0; }
+.kteaser__media:hover .kteaser__front { rotate: 2deg; translate: 10px -10px; }
+.kteaser__tag { position: absolute; left: 4%; bottom: 3%; z-index: 2; padding: 6px 10px; border-radius: 99px; background: var(--red); color: #fff; font-size: 10px; text-transform: uppercase; letter-spacing: .06em; }
+
+/* ---------- karting page ---------- */
+.kpage__hero {
+  position: relative; min-height: 100vh; min-height: 100svh; display: grid; align-content: end; gap: 26px;
+  padding: calc(var(--header-h) + 70px) var(--gutter) 70px; overflow: hidden;
+  background: radial-gradient(80% 60% at 85% 15%, rgba(225,6,44,.28), transparent 60%), var(--ink);
+}
+.kpage__back { position: absolute; top: calc(var(--header-h) + 18px); left: var(--gutter); font-size: 11px; color: var(--mute); transition: color .3s; }
+.kpage__back:hover { color: var(--fg); }
+.kpage__title { margin: 0; display: flex; flex-wrap: wrap; gap: 0 .2em; font-family: var(--f-display); font-weight: 900; text-transform: uppercase; font-size: clamp(72px, 14vw, 240px); line-height: .82; }
+.kpage__intro { display: grid; grid-template-columns: 1fr auto; gap: 30px 60px; align-items: end; }
+.kpage__lead { margin: 0; max-width: 46ch; color: var(--mute); font-size: 18px; }
+.kpage__stats { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, auto); gap: 0 34px; }
+.kpage__stats li { display: grid; gap: 2px; }
+.kpage__stats b { font-family: var(--f-display); font-weight: 900; font-size: clamp(44px, 5vw, 84px); line-height: .9; }
+.kpage__stats li:first-child b { color: var(--hot); }
+.kpage__stats small { font-size: 10px; color: var(--mute); text-transform: uppercase; letter-spacing: .06em; }
+.kpage__jump { justify-self: start; display: flex; align-items: center; gap: 12px; font-size: 11px; color: var(--mute); }
+.kpage__jump span { width: 46px; height: 1px; background: var(--line); }
+.kpage { padding-top: 110px; }
+.kpage__sec { display: grid; gap: 14px; margin: 0 0 34px; }
+.karting__grid + .kpage__sec, .knights + .kpage__sec { margin-top: 120px; }
+.kleague__season { gap: 12px; }
+
+/* championship climb: position after each week (higher = better), stretches to fill the card */
+.kclimb { flex: 1 1 auto; display: grid; grid-template-rows: auto 1fr; min-height: 220px; margin-top: 8px; }
+.kclimb__plot { position: relative; min-height: 170px; margin-bottom: 24px; }
+.kclimb__line { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.kclimb__line polyline { fill: none; stroke: var(--hot); stroke-width: 2; vector-effect: non-scaling-stroke; stroke-linejoin: round; filter: drop-shadow(0 0 6px rgba(255,45,85,.5)); }
+.kclimb__cols { list-style: none; margin: 0; padding: 0; position: absolute; inset: 0; display: grid; grid-template-columns: repeat(5, 1fr); }
+.kclimb__cols li { position: relative; border-left: 1px dashed rgba(244,241,236,.08); }
+.kclimb__cols li:first-child { border-left: 0; }
+.kclimb__cols b {
+  position: absolute; left: 50%; top: var(--y); transform: translate(-50%, -50%);
+  padding: 3px 8px; border-radius: 99px; background: var(--ink); border: 1.5px solid var(--hot);
+  font-family: var(--f-mono); font-size: 11px; font-weight: 600; color: #fff; white-space: nowrap;
+}
+.kclimb__cols li.is-best b { background: var(--red); border-color: var(--red); }
+.kclimb__cols span { position: absolute; left: 50%; bottom: -22px; transform: translateX(-50%); font-size: 9px; color: var(--mute); text-transform: uppercase; }
+
 /* ---------- karting (Road to Racing · step 02) ---------- */
 .karting { margin: 0 0 120px; }
 .karting__head { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 40px; align-items: end; margin-bottom: 40px; }
@@ -1066,6 +1131,10 @@ section, footer { position: relative; }
   .karting__lead { justify-self: start; }
   .kwall { grid-template-columns: repeat(2, 1fr); }
   .knights__body { grid-template-columns: 1fr; }
+  .kteaser { grid-template-columns: 1fr; }
+  .kteaser__media { width: 100%; max-width: 440px; justify-self: center; }
+  .kteaser__stats, .kpage__stats { grid-template-columns: repeat(2, auto); gap: 16px 34px; }
+  .kpage__intro { grid-template-columns: 1fr; }
   .knights__group { overflow-x: auto; }
   .episodes, .socials { grid-template-columns: 1fr; }
 }

@@ -8,6 +8,7 @@
 
   const $ = (s, c = document) => c.querySelector(s);
   const $$ = (s, c = document) => [...c.querySelectorAll(s)];
+  const has = (s) => !!document.querySelector(s); // the same script runs on every page; skip what a page doesn't have
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
   const lerp = (a, b, t) => a + (b - a) * t;
 
@@ -146,14 +147,14 @@
   const heroLogo = $('#heroLogo');
   const stack = $('.hero__logo-stack');
   const LAYERS = 16;
-  for (let i = LAYERS; i >= 1; i--) {
+  for (let i = LAYERS; stack && i >= 1; i--) {
     const l = document.createElement('i');
     const t = i / LAYERS;
     l.style.transform = `translateZ(${-i * 2.6}px)`;
     l.style.setProperty('--c', `rgb(${Math.round(lerp(200, 40, t))}, ${Math.round(lerp(10, 0, t))}, ${Math.round(lerp(40, 10, t))})`);
     stack.appendChild(l);
   }
-  if (!reduced) {
+  if (heroLogo && !reduced) {
     let tx = 0, ty = 0;
     const tiltLoop = (now) => {
       const idleX = Math.sin(now / 1800) * 6, idleY = Math.cos(now / 2300) * 10;
@@ -169,7 +170,7 @@
   const clock = $('#sessionClock');
   const fmt = (n) => String(n).padStart(2, '0');
   const tickClock = () => { const d = new Date(); clock.textContent = `${fmt(d.getHours())}:${fmt(d.getMinutes())}:${fmt(d.getSeconds())}`; };
-  tickClock(); setInterval(tickClock, 1000);
+  if (clock) { tickClock(); setInterval(tickClock, 1000); }
 
   /* ------------------------------------------------------------------------
      Lights-out preloader
@@ -177,7 +178,11 @@
   function runLoader() {
     return new Promise((resolve) => {
       const loader = $('#loader');
-      if (reduced) { loader.remove(); resolve(); return; }
+      if (!loader) { resolve(); return; } // inner pages skip the lights-out intro
+      // the lights-out intro plays once per visit, not every time you come back from another page
+      let seen = false;
+      try { seen = !!sessionStorage.getItem('kv23-intro'); sessionStorage.setItem('kv23-intro', '1'); } catch (e) {}
+      if (reduced || seen) { loader.remove(); resolve(); return; }
 
       const pods = $$('.pod', loader), count = $('#loaderCount'), call = $('#loaderCall');
       let loaded = false, progress = 0;
@@ -223,7 +228,7 @@
   function intro() {
     document.body.classList.remove('is-loading');
     if (lenis) lenis.start();
-    $('#tower').classList.add('is-visible');
+    if (has('#tower')) $('#tower').classList.add('is-visible');
     KV.boost = 1;
 
     if (!hasGSAP || reduced) {
@@ -232,6 +237,10 @@
     }
 
     const heroChars = $$('.hero__row .split-char');
+    if (!heroChars.length) { // inner pages: just bring the above-the-fold bits in
+      if (has('[data-intro]')) gsap.from('[data-intro]', { y: 30, opacity: 0, duration: 1.2, ease: 'expo.out', stagger: 0.1, delay: 0.3 });
+      return;
+    }
     const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
     tl.from(heroChars, { yPercent: 120, rotate: 8, duration: 1.4, stagger: 0.035 }, 0)
       .from('.hero__logo', { scale: 0.4, opacity: 0, rotateX: 70, duration: 1.8 }, 0.15)
@@ -242,7 +251,7 @@
     if (!hasGSAP || !window.ScrollTrigger || reduced) return;
 
     // hero: drive "through" the logo, name rows peel apart
-    gsap.timeline({ scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } })
+    if (has('.hero')) gsap.timeline({ scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } })
       .to('.hero__row--a', { xPercent: -30, ease: 'none' }, 0)
       .to('.hero__row--b', { xPercent: -14, ease: 'none' }, 0)
       // logo exits up and away from the name instead of growing over it; fromTo so the scrub never captures mid-intro values
@@ -267,35 +276,39 @@
 
     // manifesto: words light up as you read
     const man = $('#manifesto');
-    const words = man.textContent.trim().split(/\s+/);
-    man.textContent = '';
-    words.forEach((w, i) => {
-      const s = document.createElement('span');
-      s.className = 'w'; s.textContent = w;
-      man.appendChild(s);
-      if (i < words.length - 1) man.appendChild(document.createTextNode(' '));
-    });
-    gsap.to($$('.w', man), {
-      opacity: 1, ease: 'none', stagger: 0.1,
-      scrollTrigger: { trigger: man, start: 'top 85%', end: 'bottom 45%', scrub: true },
-    });
+    if (man) {
+      const words = man.textContent.trim().split(/\s+/);
+      man.textContent = '';
+      words.forEach((w, i) => {
+        const s = document.createElement('span');
+        s.className = 'w'; s.textContent = w;
+        man.appendChild(s);
+        if (i < words.length - 1) man.appendChild(document.createTextNode(' '));
+      });
+      gsap.to($$('.w', man), {
+        opacity: 1, ease: 'none', stagger: 0.1,
+        scrollTrigger: { trigger: man, start: 'top 85%', end: 'bottom 45%', scrub: true },
+      });
+    }
 
     // the licence card swings in (animate the wrapper: the card's own transform belongs to tilt/flip)
-    gsap.from('.licence-wrap', {
+    if (has('.licence-wrap')) gsap.from('.licence-wrap', {
       y: 140, rotate: -8, opacity: 0, duration: 1.6, ease: 'expo.out', clearProps: 'transform',
       scrollTrigger: { trigger: '.licence-wrap', start: 'top 85%' },
     });
 
-    // evolution title parallax
-    gsap.to('.evolution__title .outline', { xPercent: 12, ease: 'none', scrollTrigger: { trigger: '.evolution__intro', scrub: true } });
-    gsap.to('.ontrack__title .outline', { xPercent: 10, ease: 'none', scrollTrigger: { trigger: '.ontrack__head', scrub: true } });
+    // big outlined titles drift sideways
+    [['.evolution__title .outline', '.evolution__intro', 12], ['.ontrack__title .outline', '.ontrack__head', 10], ['.kpage__title .outline', '.kpage__hero', 10]]
+      .forEach(([el, trigger, x]) => has(el) && gsap.to(el, { xPercent: x, ease: 'none', scrollTrigger: { trigger, scrub: true } }));
 
     // Road to Racing roadmap: the line fills up to where Kiryl is now
-    gsap.fromTo('#roadmap', { '--p': 0 }, { '--p': 0.3, duration: 1.8, ease: 'expo.inOut', scrollTrigger: { trigger: '#roadmap', start: 'top 80%' } });
-    gsap.from('#roadmap li', { y: 30, opacity: 0, duration: 1, ease: 'expo.out', stagger: 0.12, scrollTrigger: { trigger: '#roadmap', start: 'top 80%' } });
+    if (has('#roadmap')) {
+      gsap.fromTo('#roadmap', { '--p': 0 }, { '--p': 0.3, duration: 1.8, ease: 'expo.inOut', scrollTrigger: { trigger: '#roadmap', start: 'top 80%' } });
+      gsap.from('#roadmap li', { y: 30, opacity: 0, duration: 1, ease: 'expo.out', stagger: 0.12, scrollTrigger: { trigger: '#roadmap', start: 'top 80%' } });
+    }
 
     // giant KV23 rises letter by letter
-    gsap.from('.finish__big span', {
+    if (has('.finish__big')) gsap.from('.finish__big span', {
       yPercent: 60, opacity: 0, stagger: 0.08, duration: 1.4, ease: 'expo.out',
       scrollTrigger: { trigger: '.finish__big', start: 'top 90%' },
     });
@@ -311,25 +324,27 @@
 
     // stats board boots like a timing screen: cells flip down one by one, then a light sweeps across
     const board = $('#board');
-    gsap.from($$('.cell', board), {
+    if (board) gsap.from($$('.cell', board), {
       rotateX: -85, opacity: 0, transformOrigin: '50% 0%', duration: 1, ease: 'expo.out', stagger: 0.07,
       clearProps: 'transform,opacity', scrollTrigger: once(board, 'top 80%'),
       onStart: () => board.classList.add('is-live'),
     });
-    gsap.from('.irchart__facts li', { y: 24, opacity: 0, duration: 1, ease: 'expo.out', stagger: 0.12, scrollTrigger: once('.irchart', 'top 75%') });
+    if (has('.irchart')) gsap.from('.irchart__facts li', { y: 24, opacity: 0, duration: 1, ease: 'expo.out', stagger: 0.12, scrollTrigger: once('.irchart', 'top 75%') });
 
     // licences are dealt onto the table, then the promotion gets stamped
     const promo = $('.lic--promo');
-    promo.classList.add('pre-stamp');
-    gsap.from('.lic', {
-      y: 90, rotateY: -40, rotateZ: -3, opacity: 0, transformOrigin: '0% 50%', duration: 1.2, ease: 'expo.out', stagger: 0.14,
-      clearProps: 'transform,opacity', scrollTrigger: once('.lics__track'),
-      onComplete: () => promo.classList.replace('pre-stamp', 'is-stamped'),
-    });
+    if (promo) {
+      promo.classList.add('pre-stamp');
+      gsap.from('.lic', {
+        y: 90, rotateY: -40, rotateZ: -3, opacity: 0, transformOrigin: '0% 50%', duration: 1.2, ease: 'expo.out', stagger: 0.14,
+        clearProps: 'transform,opacity', scrollTrigger: once('.lics__track'),
+        onComplete: () => promo.classList.replace('pre-stamp', 'is-stamped'),
+      });
+    }
 
     // race cards pull out of the pit lane; shorts are dealt up like cards
-    gsap.from('#raceRail > li', { x: 140, opacity: 0, duration: 1.1, ease: 'expo.out', stagger: 0.07, scrollTrigger: once('#raceRail', 'top 88%') });
-    gsap.from('#shortsRail > li', {
+    if (has('#raceRail')) gsap.from('#raceRail > li', { x: 140, opacity: 0, duration: 1.1, ease: 'expo.out', stagger: 0.07, scrollTrigger: once('#raceRail', 'top 88%') });
+    if (has('#shortsRail')) gsap.from('#shortsRail > li', {
       y: 140, rotate: 8, opacity: 0, transformOrigin: '0% 100%', duration: 1.2, ease: 'expo.out', stagger: 0.06,
       scrollTrigger: once('#shortsRail', 'top 90%'),
     });
@@ -353,15 +368,17 @@
     });
 
     // karting: photos get pinned to the wall one by one, the league photo drifts, the best lap flickers on like a timing screen
-    gsap.from('#kwall li', { y: 110, opacity: 0, scale: 0.9, duration: 1.1, ease: 'expo.out', stagger: 0.08, clearProps: 'transform,opacity', scrollTrigger: once('#kwall', 'top 88%') });
-    gsap.fromTo('.kleague__img img', { '--ky': '-5%' }, { '--ky': '5%', ease: 'none', scrollTrigger: { trigger: '.kleague', start: 'top bottom', end: 'bottom top', scrub: true } });
-    gsap.from('.ksplit__seg', { scaleX: 0, duration: 0.9, ease: 'expo.out', stagger: 0.12, scrollTrigger: once('.ksplit', 'top 90%') });
-    gsap.from('.kyears__bar', { scaleY: 0, duration: 1.1, ease: 'expo.out', stagger: 0.1, scrollTrigger: once('.kyears', 'top 85%') });
-    gsap.from('.kleague__result > div', { y: 30, opacity: 0, duration: 0.9, ease: 'expo.out', stagger: 0.1, scrollTrigger: once('.kleague__result', 'top 90%') });
-    gsap.from('.ktable tbody tr', { x: -24, opacity: 0, duration: 0.8, ease: 'expo.out', stagger: 0.08, scrollTrigger: once('.ktable', 'top 90%') });
-    gsap.from('.kboard__best b', { opacity: 0, duration: 0.07, repeat: 4, yoyo: true, delay: 0.4, scrollTrigger: once('.kboard__best', 'top 85%') });
+    if (has('#kwall')) gsap.from('#kwall li', { y: 110, opacity: 0, scale: 0.9, duration: 1.1, ease: 'expo.out', stagger: 0.08, clearProps: 'transform,opacity', scrollTrigger: once('#kwall', 'top 88%') });
+    if (has('.kleague')) gsap.fromTo('.kleague__img img', { '--ky': '-5%' }, { '--ky': '5%', ease: 'none', scrollTrigger: { trigger: '.kleague', start: 'top bottom', end: 'bottom top', scrub: true } });
+    if (has('.ksplit')) gsap.from('.ksplit__seg', { scaleX: 0, duration: 0.9, ease: 'expo.out', stagger: 0.12, scrollTrigger: once('.ksplit', 'top 90%') });
+    if (has('.kyears')) gsap.from('.kyears__bar', { scaleY: 0, duration: 1.1, ease: 'expo.out', stagger: 0.1, scrollTrigger: once('.kyears', 'top 85%') });
+    if (has('.kleague__result')) gsap.from('.kleague__result > div', { y: 30, opacity: 0, duration: 0.9, ease: 'expo.out', stagger: 0.1, scrollTrigger: once('.kleague__result', 'top 90%') });
+    if (has('.ktable')) gsap.from('.ktable tbody tr', { x: -24, opacity: 0, duration: 0.8, ease: 'expo.out', stagger: 0.08, scrollTrigger: once('.ktable', 'top 90%') });
+    if (has('.kboard__best')) gsap.from('.kboard__best b', { opacity: 0, duration: 0.07, repeat: 4, yoyo: true, delay: 0.4, scrollTrigger: once('.kboard__best', 'top 85%') });
+    if (has('.kteaser')) gsap.from('.kteaser__stats li', { y: 30, opacity: 0, duration: 1, ease: 'expo.out', stagger: 0.08, scrollTrigger: once('.kteaser__stats', 'top 90%') });
 
     // chequered flag drops in; then KV23 lights up letter by letter like the start lights… and lights out
+    if (!has('.finish__big')) return;
     gsap.from('.finish__flag', { scaleY: 0, transformOrigin: '50% 0%', duration: 1, ease: 'expo.out', scrollTrigger: once('.finish', 'top 90%') });
     const letters = $$('.finish__big span');
     ScrollTrigger.create({
@@ -400,6 +417,7 @@
      ------------------------------------------------------------------------ */
   function marquee() {
     const track = $('#bandTrack');
+    if (!track) return;
     track.innerHTML += track.innerHTML + track.innerHTML;
     let x = 0, dir = 1, w = track.scrollWidth / 3;
     addEventListener('resize', () => (w = track.scrollWidth / 3));
@@ -419,6 +437,7 @@
      ------------------------------------------------------------------------ */
   function licence() {
     const card = $('#licence'), wrap = $('.licence-wrap');
+    if (!card || !wrap) return;
     wrap.addEventListener('pointermove', (e) => {
       const r = card.getBoundingClientRect();
       const px = clamp((e.clientX - r.left) / r.width, 0, 1), py = clamp((e.clientY - r.top) / r.height, 0, 1);
@@ -442,6 +461,7 @@
      ------------------------------------------------------------------------ */
   function tower() {
     const rows = $$('.tower__list li');
+    if (!rows.length) return;
     const sections = rows.map((r) => $(r.dataset.target));
     const lap = $('#lapNo');
     rows.forEach((r) => r.addEventListener('click', () => scrollToTarget(r.dataset.target)));
@@ -496,6 +516,7 @@
   };
 
   function statsBoard() {
+    if (!has('#board')) return;
     const board = $('#board'), tabs = $$('.board__tabs button', board), pill = $('.board__pill', board);
     const fields = $$('[data-k]', board);
     const fmt = (el, v) => {
@@ -554,6 +575,7 @@
 
   function iRatingChart() {
     const plot = $('#irPlot'), svg = $('#irSvg'), tip = $('#irTip');
+    if (!plot) return;
     const dateFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     const pts = IRATING;
     let geo = null, drawn = false;
@@ -698,6 +720,7 @@
      Road to Racing — YouTube player modal
      ------------------------------------------------------------------------ */
   function videoModal() {
+    if (!has('#vmodal')) return;
     const m = $('#vmodal'), frame = $('.vmodal__frame', m), yt = $('.vmodal__yt', m), closeBtn = $('.vmodal__close', m);
     let open = false, lastFocus = null;
 
@@ -1058,6 +1081,7 @@
      (written by scripts/update-youtube.ps1; the cards in the HTML stay as the fallback)
      ------------------------------------------------------------------------ */
   function youtubeFeed() {
+    if (!has('#shortsRail') && !has('.episodes')) return Promise.resolve();
     const load = fetch('data/youtube.json', { cache: 'no-cache' })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => d && renderYouTube(d))
@@ -1151,8 +1175,8 @@
       lastY = y;
     }, { passive: true });
 
-    $('#boxBox').addEventListener('click', () => { KV.boost = 1; scrollToTarget(0, { duration: 2.2 }); });
-    $('#year').textContent = new Date().getFullYear();
+    if (has('#boxBox')) $('#boxBox').addEventListener('click', () => { KV.boost = 1; scrollToTarget(0, { duration: 2.2 }); });
+    if (has('#year')) $('#year').textContent = new Date().getFullYear();
   }
 
   /* ------------------------------------------------------------------------
@@ -1199,6 +1223,7 @@
 
   function evolution() {
     const evo = $('#evo'), track = $('#evoTrack'), svg = $('#evoContours');
+    if (!evo) return;
     const floaters = $$('[data-speed]', track);
     const items = $$('.evo__item', track);
     const rulerBtns = $$('#evoRuler button'), fill = $('#evoFill'), hint = $('.evo__hint', evo), sign = $('.evo__sign', evo);
@@ -1410,5 +1435,8 @@
     intro();
     scrollAnimations();
     if (window.ScrollTrigger) ScrollTrigger.refresh();
+    // arriving from another page with a #section (e.g. karting.html → index.html#r2r): land on it once the layout is final
+    const hash = location.hash && location.hash.length > 1 ? location.hash : null;
+    if (hash && /^#[\w-]+$/.test(hash) && has(hash)) scrollToTarget(hash, { immediate: true, duration: 0 });
   });
 })();

@@ -47,6 +47,7 @@
       <a href="#evolution" data-roll>Evolution</a>
       <a href="#ontrack" data-roll>On Track</a>
       <a href="#r2r" data-roll>Road to Racing</a>
+      <a href="karting.html" data-roll>Karting</a>
       <a href="#finish" data-roll>Contact</a>
     </nav>
     <button class="header__menu" id="menuBtn" aria-expanded="false" aria-controls="menu" data-magnetic>
@@ -65,7 +66,8 @@
         <li><a href="#evolution"><small>02</small><span data-roll>Evolution</span></a></li>
         <li><a href="#ontrack"><small>03</small><span data-roll>On Track</span></a></li>
         <li><a href="#r2r"><small>04</small><span data-roll>Road to Racing</span></a></li>
-        <li><a href="#finish"><small>05</small><span data-roll>Chequered Flag</span></a></li>
+        <li><a href="karting.html"><small>05</small><span data-roll>Karting</span></a></li>
+        <li><a href="#finish"><small>06</small><span data-roll>Chequered Flag</span></a></li>
       </ol>
       <div class="menu__side">
         <div class="menu__preview"><img src="assets/img/pfp.webp" alt="" /></div>
@@ -420,88 +422,25 @@
         <i class="roadmap__line" aria-hidden="true"><i></i></i>
       </ol>
 
-      <!-- step 02: real seat time (rental karting, timed on RaceFacer) -->
-      <div class="karting" id="karting">
-        <div class="karting__head">
+      <!-- step 02: real seat time. The full story (RaceFacer, league night by night, photos) lives on karting.html -->
+      <div class="kteaser" id="karting">
+        <div class="kteaser__copy">
           <p class="mono karting__kicker" data-reveal><span>02</span> Real seat time</p>
           <h3 class="karting__title" data-split>Rental karts,<br /><em>for now.</em></h3>
-          <p class="karting__lead" data-reveal>Not a race seat yet, but real grip, real g-force and real people to beat. 70 timed sessions since 2022, all logged on RaceFacer.</p>
+          <p class="karting__lead" data-reveal>Not a race seat yet, but real grip, real g-force and real people to beat. 70 timed sessions since 2022, plus a full league season in 2024.</p>
+          <ul class="kteaser__stats">
+            <li><b data-count="35">0</b><small class="mono">Wins</small></li>
+            <li><b data-count="58">0</b><small class="mono">Podiums</small></li>
+            <li><b data-count="70">0</b><small class="mono">Sessions</small></li>
+            <li><b>P13</b><small class="mono">League 2024</small></li>
+          </ul>
+          <a class="kteaser__cta" href="karting.html" data-cursor="Open">Open the karting file <span aria-hidden="true">→</span></a>
         </div>
-
-        <div class="karting__grid">
-          <div class="kboard" data-reveal>
-            <div class="kboard__top">
-              <span class="mono">RaceFacer · since Aug 2022</span>
-              <b class="kboard__level">Expert</b>
-            </div>
-            <div class="kboard__cells" id="kartStats"><!-- built from KARTING in main.js --></div>
-            <div class="ksplit" id="kartSplit"><!-- finishing positions, built in main.js --></div>
-            <div class="kyears" id="kartYears"><!-- season by season, built in main.js --></div>
-            <div class="kboard__best">
-              <span class="mono">Latest session · best lap</span>
-              <b>00:43<i>.464</i></b>
-              <span class="mono kboard__last">P2 of 10 · TAG E-Karting · Oct 5, 2026</span>
-            </div>
-            <a class="kboard__link mono" href="https://www.racefacer.com/en/profile/kiryl.valadzko.2" target="_blank" rel="noopener noreferrer" data-cursor="Visit">Full profile on RaceFacer ↗</a>
-          </div>
-
-          <figure class="kleague" data-reveal>
-            <span class="kleague__img"><img src="assets/karting/league-helmet.jpg" width="1050" height="1400" loading="lazy" alt="Kiryl in kart 91 on the grid at the TAG E-Karting League, wearing the red-and-black helmet" /></span>
-            <figcaption>
-              <span class="mono kleague__when">Mar 18 – Apr 15, 2024 · 5 weeks</span>
-              <b class="kleague__name">TAG E-Karting League</b>
-              <small>Every Monday night: qualifying, a pre-final and a final, points for each, same rivals every week.</small>
-
-              <div class="kleague__result">
-                <div><small class="mono">Championship</small><b>P13</b><span class="mono">of 31 drivers</span></div>
-                <div><small class="mono">Total</small><b>199</b><span class="mono">points</span></div>
-                <div><small class="mono">Best week</small><b>51</b><span class="mono">pts · week 3</span></div>
-              </div>
-
-              <table class="ktable">
-                <caption class="mono">Points per round, and the standings after each week</caption>
-                <thead><tr><th scope="col">Week</th><th scope="col">Qualif</th><th scope="col">Pre-final</th><th scope="col">Final</th><th scope="col">Pts</th><th scope="col">Standing</th></tr></thead>
-                <tbody>
-                  <tr><th scope="row">1 <span>Mar 18</span></th><td>8</td><td>14</td><td>18</td><td>40</td><td>P14</td></tr>
-                  <tr><th scope="row">2 <span>Mar 25</span></th><td>1</td><td>9</td><td>21</td><td>31</td><td>P17</td></tr>
-                  <tr class="is-best"><th scope="row">3 <span>Apr 1</span></th><td>9</td><td>16</td><td>26</td><td>51</td><td>P11</td></tr>
-                  <tr><th scope="row">4 <span>Apr 8</span></th><td>8</td><td>13</td><td>22</td><td>43</td><td>P12</td></tr>
-                  <tr><th scope="row">5 <span>Apr 15</span></th><td>5</td><td>9</td><td>20</td><td>34</td><td>P13</td></tr>
-                </tbody>
-              </table>
-              <ul class="kleague__hl">
-                <li><b>Week 3</b> Won the pre-final with the fastest lap, then P3 in the final</li>
-                <li><b>Week 2</b> Fastest lap of the final</li>
-                <li><b>Best qualifying</b> P2, week 3</li>
-              </ul>
-              <p class="mono kleague__foot">Points · qualifying 10 → 1 (P1–P10) · pre-final 15 → 1 · final 30 → 8 · +1 for the fastest lap in the pre-final and final. Fastest league lap on RaceFacer: 39.865, Apr 8.</p>
-            </figcaption>
-          </figure>
-        </div>
-
-        <!-- league, night by night (built from LEAGUE in main.js) -->
-        <div class="knights" id="knights" data-reveal>
-          <div class="knights__head">
-            <div>
-              <p class="mono knights__kicker">TAG E-Karting League · night by night</p>
-              <h4 class="knights__title">Every round, every group</h4>
-            </div>
-            <div class="knights__tabs" id="knightsTabs" role="tablist" aria-label="League week"></div>
-          </div>
-          <div class="knights__body" id="knightsBody" role="tabpanel"></div>
-          <p class="mono knights__note">Points from the official league sheet, positions worked out from them, <i class="fl-dot" aria-hidden="true"></i> = fastest lap (+1). Groups, timing sheets and best laps from RaceFacer; averages and worst laps from my own sheet. Other drivers are anonymised, each with the same number all season.</p>
-        </div>
-
-        <ul class="kwall" id="kwall" aria-label="Karting photos">
-          <li style="--r:-4deg"><img src="assets/karting/tag-helmet.jpg" width="788" height="1400" loading="lazy" alt="Kiryl in the kart at TAG, helmet on, K1 gloves raised to the visor" /><span class="mono">TAG · suited up</span></li>
-          <li style="--r:3deg"><img src="assets/karting/league-start.jpg" width="1050" height="1400" loading="lazy" alt="Kiryl in kart 91 leading a line of karts out to the start at the TAG E-Karting League" /><span class="mono">League · on the grid in #91</span></li>
-          <li style="--r:-2deg"><img src="assets/karting/outdoor-kart.jpg" width="1600" height="1200" loading="lazy" alt="Kiryl in a red jacket driving kart number 6 on an outdoor track" /><span class="mono">Outdoor · kart #6</span></li>
-          <li style="--r:4deg"><img src="assets/karting/onboard.jpg" width="1200" height="1200" loading="lazy" alt="Onboard view from the seat of an outdoor rental kart in the pit lane" /><span class="mono">Onboard · Aug 2025</span></li>
-          <li style="--r:-3deg"><img src="assets/karting/league-pack.jpg" width="1600" height="1200" loading="lazy" alt="Two karts side by side through a corner at TAG" /><span class="mono">Wheel to wheel</span></li>
-          <li style="--r:2deg"><img src="assets/karting/boys-helmets.jpg" width="675" height="1200" loading="lazy" alt="Four helmets on a round table at the track, including Kiryl's red-and-black Fanatec helmet" /><span class="mono">Boys' night · helmets off</span></li>
-          <li style="--r:-3deg"><img src="assets/karting/boys-night.jpg" width="675" height="1200" loading="lazy" alt="Steak and fries at a table with friends after a karting night" /><span class="mono">Boys' night · refuel</span></li>
-          <li style="--r:3deg"><img src="assets/karting/post-race.jpg" width="675" height="1200" loading="lazy" alt="Helmet on the table next to a plate of chicken wings after a session" /><span class="mono">Post-race fuel</span></li>
-        </ul>
+        <a class="kteaser__media" href="karting.html" aria-label="Open the karting page" data-cursor="Open" data-reveal>
+          <img class="kteaser__back" src="assets/karting/tag-helmet.jpg" width="788" height="1400" loading="lazy" alt="" />
+          <img class="kteaser__front" src="assets/karting/league-helmet.jpg" width="1050" height="1400" loading="lazy" alt="Kiryl in kart 91 on the grid at the TAG E-Karting League" />
+          <span class="kteaser__tag mono">League 2024 · RaceFacer · photos</span>
+        </a>
       </div>
 
       <div class="episodes">
