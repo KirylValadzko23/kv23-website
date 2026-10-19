@@ -13,6 +13,10 @@ Six pages, sharing `css/style.css` and `js/main.js` (which skips whatever a page
 
 Plain HTML, CSS and JavaScript with no build step. Animation by [GSAP](https://gsap.com/) + ScrollTrigger and smooth scrolling by [Lenis](https://lenis.darkroom.engineering/), both loaded from CDNs. The cream background's terrain lines are drawn in `main.js`.
 
+## Homepage rides
+
+On the homepage, Outside the Track (→), Why I Race (↙), the Evolution (↘) and On Track (←) are *rides*: the vertical scroll turns into travel in one direction (`ride()` in `js/main.js`; set per section with `data-dir` and `data-dive`). The contour-line background is one endless map on a canvas whose camera follows the same direction.
+
 ## English and French
 
 The pages are written in English. `js/i18n.js` holds the French: page text keyed by the English exactly as it appears in the HTML, plus the text `main.js` builds (charts, tables). The FR / EN button in the header switches and remembers the choice; first-time visitors get French if their browser is set to French. If you change English text in a page, update its key in `js/i18n.js` too, or that bit shows in English on the French site.

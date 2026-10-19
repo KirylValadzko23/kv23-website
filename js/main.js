@@ -162,36 +162,98 @@
   $$('[data-split]').forEach((el) => splits.set(el, splitChars(el)));
 
   /* ------------------------------------------------------------------------
-     Terrain lines behind every page: one map as long as the page, so it scrolls with the content
-     and each part of the page sits on its own stretch of terrain. Drawn in 1000px bands, each with
-     its own seed, and redrawn only when the width changes or the page grows past what's drawn.
+     Terrain: one endless map of contour lines behind every page, drawn on a fixed canvas. A camera
+     follows the page: straight down while you scroll normally, and along a ride's direction while a
+     ride section turns the scroll sideways or diagonal, so the lines always move with what's in front.
+     Hills sit on a grid of cells (generated as the camera reaches them, same terrain every visit);
+     long flowing lines run across the rows.
      ------------------------------------------------------------------------ */
-  function backdrop() {
-    // the map sits in a clipped box the size of the page, so its own (taller) height never adds scroll
-    const box = document.createElement('div');
-    box.className = 'bgfx';
-    box.setAttribute('aria-hidden', 'true');
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    box.appendChild(svg);
-    document.body.prepend(box);
-    const BAND = 1000;
-    let drawnW = 0, drawnH = 0;
-    const draw = () => {
-      const w = document.documentElement.clientWidth, need = document.body.offsetHeight;
-      if (w === drawnW && need <= drawnH) return;
-      const h = Math.ceil((need + innerHeight) / BAND) * BAND; // a screen of spare, so small growth needs no redraw
-      let d = '';
-      for (let b = 0; b * BAND < h; b++) d += contourPaths(w, BAND, 7 + b * 131, b * BAND);
-      svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-      svg.style.height = h + 'px';
-      svg.innerHTML = `<path d="${d}"/>`;
-      drawnW = w; drawnH = h;
+  const RIDES = []; // each ride says how far it has pulled the camera away from plain scrolling: { x, y }
+  function terrain() {
+    const cv = document.createElement('canvas');
+    cv.className = 'bgfx';
+    cv.setAttribute('aria-hidden', 'true');
+    document.body.prepend(cv);
+    const ctx = cv.getContext('2d');
+    if (!ctx) return;
+    const CELL = 720, ROW = 380, PAD = 820;
+    const hash = (a, b, k) => { // stable 0–1 noise for a cell
+      let h = Math.imul(a | 0, 0x27d4eb2d) ^ Math.imul(b | 0, 0x165667b1) ^ Math.imul(k + 1, 0x9e3779b9);
+      h = Math.imul(h ^ (h >>> 15), 0x85ebca6b); h = Math.imul(h ^ (h >>> 13), 0xc2b2ae35);
+      return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
     };
-    draw();
-    if (window.ResizeObserver) new ResizeObserver(draw).observe(document.body);
-    else addEventListener('resize', draw);
+    const ring = (path, pts) => {
+      const n = pts.length, mid = (p, q) => [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2];
+      const m = mid(pts[n - 1], pts[0]);
+      path.moveTo(m[0], m[1]);
+      for (let i = 0; i < n; i++) { const p = pts[i], q = mid(p, pts[(i + 1) % n]); path.quadraticCurveTo(p[0], p[1], q[0], q[1]); }
+      path.closePath();
+    };
+    const cells = new Map();
+    const hill = (i, j) => {
+      const key = i + ',' + j;
+      if (cells.has(key)) return cells.get(key);
+      let h = null;
+      if (hash(i, j, 1) < 0.72) {
+        const r = (k) => hash(i, j, k);
+        const cx = (i + 0.15 + r(2) * 0.7) * CELL, cy = (j + 0.15 + r(3) * 0.7) * CELL;
+        const rings = 4 + Math.floor(r(4) * 5), base = 34 + r(5) * 26, p1 = r(6) * 6.28, p2 = r(7) * 6.28, p3 = r(8) * 6.28;
+        const path = new Path2D();
+        let R = 0;
+        for (let q = 1; q <= rings; q++) {
+          const pts = [];
+          for (let k = 0; k < 40; k++) {
+            const t = (k / 40) * Math.PI * 2;
+            const rr = q * base * (1 + 0.2 * Math.sin(2 * t + p1) + 0.1 * Math.sin(3 * t + p2) + 0.06 * Math.sin(5 * t + p3) * (q / rings));
+            pts.push([cx + Math.cos(t) * rr * 1.35, cy + Math.sin(t) * rr]);
+            R = Math.max(R, rr * 1.35);
+          }
+          ring(path, pts);
+        }
+        h = { path, x0: cx - R, x1: cx + R, y0: cy - R, y1: cy + R };
+      }
+      cells.set(key, h);
+      return h;
+    };
+    let W = 0, H = 0, dpr = 1, color = '#d5dbc4', last = '';
+    const resize = () => {
+      dpr = Math.min(devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight;
+      cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+      color = getComputedStyle(document.documentElement).getPropertyValue('--contour').trim() || color;
+      last = '';
+    };
+    const draw = () => {
+      let cx = 0, cy = scrollY;
+      for (const r of RIDES) { const o = r.shift(); cx += o.x; cy -= o.y; }
+      const key = `${cx.toFixed(1)},${cy.toFixed(1)},${W},${H}`;
+      if (key === last) return; // nothing moved
+      last = key;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      ctx.setTransform(dpr, 0, 0, dpr, -cx * dpr, -cy * dpr);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1;
+      for (let i = Math.floor((cx - PAD) / CELL); i <= Math.floor((cx + W + PAD) / CELL); i++) {
+        for (let j = Math.floor((cy - PAD) / CELL); j <= Math.floor((cy + H + PAD) / CELL); j++) {
+          const h = hill(i, j);
+          if (h && h.x1 > cx && h.x0 < cx + W && h.y1 > cy && h.y0 < cy + H) ctx.stroke(h.path);
+        }
+      }
+      for (let j = Math.floor((cy - 140) / ROW); j <= Math.floor((cy + H + 140) / ROW); j++) {
+        const a = 40 + hash(j, 7, 9) * 50, f = 260 + hash(j, 7, 10) * 200, ph = hash(j, 7, 11) * 6.28, y0 = j * ROW + hash(j, 7, 12) * ROW * 0.5;
+        ctx.beginPath();
+        for (let x = Math.floor(cx / 24) * 24 - 24; x <= cx + W + 24; x += 24) {
+          const y = y0 + a * Math.sin(x / f + ph) + a * 0.4 * Math.sin(x / (f * 0.37) + ph * 2);
+          if (x === Math.floor(cx / 24) * 24 - 24) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+    };
+    resize();
+    addEventListener('resize', resize);
+    if (hasGSAP) gsap.ticker.add(draw); // after Lenis and the rides have moved, every frame
+    else { const loop = () => { draw(); requestAnimationFrame(loop); }; requestAnimationFrame(loop); }
   }
-
   /* ------------------------------------------------------------------------
      Hero: extruded 3D logo
      ------------------------------------------------------------------------ */
@@ -1335,104 +1397,30 @@
   }
 
   /* ------------------------------------------------------------------------
-     Terrain lines: contour "hills" and long flowing lines (drawn by backdrop())
+     Rides — a section where the vertical scroll turns into travel in one direction: Evolution, and the
+     homepage sections. The scroll turns each corner in a wide curve (↓, the ride's direction, ↓ again);
+     every scrolled pixel is spent moving, so the speed never drops. A ride only ever goes one way.
+       dir  1: the camera travels right (the scene slides left) · -1: it travels left
+       dive the camera's downward angle in degrees (0 = flat), so a ride can run diagonally down
+       auto lay the items out in order along the run (data-lane: 0 top … 1 bottom); otherwise CSS places them
      ------------------------------------------------------------------------ */
-  function contourPaths(w, h, seed = 23, oy = 0) { // oy: shifts this stretch of terrain down the page
-    // deterministic pseudo-random so the "terrain" is the same on every visit
-    const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
-    const smooth = (pts, closed) => {
-      const mid = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
-      const n = pts.length;
-      let m = closed ? mid(pts[n - 1], pts[0]) : pts[0];
-      let d = `M${m[0].toFixed(0)},${m[1].toFixed(0)}`; // whole pixels: plenty for a background, half the markup
-      for (let i = 0; i < (closed ? n : n - 1); i++) {
-        const p = pts[i], q = mid(p, pts[(i + 1) % n]);
-        d += `Q${p[0].toFixed(0)},${p[1].toFixed(0)} ${q[0].toFixed(0)},${q[1].toFixed(0)}`;
-      }
-      return d + (closed ? 'Z' : '');
-    };
-    let d = '';
-    // concentric "hills"
-    for (let cx = rnd() * 300; cx < w + 300; cx += 520 + rnd() * 360) {
-      const cy = h * (0.1 + rnd() * 0.8), rings = 5 + Math.floor(rnd() * 5);
-      const p1 = rnd() * 6.28, p2 = rnd() * 6.28, p3 = rnd() * 6.28, base = 40 + rnd() * 30;
-      for (let i = 1; i <= rings; i++) {
-        const r = i * base, pts = [];
-        for (let k = 0; k < 48; k++) {
-          const t = (k / 48) * Math.PI * 2;
-          const rr = r * (1 + 0.2 * Math.sin(2 * t + p1) + 0.1 * Math.sin(3 * t + p2) + 0.06 * Math.sin(5 * t + p3) * (i / rings));
-          pts.push([cx + Math.cos(t) * rr * 1.35, oy + cy + Math.sin(t) * rr]);
-        }
-        d += smooth(pts, true);
-      }
-    }
-    // long flowing lines between the hills
-    for (let j = 0; j < 6; j++) {
-      const y0 = h * (j + 0.5) / 6, a = 40 + rnd() * 50, f = 260 + rnd() * 200, ph = rnd() * 6.28, pts = [];
-      for (let x = -50; x <= w + 50; x += 60) pts.push([x, oy + y0 + a * Math.sin(x / f + ph) + a * 0.4 * Math.sin(x / (f * 0.37) + ph * 2)]);
-      d += smooth(pts, false);
-    }
-    return d;
-  }
-
-  /* ------------------------------------------------------------------------
-     Evolution — vertical scroll drives a sideways photo collage
-     ------------------------------------------------------------------------ */
-  function evolution() {
-    const evo = $('#evo'), track = $('#evoTrack');
-    if (!evo) return;
+  function ride(panel, o = {}) {
+    const track = $('.ride__track, .evo__track', panel);
+    const dir = o.dir < 0 ? -1 : 1;
+    const DIVE = Math.tan(((o.dive || 0) * Math.PI) / 180);
     const floaters = $$('[data-speed]', track);
-    const items = $$('.evo__item', track);
-    const hint = $('.evo__hint', evo), sign = $('.evo__sign', evo);
-    // the gallery always rides the vertical scroll (phones included): it only moves when you scroll, so it stays on
-    // even with "reduce motion" switched on; only the decorative camera sway is dropped then
-    const pinned = true;
-    let centers = [], lay = [], dist = 0, pin = null, bend = 0, lastS = NaN;
+    const autoItems = o.auto ? $$(':scope > .ride__item', track) : [];
+    const focusEls = o.focus ? $$(o.focus, track) : [];
+    let centers = [], fwd = [], lay = [], dist = 0, bend = 0, lastS = NaN, trackW = 0, left0 = 0, pinTop = 0;
 
-    // the corners are wide, sweeping curves (up to 1.5 screens of scroll to turn), not a tight flick.
-    // The track is sized around them: extra run-in (--lead) so the first photos still reach centre stage once the
-    // turn is done, and a run-out timed so "To be continued" sits fully on screen while the gallery starts to rise
-    const outro = $('.evo__outro', track);
-    const measure = () => {
-      const W = innerWidth, H = innerHeight;
-      const B = pin ? Math.min(H * 1.5, W * 2.2) : 0;
-      track.style.setProperty('--lead', (pin ? Math.max(0, Math.round(B - H * 0.6)) : 0) + 'px');
-      if (pin) {
-        const last = items[items.length - 1], outroLeft = Math.round(last.offsetLeft + last.offsetWidth + W * 0.12);
-        const u = Math.sqrt(0.6 * B * H); // scroll into the turn-out at which the gallery has risen 15% of the screen
-        const run = Math.round(outroLeft - W * 0.12 + B - u + H * 0.15); // …and the outro is 12% in from the left then
-        track.style.width = run + W + 'px';
-        outro.style.left = outroLeft + 'px';
-      }
-      dist = Math.max(0, track.offsetWidth - W);
-      centers = floaters.map((el) => el.offsetLeft + el.offsetWidth / 2);
-      if (pin) {
-        pin.style.height = evo.offsetHeight + dist + 'px';
-        bend = Math.min(B, dist * 0.45); // length of the curve into / out of the sideways run
-        lastS = NaN;
-      }
-      // lay each photo along the camera's diagonal, so it sits at its designed height the moment it's centred
-      lay = floaters.map((el, i) => (pin ? DIVE * glide(clamp(centers[i] - innerWidth / 2, 0, dist)) : 0));
-    };
+    const pin = document.createElement('div');
+    pin.className = o.pinClass || 'ride-pin';
+    panel.before(pin);
+    pin.appendChild(panel);
+    panel.classList.add('is-pinned');
 
-    // s = how far the page has scrolled past the top of the pin zone.
-    // Instead of stopping dead and then going sideways, the vertical motion eases out while the
-    // sideways motion eases in (and the reverse on the way out), so the scroll turns the corner:
-    // ↓ ↘ → → → ↘ ↓. Every scrolled pixel is spent either down or sideways, so the speed never drops.
-    const screenTop = (s) => { // where the gallery's top edge sits on screen
-      if (s <= -bend) return -s;
-      if (s < bend) return (bend - s) ** 2 / (4 * bend);
-      if (s <= dist - bend) return 0;
-      if (s < dist + bend) return -((s - dist + bend) ** 2) / (4 * bend);
-      return dist - s;
-    };
-    const trackX = (s) => clamp(-(s + screenTop(s)), -dist, 0);
-
-    // the camera: on the straight it travels down-right at 330° (the scene slides up-left), easing into
-    // and out of that slope, and drifts up and down in a slow, gentle wave on top of it.
-    // The photos move as one, over the page's own terrain lines, which keep scrolling up behind them.
-    const DIVE = Math.tan(Math.PI / 6); // 30° below horizontal: sinks 0.58px per px travelled
-    const glide = (u) => { // the slope's run after u px of sideways travel (eases from flat to 1:1 and back)
+    // the slope's run after u px of travel (eases from flat to full slope and back over the bends)
+    const glide = (u) => {
       const r = bend || 1, ease = (t) => r * (t ** 3 - t ** 4 / 2); // integral of a smoothstep ramp
       if (u <= 0) return 0;
       if (u >= dist) return dist - r;
@@ -1441,64 +1429,132 @@
       return u - r / 2;
     };
     const smoothstep = (t) => (t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t));
-    const camera = (s) => {
-      // phones: no sway. On a narrow screen the swell repeats every few hundred px of scroll and reads as bobbing
-      if (reduced || innerWidth < 760) return 0;
-      const b = bend || 1, amp = Math.min(innerHeight * 0.025, 20), len = innerWidth * 1.2; // one swell per ~1.2 screens of travel
-      return amp * Math.sin((s / len) * Math.PI * 2) * smoothstep(s / b) * smoothstep((dist - s) / b); // flat through the corners
+    // s = how far the page has scrolled past the top of the pin zone; where the panel's top sits on screen
+    const screenTop = (s) => {
+      if (s <= -bend) return -s;
+      if (s < bend) return (bend - s) ** 2 / (4 * bend);
+      if (s <= dist - bend) return 0;
+      if (s < dist + bend) return -((s - dist + bend) ** 2) / (4 * bend);
+      return dist - s;
     };
-    let wasNear = true;
+    const travel = (s) => clamp(s + screenTop(s), 0, dist); // px travelled along the ride
+    const sway = (s) => { // Evolution's slow camera swell (not on phones, where it reads as bobbing)
+      if (!o.sway || reduced || innerWidth < 760) return 0;
+      const b = bend || 1, amp = Math.min(innerHeight * 0.025, 20), len = innerWidth * 1.2;
+      return amp * Math.sin((s / len) * Math.PI * 2) * smoothstep(s / b) * smoothstep((dist - s) / b);
+    };
+    const offset = (s) => { const u = travel(s); return { x: -dir * u, y: -DIVE * glide(u) + sway(s) }; };
 
+    const measure = () => {
+      const W = innerWidth, H = innerHeight;
+      const B = Math.min(H * 1.5, W * 2.2); // how long the bends are
+      const lead = Math.max(0, Math.round(B - H * 0.6)); // run-in, so the first things still reach centre stage after the turn
+      const u = Math.sqrt(0.6 * B * H); // into the turn-out, the panel has risen 15% of the screen here…
+      if (o.auto) {
+        // lay the items out one after another along the run, each at its own height
+        const gap = clamp(W * 0.08, 48, 160), pos = [];
+        let p = lead + W * 0.08;
+        autoItems.forEach((el, i) => {
+          const w = el.offsetWidth, h = el.offsetHeight;
+          if (el.hasAttribute('data-outro')) p += W * 0.12 - gap;
+          const lane = clamp(parseFloat(el.dataset.lane || '0.5'), 0, 1);
+          const top = clamp(H * 0.12 + lane * (H * 0.74 - h), H * 0.08, Math.max(H * 0.08, H * 0.9 - h));
+          pos.push([el, p, w, top]);
+          p += w + (i < autoItems.length - 1 ? gap : 0);
+        });
+        const oStart = pos[pos.length - 1][1];
+        const run = Math.round(oStart - W * 0.12 + B - u + H * 0.15); // …and the last block sits 12% in from the edge then
+        trackW = Math.max(run + W, p + W * 0.1);
+        pos.forEach(([el, p0, w, top]) => { el.style.left = (dir > 0 ? p0 : trackW - p0 - w) + 'px'; el.style.top = top + 'px'; });
+        track.style.width = trackW + 'px';
+      } else {
+        // Evolution: CSS places the photos; the run-in and the outro are set here
+        track.style.setProperty('--lead', lead + 'px');
+        const items = o.items, last = items[items.length - 1];
+        const outroLeft = Math.round(last.offsetLeft + last.offsetWidth + W * 0.12);
+        const run = Math.round(outroLeft - W * 0.12 + B - u + H * 0.15);
+        trackW = run + W;
+        track.style.width = trackW + 'px';
+        if (o.outro) o.outro.style.left = outroLeft + 'px';
+      }
+      dist = Math.max(0, trackW - W);
+      left0 = dir > 0 ? 0 : -dist; // a left-going ride starts with its right end on screen
+      track.style.left = left0 + 'px';
+      centers = floaters.map((el) => el.offsetLeft + el.offsetWidth / 2);
+      fwd = centers.map((c) => (dir > 0 ? c - W / 2 : trackW - c - W / 2)); // travel needed to centre each one
+      pin.style.height = panel.offsetHeight + dist + 'px';
+      bend = Math.min(B, dist * 0.45);
+      // lay each item along the camera's slope, so it sits at its designed height the moment it's centred
+      lay = fwd.map((f) => DIVE * glide(clamp(f, 0, dist)));
+      lastS = NaN;
+      requestAnimationFrame(() => (pinTop = pin.getBoundingClientRect().top + scrollY));
+    };
+
+    const update = (x) => {
+      const mid = innerWidth / 2;
+      floaters.forEach((el, i) => {
+        const dx = left0 + centers[i] + x - mid;
+        const speed = parseFloat(el.dataset.speed) || 1;
+        // depth drift, capped at the screen edges so neighbours never drift into each other on their way out
+        const dd = clamp(dx, -mid, mid);
+        el.style.transform = `translate3d(${(dd * (speed - 1)).toFixed(1)}px,${(lay[i] || 0).toFixed(1)}px,0)`; // depth: a touch faster/slower than the track
+        if (focusEls.includes(el)) el.style.setProperty('--focus', clamp(1 - Math.abs(dx) / (innerWidth * 0.5), 0, 1).toFixed(3));
+      });
+      if (o.hint) o.hint.style.opacity = dist && Math.abs(x) / dist > 0.03 ? 0 : '';
+    };
+
+    let wasNear = true;
     const tick = () => {
       const s = -pin.getBoundingClientRect().top;
       if (s === lastS) return;
       const near = s > -innerHeight && s < dist + innerHeight;
       if (!near && !wasNear) return; // off screen: leave it as it was left
       lastS = s; wasNear = near;
-      // position: sticky holds the gallery for the straight part; the transform only bends the corners
+      // position: sticky holds the panel for the run; the transform only bends the corners
       const stuck = Math.max(-s, Math.min(0, dist - s));
-      evo.style.transform = `translate3d(0,${(screenTop(s) - stuck).toFixed(2)}px,0)`;
-      const x = trackX(s), y = -DIVE * glide(-x) + camera(s);
+      panel.style.transform = `translate3d(0,${(screenTop(s) - stuck).toFixed(2)}px,0)`;
+      const { x, y } = offset(s);
       track.style.transform = `translate3d(${x.toFixed(2)}px,${y.toFixed(2)}px,0)`;
       update(x);
     };
 
-    // x = how far the track has moved (≤ 0), y = camera height
-    const update = (x) => {
-      const mid = innerWidth / 2;
-      floaters.forEach((el, i) => {
-        const dx = centers[i] + x - mid;
-        const speed = parseFloat(el.dataset.speed) || 1;
-        el.style.transform = `translate3d(${(dx * (speed - 1)).toFixed(1)}px,${(lay[i] || 0).toFixed(1)}px,0)`; // depth: faster/slower than the track
-        if (el.classList.contains('evo__item')) el.style.setProperty('--focus', clamp(1 - Math.abs(dx) / (innerWidth * 0.5), 0, 1).toFixed(3));
-      });
-      hint.style.opacity = dist && -x / dist > 0.03 ? 0 : '';
-    };
+    // the background camera: as far as this ride has carried things sideways, and how its vertical
+    // motion differs from plain scrolling (0 before it, a fixed amount after it)
+    RIDES.push({
+      shift: () => {
+        const s = scrollY - pinTop, { x, y } = offset(s);
+        return { x: -x, y: screenTop(s) + s + y };
+      },
+    });
 
-    new IntersectionObserver(([e], io) => { if (e.isIntersecting) { sign.classList.add('is-signed'); io.disconnect(); } }, { threshold: 0.6 }).observe(sign);
-
-    if (pinned) {
-      // a tall wrapper gives the sideways run its scroll length; the gallery sticks inside it
-      pin = document.createElement('div');
-      pin.className = 'evo-pin';
-      evo.before(pin);
-      pin.appendChild(evo);
-      evo.classList.add('is-pinned');
-    }
     measure();
-    if (pinned) {
-      if (window.ScrollTrigger) ScrollTrigger.addEventListener('refreshInit', measure);
-      else addEventListener('resize', measure);
-      if (hasGSAP) gsap.ticker.add(tick); // runs after Lenis moves the page, so nothing lags a frame
-      else { const loop = () => { tick(); requestAnimationFrame(loop); }; requestAnimationFrame(loop); }
-    } else {
-      evo.addEventListener('scroll', () => update(-evo.scrollLeft), { passive: true });
-      addEventListener('resize', () => { measure(); update(-evo.scrollLeft); });
-    }
+    if (window.ScrollTrigger) {
+      ScrollTrigger.addEventListener('refreshInit', measure);
+      ScrollTrigger.addEventListener('refresh', () => (pinTop = pin.getBoundingClientRect().top + scrollY));
+    } else addEventListener('resize', measure);
+    if (window.ResizeObserver) new ResizeObserver(() => (pinTop = pin.getBoundingClientRect().top + scrollY)).observe(document.body);
+    if (hasGSAP) gsap.ticker.add(tick); // runs after Lenis moves the page, so nothing lags a frame
+    else { const loop = () => { tick(); requestAnimationFrame(loop); }; requestAnimationFrame(loop); }
     update(0);
+  }
+
+  // Evolution: right and down at 30°, with the camera swell, photos that colour in at centre stage, and its lightbox
+  function evolution() {
+    const evo = $('#evo');
+    if (!evo) return;
+    const items = $$('.evo__item', evo), sign = $('.evo__sign', evo);
+    ride(evo, { dir: 1, dive: 30, sway: true, items, outro: $('.evo__outro', evo), hint: $('.evo__hint', evo), focus: '.evo__item', pinClass: 'evo-pin' });
+    new IntersectionObserver(([e], io) => { if (e.isIntersecting) { sign.classList.add('is-signed'); io.disconnect(); } }, { threshold: 0.6 }).observe(sign);
     lightbox(items);
   }
 
+  // the homepage rides: each section travels its own way (set on the panel: data-dir, data-dive)
+  function homeRides() {
+    $$('[data-ride]').forEach((p) => ride(p, {
+      dir: +p.dataset.dir || 1, dive: +p.dataset.dive || 0, auto: true,
+      hint: $('.ride__hint', p), focus: '.ride__ph',
+    }));
+  }
   function lightbox(items) {
     const lb = $('#lightbox'), img = $('img', lb), stage = $('.lightbox__stage', lb), h3 = $('h3', lb), ul = $('ul', lb), count = $('.lightbox__count', lb);
     const pad = (n) => String(n).padStart(2, '0');
@@ -1568,7 +1624,7 @@
      like the Evolution lightbox, with its caption; arrows step through the photos on that page
      ------------------------------------------------------------------------ */
   function photoViewer() {
-    const imgs = $$('.kwall img, .pphoto img, .bpage__photo img, .kleague__img img, .dout__ph img');
+    const imgs = $$('.kwall img, .pphoto img, .bpage__photo img, .kleague__img img, .dout__ph img, .ride__ph img');
     if (!imgs.length) return;
     const lb = document.createElement('div');
     lb.className = 'lightbox pview';
@@ -1645,7 +1701,7 @@
   /* ------------------------------------------------------------------------
      Boot
      ------------------------------------------------------------------------ */
-  backdrop();
+  terrain();
   navigation();
   marquee();
   licence();
@@ -1661,7 +1717,8 @@
   counters();
 
   Promise.all([runLoader(), youtubeFeed()]).then(() => {
-    evolution(); // creates its pin first so every trigger below it accounts for the pin spacing
+    homeRides(); // the rides create their pins first, so every trigger below them accounts for the pin spacing
+    evolution();
     intro();
     scrollAnimations();
     if (window.ScrollTrigger) ScrollTrigger.refresh();

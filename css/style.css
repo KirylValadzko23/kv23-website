@@ -53,11 +53,9 @@ html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 .lenis.lenis-stopped { overflow: hidden; }
 
-/* the terrain lines behind every page (drawn in main.js): one map the length of the page, so it scrolls with
-   everything else and every part of the page has its own stretch of terrain */
-.bgfx { position: absolute; inset: 0; overflow: hidden; z-index: -1; pointer-events: none; }
-.bgfx svg { display: block; width: 100%; }
-.bgfx path { fill: none; stroke: var(--contour); stroke-width: 1; vector-effect: non-scaling-stroke; }
+/* the terrain behind every page: a fixed canvas drawn in main.js, with a camera that follows the scroll
+   (straight down, or along a ride's direction), so the lines always move with the content */
+.bgfx { position: fixed; left: 0; top: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
 
 body {
   margin: 0; position: relative; /* the terrain map is sized to the body */
@@ -1299,6 +1297,55 @@ section, footer { position: relative; }
 .bspec .x { font-family: var(--f-mono); font-size: 12px; font-weight: 600; color: var(--red); margin-left: 6px; }
 .bpage__back { display: inline-flex; align-items: center; gap: 12px; margin-top: 40px; }
 
+/* ---------- homepage rides: each section travels its own way (main.js: ride()) ---------- */
+.rsec { position: relative; }
+.ride { position: relative; height: 100vh; height: 100svh; min-height: 560px; overflow: hidden; }
+.ride-pin { position: relative; }
+.ride.is-pinned { position: sticky; top: 0; will-change: transform; }
+.ride__track { position: absolute; top: 0; left: 0; height: 100%; will-change: transform; }
+.ride__item { position: absolute; margin: 0; will-change: transform; }
+.ride__intro { width: min(46vw, 760px); display: grid; gap: 20px; }
+.ride__intro .karting__kicker { margin: 0; }
+.ride__title {
+  margin: 0; display: flex; flex-wrap: wrap; gap: 0 .2em;
+  font-family: var(--f-display); font-weight: 900; text-transform: uppercase;
+  font-size: clamp(64px, min(10vw, 17vh), 210px); line-height: .82;
+}
+.ride__lead, .ride__quote { margin: 0; max-width: 32ch; font-family: "Instrument Serif", Georgia, serif; font-size: clamp(24px, 2.2vw, 38px); line-height: 1.1; }
+.ride__quote b { font-weight: 400; font-style: italic; color: var(--red); }
+.ride__ph {
+  --w: min(19vw, 34vh);
+  width: var(--w); display: grid; gap: 6px; padding: 8px 8px 12px; border-radius: 6px; background: #fff;
+  box-shadow: 0 30px 50px -25px rgba(7,6,10,.5);
+  rotate: calc((1 - var(--focus, 0)) * var(--r, 0deg)); /* polaroids straighten as they reach centre stage */
+}
+.ride__ph img, .ride__media { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 3px; }
+.ride__media { overflow: hidden; background: var(--ink); }
+.ride__media video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ride__ph--wide { --w: min(36vw, 62vh); }
+.ride__ph--wide img, .ride__ph--wide .ride__media { aspect-ratio: 16 / 9; }
+.ride__ph figcaption { display: grid; gap: 2px; padding: 2px 2px 0; }
+.ride__ph figcaption .mono { font-size: 10px; color: rgba(7,6,10,.6); }
+.ride__ph figcaption small { font-size: 12px; line-height: 1.35; color: rgba(7,6,10,.78); }
+.ride__text { width: min(26vw, 430px); display: grid; gap: 10px; }
+.ride__text p { margin: 0; font-size: clamp(17px, 1.4vw, 21px); line-height: 1.5; }
+.ride__kick { color: var(--red); font-size: 11px !important; }
+.ride__num { font-family: var(--f-display); font-weight: 900; font-size: clamp(60px, 6.4vw, 120px) !important; line-height: .88 !important; }
+.ride__num i { font-style: normal; color: var(--red); font-size: .55em; }
+.ride__stats { width: min(42vw, 680px); }
+.ride__stats .kteaser__stats { grid-template-columns: repeat(2, auto); gap: 18px 44px; }
+.ride__stats .kteaser__stats b { font-size: clamp(56px, 6vw, 110px); }
+.ride .otcard { width: min(30vw, 480px); }
+.ride__outro { width: min(42vw, 640px); display: grid; gap: 24px; justify-items: start; }
+.ride__words { margin: 0; display: flex; flex-wrap: wrap; gap: 0 .3em; font-family: var(--f-display); font-weight: 900; text-transform: uppercase; font-size: clamp(44px, 5.4vw, 100px); line-height: .9; }
+.ride__words span:nth-child(even) { color: transparent; -webkit-text-stroke: 2px var(--ink); }
+.ride__words span:last-child { color: var(--red); -webkit-text-stroke: 0; }
+.ride__words--sm { display: block; font-size: clamp(32px, 3.4vw, 60px); line-height: .95; }
+.ride__words--sm span { color: var(--red) !important; -webkit-text-stroke: 0 !important; }
+.ride__hint { position: absolute; right: var(--gutter); bottom: 30px; margin: 0; opacity: .55; display: flex; gap: 8px; transition: opacity .4s; }
+.ride__hint span { display: inline-block; animation: nudge 1.4s var(--ease-io) infinite; }
+.ride--why .ride__hint span, .ride--ontrack .ride__hint span { animation-name: nudgeLeft; }
+@keyframes nudgeLeft { 50% { transform: translateX(-6px); } }
 /* ---------- reveal defaults (JS adds .in) ---------- */
 .js [data-reveal] { opacity: 0; transform: translateY(40px); }
 
@@ -1360,6 +1407,14 @@ section, footer { position: relative; }
   .evo__outro   { --x: 600vw; --y: 30vh; }
   .evo__ghost { font-size: 34vw; right: 0; top: -14%; }
   .evo__hint { display: none; }
+  .ride__intro { width: 84vw; }
+  .ride__title { font-size: min(17vw, 12vh); }
+  .ride__ph { --w: min(62vw, 40vh); }
+  .ride__ph--wide { --w: min(86vw, 62vh); }
+  .ride__text, .ride__stats, .ride__outro { width: 80vw; }
+  .ride .otcard { width: 84vw; }
+  .ride__stats .kteaser__stats b { font-size: 52px; }
+  .ride__hint { display: none; }
   .lightbox { padding: 70px 16px 90px; }
   .lightbox__fig { grid-template-columns: 1fr; gap: 18px; }
   .lightbox__fig img { max-width: 100%; max-height: 52vh; justify-self: center; }

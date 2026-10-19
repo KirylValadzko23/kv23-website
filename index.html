@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;600;800;900&family=Instrument+Serif:ital@0;1&family=Mrs+Saint+Delafield&family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=8e21b1a3" />
+  <link rel="stylesheet" href="css/style.css?v=c501d42a" />
 </head>
 <body class="is-loading">
 
@@ -179,58 +179,88 @@
           </div>
         </div>
       </div>
-
-      <!-- outside the track: the person behind the helmet (full page: outside.html) -->
-      <div class="dout">
-        <p class="mono karting__kicker" data-reveal><span>✦</span> The person behind the helmet</p>
-        <h3 class="dout__title" aria-label="Outside the track">
-          <span data-split>OUTSIDE THE</span>
-          <span class="outline" data-split>TRACK</span>
-        </h3>
-        <div class="dout__grid">
-          <div class="dout__copy">
-            <p class="dout__lead" data-reveal>I'm a creator, a student, and someone who believes in building something meaningful through passion, creativity and perseverance.</p>
-            <p class="karting__lead" data-reveal>Outside of racing I'm into industrial design, technology, photography, filmmaking and storytelling. As an Orthodox Christian, faith is the foundation, and family is the reason the wins mean anything. I'd rather show the real process than pretend to have it all figured out.</p>
-            <ul class="dout__values" data-reveal>
-              <li><b>Faith</b><small class="mono">Orthodox Christian</small></li>
-              <li><b>Family</b><small class="mono">Success, shared</small></li>
-              <li><b>Creativity</b><small class="mono">Film · design · story</small></li>
-              <li><b>Perseverance</b><small class="mono">Keep moving forward</small></li>
-            </ul>
-            <a class="kteaser__cta" href="outside.html" data-reveal>Who I am outside the track <span aria-hidden="true">→</span></a>
-          </div>
-          <div class="dout__media" data-reveal>
-            <figure class="dout__ph dout__ph--a"><img src="assets/outside/studying.jpg" width="900" height="1600" loading="lazy" alt="Kiryl in a black Ferrari hoodie working on a laptop, a Ferrari backpack at his feet" /><figcaption class="mono">Student</figcaption></figure>
-            <figure class="dout__ph dout__ph--b"><img src="assets/outside/graduation.jpg" width="1200" height="1600" loading="lazy" alt="Kiryl in a graduation cap and gown" /><figcaption class="mono">Graduation day</figcaption></figure>
-            <figure class="dout__ph dout__ph--c"><img src="assets/outside/wheel-plate.jpg" width="810" height="1080" loading="lazy" alt="Gloved hands holding a cut aluminium steering-wheel plate" /><figcaption class="mono">Hands on</figcaption></figure>
-            <span class="kteaser__tag mono">Faith · Family · Creativity</span>
-          </div>
-        </div>
-      </div>
-      <!-- scroll-filled manifesto -->
-      <p class="manifesto" id="manifesto">Every rig starts somewhere. This is the story of mine — from the very first lap to the cockpit I race today, one upgrade at a time.</p>
     </section>
 
-    <!-- ============ WHY I RACE (teaser; the full story is paddock.html) ============ -->
-    <section class="whyteaser" id="why">
-      <div class="kteaser">
-        <div class="kteaser__copy">
-          <p class="mono karting__kicker" data-reveal><span>✦</span> Off track · Canadian Grand Prix 2026</p>
-          <h2 class="display" data-split>Why I<br /><em>race.</em></h2>
-          <p class="whyteaser__quote" data-reveal>“I walked away from <b>225 days</b> of building a growing YouTube channel, because I couldn't commit to <b>two paths</b> at once.”</p>
-          <p class="karting__lead" data-reveal>Then Montreal made it real: walking the Formula 2 paddock, with caps signed by Rafael Câmara, Dino Beganovic and Alba Larsen. It turned racing from something I admired into something I had to chase.</p>
-          <a class="kteaser__cta" href="paddock.html" data-reveal>Read the story <span aria-hidden="true">→</span></a>
+    <!-- ============ OUTSIDE THE TRACK (ride →; the full page is outside.html) ============ -->
+    <section class="rsec" id="outside" data-section>
+      <div class="ride ride--outside" data-ride data-dir="1" data-dive="0">
+        <div class="ride__track">
+          <div class="ride__item ride__intro" data-lane="0.42" data-speed="0.92">
+            <p class="mono karting__kicker"><span>✦</span> The person behind the helmet</p>
+            <h2 class="ride__title" aria-label="Outside the track"><span data-split>OUTSIDE THE</span> <span class="outline" data-split>TRACK</span></h2>
+            <p class="ride__lead">I'm a creator, a student, and someone who believes in building something meaningful through passion, creativity and perseverance.</p>
+          </div>
+          <figure class="ride__item ride__ph" data-lane="0.1" data-speed="1.05" style="--r:-5deg"><img src="assets/outside/graduation.jpg" width="1200" height="1600" loading="lazy" alt="Kiryl in a graduation cap and gown" /><figcaption><span class="mono">Graduation day</span><small>Cap, gown, and the next chapter.</small></figcaption></figure>
+          <figure class="ride__item ride__ph" data-lane="0.85" data-speed="0.96" style="--r:4deg"><img src="assets/outside/highschool.jpg" width="900" height="1600" loading="lazy" alt="Kiryl in a dark hoodie at his desk in a high school classroom, a worksheet in front of him" /><figcaption><span class="mono">In class</span><small>School first, sim after.</small></figcaption></figure>
+          <div class="ride__item ride__text" data-lane="0.25" data-speed="0.94">
+            <p class="mono ride__kick">Learn · create · improve</p>
+            <p>Outside of racing I'm into industrial design, technology, photography, filmmaking and storytelling. I like understanding how things work, and always finding a way to do them better.</p>
+          </div>
+          <figure class="ride__item ride__ph" data-lane="0.8" data-speed="1.04" style="--r:-3deg"><img src="assets/outside/college.jpg" width="900" height="1600" loading="lazy" alt="A desk with a laptop, a ruler and pages of sketches and notes" /><figcaption><span class="mono">College projects</span><small>Sketches, specs and a laptop full of tabs.</small></figcaption></figure>
+          <figure class="ride__item ride__ph" data-lane="0.12" data-speed="0.95" style="--r:5deg"><img src="assets/outside/fsae-frame.jpg" width="900" height="1600" loading="lazy" alt="Hands holding a small race-car frame with a red seat on a green cutting mat" /><figcaption><span class="mono">The FSAE frame</span><small>Where design meets racing.</small></figcaption></figure>
+          <figure class="ride__item ride__ph" data-lane="0.78" data-speed="1.06" style="--r:-4deg"><img src="assets/outside/fsae-car.jpg" width="810" height="1080" loading="lazy" alt="Kiryl in a Nike hoodie sitting in an older student-built Formula SAE car" /><figcaption><span class="mono">In the old FSAE car</span><small>Student-built, and a perfect fit.</small></figcaption></figure>
+          <figure class="ride__item ride__ph" data-lane="0.2" data-speed="0.97" style="--r:3deg"><img src="assets/outside/wheel-plate.jpg" width="810" height="1080" loading="lazy" alt="Gloved hands holding a cut aluminium steering-wheel plate" /><figcaption><span class="mono">Hands on</span><small>Gloves on, wheel plate in hand.</small></figcaption></figure>
+          <div class="ride__item ride__text" data-lane="0.72" data-speed="0.93">
+            <p class="mono ride__kick">Faith</p>
+            <p>As an Orthodox Christian, faith is my foundation. Jeremiah 29:11 reminds me to trust God's plan while continuing to put in the work.</p>
+          </div>
+          <figure class="ride__item ride__ph" data-lane="0.15" data-speed="1.05" style="--r:-5deg"><img src="assets/outside/books.jpg" width="900" height="1600" loading="lazy" alt="The Holy Bible and The Psychology of Money held side by side" /><figcaption><span class="mono">Reading list</span><small>The Bible and The Psychology of Money.</small></figcaption></figure>
+          <figure class="ride__item ride__ph" data-lane="0.82" data-speed="0.96" style="--r:4deg"><img src="assets/outside/habs.jpg" width="900" height="1600" loading="lazy" alt="Kiryl in a Montreal Canadiens jersey in the stands at a hockey game" /><figcaption><span class="mono">Habs game night</span><small>Red seats, loud crowd.</small></figcaption></figure>
+          <div class="ride__item ride__text" data-lane="0.3" data-speed="0.94">
+            <p class="mono ride__kick">Family</p>
+            <p>My ambitions aren't just about me. I want to give back to the people who supported me: success means more when it's shared.</p>
+          </div>
+          <figure class="ride__item ride__ph" data-lane="0.75" data-speed="1.04" style="--r:-3deg"><img src="assets/outside/hypercar.jpg" width="900" height="1600" loading="lazy" alt="A gold and red Cadillac WEC hypercar on display at an auto show" /><figcaption><span class="mono">WEC hypercar</span><small>Auto show, eyes on the endurance cars.</small></figcaption></figure>
+          <figure class="ride__item ride__ph" data-lane="0.12" data-speed="0.97" style="--r:5deg"><img src="assets/outside/young-sim.jpg" width="1200" height="1600" loading="lazy" alt="Kiryl as a kid in a VR headset, hands on the wheel of a racing simulator" /><figcaption><span class="mono">Where it started</span><small>A VR headset, a wheel, and a kid hooked.</small></figcaption></figure>
+          <div class="ride__item ride__outro" data-lane="0.45" data-outro>
+            <p class="ride__words"><span>Faith.</span> <span>Family.</span> <span>Creativity.</span> <span>Perseverance.</span></p>
+            <a class="kteaser__cta" href="outside.html">Who I am outside the track <span aria-hidden="true">→</span></a>
+          </div>
         </div>
-        <a class="kteaser__media" href="paddock.html" aria-label="Read why I race" data-reveal>
-          <img class="kteaser__back" src="assets/paddock/larsen.jpg" width="1200" height="1600" loading="lazy" alt="" />
-          <video class="kteaser__front" src="assets/paddock/montreal.mp4#t=0.1" muted loop playsinline preload="metadata" data-inview aria-hidden="true"></video>
-          <span class="kteaser__tag mono">Montreal · 2026</span>
-        </a>
+        <p class="ride__hint mono" aria-hidden="true">Scroll <span>→</span></p>
       </div>
     </section>
+
+    <!-- ============ WHY I RACE (ride ↙; the full story is paddock.html) ============ -->
+    <section class="rsec" id="why" data-section>
+      <div class="ride ride--why" data-ride data-dir="-1" data-dive="35">
+        <div class="ride__track">
+          <div class="ride__item ride__intro" data-lane="0.4" data-speed="0.92">
+            <p class="mono karting__kicker"><span>✦</span> Off track · Canadian Grand Prix 2026</p>
+            <h2 class="ride__title" aria-label="Why I race"><span data-split>WHY I</span> <span class="outline" data-split>RACE</span></h2>
+            <p class="ride__quote">“I walked away from <b>225 days</b> of building a growing YouTube channel, because I couldn't commit to <b>two paths</b> at once.”</p>
+          </div>
+          <figure class="ride__item ride__ph" data-lane="0.85" data-speed="1.05" style="--r:4deg"><img src="assets/paddock/editing.jpg" width="900" height="1600" loading="lazy" alt="A laptop with a video-editing timeline open, by a window with snowy trees" /><figcaption><span class="mono">The channel I stopped</span><small>225 days of editing, then a choice.</small></figcaption></figure>
+          <div class="ride__item ride__text" data-lane="0.2" data-speed="0.94">
+            <p class="mono ride__kick">All in</p>
+            <p>So I went all in on racing. Then Montreal made it real: walking the Formula 2 paddock, with caps signed by Rafael Câmara, Dino Beganovic and Alba Larsen.</p>
+          </div>
+          <figure class="ride__item ride__ph" data-lane="0.82" data-speed="0.96" style="--r:-4deg"><img src="assets/paddock/pitlane.jpg" width="900" height="1600" loading="lazy" alt="The empty pit lane and garages at Circuit Gilles Villeneuve a few weeks before the Grand Prix" /><figcaption><span class="mono">Weeks before the GP</span><small>An empty pit lane, waiting.</small></figcaption></figure>
+          <figure class="ride__item ride__ph" data-lane="0.1" data-speed="1.04" style="--r:3deg"><img src="assets/paddock/curbs.jpg" width="900" height="1600" loading="lazy" alt="Red, white and blue curbs on a corner of Circuit Gilles Villeneuve" /><figcaption><span class="mono">Circuit Gilles Villeneuve</span><small>The curbs, before race weekend.</small></figcaption></figure>
+          <figure class="ride__item ride__ph ride__ph--video" data-lane="0.7" data-speed="0.95" style="--r:-3deg"><div class="ride__media"><video src="assets/paddock/podium.mp4#t=0.1" muted loop playsinline preload="metadata" data-inview aria-label="The Canadian Grand Prix podium, filmed from the crowd"></video></div><figcaption><span class="mono">The podium</span><small>Race day, from the crowd.</small></figcaption></figure>
+          <figure class="ride__item ride__ph" data-lane="0.12" data-speed="1.05" style="--r:5deg"><img src="assets/paddock/alba-signing.jpg" width="1200" height="1600" loading="lazy" alt="Alba Larsen in her red Ferrari team kit signing for fans in the paddock" /><figcaption><span class="mono">Alba Larsen</span><small>F1 Academy, signing in the paddock.</small></figcaption></figure>
+          <figure class="ride__item ride__ph" data-lane="0.84" data-speed="0.96" style="--r:-4deg"><img src="assets/paddock/larsen.jpg" width="1200" height="1600" loading="lazy" alt="Kiryl handing a white cap to Alba Larsen, number 12, to sign in front of the F1 Academy garage" /><figcaption><span class="mono">My cap, signed</span><small>Outside Ferrari's F1 Academy garage.</small></figcaption></figure>
+          <figure class="ride__item ride__ph" data-lane="0.2" data-speed="1.04" style="--r:3deg"><img src="assets/paddock/f1academy-post.jpg" width="1174" height="1600" loading="lazy" alt="An F1 Academy Instagram post of the paddock crowd, with Kiryl in a red hoodie on the right" /><figcaption><span class="mono">Caught on camera</span><small>In an F1 Academy post: red hoodie, on the right.</small></figcaption></figure>
+          <figure class="ride__item ride__ph ride__ph--video" data-lane="0.78" data-speed="0.95" style="--r:-3deg"><div class="ride__media"><video src="assets/paddock/invasion.mp4#t=0.1" muted loop playsinline preload="metadata" data-inview aria-label="Fans waiting at the fence for the track invasion at the end of the race"></video></div><figcaption><span class="mono">Track invasion</span><small>Waiting for the gates to open.</small></figcaption></figure>
+          <figure class="ride__item ride__ph" data-lane="0.14" data-speed="1.05" style="--r:4deg"><img src="assets/paddock/kimi.jpg" width="1200" height="1600" loading="lazy" alt="Kimi Antonelli in the crowd outside, fans holding up phones" /><figcaption><span class="mono">Kimi Antonelli</span><small>A few steps away.</small></figcaption></figure>
+          <figure class="ride__item ride__ph" data-lane="0.8" data-speed="0.96" style="--r:-5deg"><img src="assets/paddock/leclerc.jpg" width="915" height="1600" loading="lazy" alt="Charles Leclerc driving a red Ferrari road car on a Montreal street" /><figcaption><span class="mono">Charles Leclerc</span><small>Spotted in the Ferrari.</small></figcaption></figure>
+          <figure class="ride__item ride__ph" data-lane="0.2" data-speed="1.04" style="--r:3deg"><img src="assets/paddock/redbull-boss.jpg" width="913" height="1600" loading="lazy" alt="Red Bull's team boss signing for fans outside the drivers' hotel" /><figcaption><span class="mono">Red Bull's team boss</span><small>At the drivers' hotel.</small></figcaption></figure>
+          <figure class="ride__item ride__ph" data-lane="0.82" data-speed="0.95" style="--r:-3deg"><img src="assets/paddock/academy-1.jpg" width="906" height="1600" loading="lazy" alt="Dino Beganovic in a Ferrari team jacket signing a white cap for Kiryl" /><figcaption><span class="mono">Dino Beganovic</span><small>Ferrari Driver Academy.</small></figcaption></figure>
+          <figure class="ride__item ride__ph" data-lane="0.16" data-speed="1.05" style="--r:4deg"><img src="assets/paddock/academy-2.jpg" width="924" height="1600" loading="lazy" alt="Sebastián Montoya in a Prema team shirt signing for Kiryl in the paddock" /><figcaption><span class="mono">Sebastián Montoya</span><small>In the Prema paddock.</small></figcaption></figure>
+          <div class="ride__item ride__outro" data-lane="0.55" data-outro>
+            <p class="ride__words ride__words--sm">It turned racing from something I admired into something I had to <span>chase</span>.</p>
+            <a class="kteaser__cta" href="paddock.html">Read the full story <span aria-hidden="true">→</span></a>
+          </div>
+        </div>
+        <p class="ride__hint mono" aria-hidden="true"><span>←</span> Scroll</p>
+      </div>
+    </section>
+
     <!-- ============ CHAPTER 02 — EVOLUTION ============ -->
     <section class="evolution" id="evolution" data-section>
       <div class="evolution__intro">
+        <!-- scroll-filled manifesto -->
+        <p class="manifesto" id="manifesto">Every rig starts somewhere. This is the story of mine — from the very first lap to the cockpit I race today, one upgrade at a time.</p>
         <div class="chapter-tag mono" data-reveal><span>02</span> The Evolution</div>
         <h2 class="evolution__title" aria-label="The Evolution">
           <span class="outline" data-split>THE</span>
@@ -347,33 +377,43 @@
       <button class="lightbox__close mono" type="button">Close ✕</button>
     </div>
 
-    <!-- ============ CHAPTER 03 — ON TRACK (teaser; the full sim racing file is sim.html) ============ -->
-    <section class="otteaser" id="ontrack" data-section>
-      <div class="ontrack__head">
-        <div class="chapter-tag mono" data-reveal><span>03</span> On Track</div>
-        <h2 class="ontrack__title" aria-label="On Track">
-          <span data-split>ON</span>
-          <span class="outline" data-split>TRACK</span>
-        </h2>
-      </div>
-      <div class="otteaser__body">
-        <div class="otteaser__copy">
-          <p class="ontrack__sub" data-reveal>iRacing · Sports Car · Class B. From the Porsche Cup to the GT3 Regional Tour, and a first GT3 win at Imola. The full file has the stats, the iRating climb and every GT3 race.</p>
-          <ul class="kteaser__stats">
-            <li><b data-count="4605">0</b><small class="mono">Laps driven</small></li>
-            <li><b data-count="2725">0</b><small class="mono">Sessions</small></li>
-            <li><b data-count="2037">0</b><small class="mono">iRating</small></li>
-            <li><b>B</b><small class="mono">Licence</small></li>
-          </ul>
-          <a class="kteaser__cta" href="sim.html">Open the sim racing file <span aria-hidden="true">→</span></a>
+    <!-- ============ CHAPTER 03 — ON TRACK (ride ←; the full sim racing file is sim.html) ============ -->
+    <section class="rsec" id="ontrack" data-section>
+      <div class="ride ride--ontrack" data-ride data-dir="-1" data-dive="0">
+        <div class="ride__track">
+          <div class="ride__item ride__intro" data-lane="0.42" data-speed="0.92">
+            <p class="mono karting__kicker"><span>03</span> On Track</p>
+            <h2 class="ride__title" aria-label="On Track"><span data-split>ON</span> <span class="outline" data-split>TRACK</span></h2>
+            <p class="ride__lead">iRacing · Sports Car · Class B. From the Porsche Cup to the GT3 Regional Tour, and a first GT3 win at Imola.</p>
+          </div>
+          <figure class="ride__item ride__ph ride__ph--wide" data-lane="0.82" data-speed="1.04" style="--r:-2deg"><div class="ride__media"><video src="assets/sim/hop-in.mp4#t=0.1" muted loop playsinline preload="metadata" data-inview aria-label="Kiryl getting ready and climbing into his sim rig"></video></div><figcaption><span class="mono">Getting ready</span><small>Gloves on, into the seat.</small></figcaption></figure>
+          <div class="ride__item ride__stats" data-lane="0.2" data-speed="0.95">
+            <ul class="kteaser__stats">
+              <li><b data-count="4605">0</b><small class="mono">Laps driven</small></li>
+              <li><b data-count="2725">0</b><small class="mono">Sessions</small></li>
+              <li><b data-count="2037">0</b><small class="mono">iRating</small></li>
+              <li><b>B</b><small class="mono">Licence</small></li>
+            </ul>
+          </div>
+          <a class="ride__item otcard" data-lane="0.7" data-speed="1.03" href="sim.html#gt3" aria-label="First GT3 win, Imola, October 15, 2026. Open the GT3 progression">
+            <span class="mono otcard__date">Oct 15, 2026 · 6:45 PM · GT3 Regional Tour</span>
+            <b class="otcard__pos">P1</b>
+            <b class="otcard__series">First GT3 win</b>
+            <span class="otcard__track">Imola · Grand Prix · Porsche 911 GT3 R (992)</span>
+            <span class="mono otcard__meta"><span>Start <b>P1</b></span><span>Inc <b>1x</b></span><span>SoF <b>1,748</b></span><span>Points <b>106</b></span></span>
+          </a>
+          <figure class="ride__item ride__ph ride__ph--wide" data-lane="0.15" data-speed="0.96" style="--r:2deg"><img src="assets/outside/home-rig.jpg" width="1600" height="900" loading="lazy" alt="Kiryl in race gloves at his Fanatec rig at home, a lap on screen and F1 posters on the green wall" /><figcaption><span class="mono">The office</span><small>McLaren GT3 wheel, Fanatec base, every evening.</small></figcaption></figure>
+          <div class="ride__item ride__text ride__text--big" data-lane="0.78" data-speed="0.94">
+            <p class="mono ride__kick">iRating · Sports Car</p>
+            <p class="ride__num">905 <i>→</i> 2037</p>
+            <p>From a low of 905 in December 2025 to 2037 and a Class B licence: 173 starts, 19 wins, 19 poles.</p>
+          </div>
+          <div class="ride__item ride__outro" data-lane="0.4" data-outro>
+            <p class="ride__words ride__words--sm">Every stat, the iRating climb and every GT3 race.</p>
+            <a class="kteaser__cta" href="sim.html">Open the sim racing file <span aria-hidden="true">→</span></a>
+          </div>
         </div>
-        <a class="otcard" href="sim.html#gt3" aria-label="First GT3 win, Imola, October 15, 2026. Open the GT3 progression" data-reveal>
-          <span class="mono otcard__date">Oct 15, 2026 · 6:45 PM · GT3 Regional Tour</span>
-          <b class="otcard__pos">P1</b>
-          <b class="otcard__series">First GT3 win</b>
-          <span class="otcard__track">Imola · Grand Prix · Porsche 911 GT3 R (992)</span>
-          <span class="mono otcard__meta"><span>Start <b>P1</b></span><span>Inc <b>1x</b></span><span>SoF <b>1,748</b></span><span>Points <b>106</b></span></span>
-        </a>
+        <p class="ride__hint mono" aria-hidden="true"><span>←</span> Scroll</p>
       </div>
     </section>
 
@@ -526,7 +566,7 @@
       </div>
       <div class="finish__legal mono">
         <span>© <span id="year">2026</span> Kiryl Valadzko · KV23</span>
-        <span class="finish__build">build b1225814</span>
+        <span class="finish__build">build a08682c5</span>
       </div>
     </footer>
   </main>
@@ -535,7 +575,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
-  <script src="js/i18n.js?v=7a656387"></script>
-  <script src="js/main.js?v=3b93181b"></script>
+  <script src="js/i18n.js?v=12384281"></script>
+  <script src="js/main.js?v=e891361d"></script>
 </body>
 </html>
