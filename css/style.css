@@ -198,13 +198,15 @@ body.menu-open .header__logo img { filter: brightness(0); }
 .menu__inner {
   position: relative; height: 100%; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 40px;
   padding: calc(var(--header-h) + 20px) var(--gutter) 40px;
+  overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; /* a short screen can still reach every chapter */
 }
+.menu__inner::-webkit-scrollbar { display: none; }
 .menu__list { list-style: none; margin: 0; padding: 0; }
 .menu__list li { overflow: hidden; }
 .menu__list a {
   display: flex; align-items: baseline; gap: 18px;
   font-family: var(--f-display); font-weight: 900; text-transform: uppercase;
-  font-size: clamp(48px, 9vw, 128px); line-height: .92; color: var(--ink);
+  font-size: clamp(34px, min(8vw, 7.4vh), 104px); line-height: .94; color: var(--ink); /* ten chapters fit the screen height */
   transform: translateY(105%); transition: transform .8s var(--ease-out), color .3s;
 }
 .menu__list a small { font-family: var(--f-mono); font-size: 12px; font-weight: 400; color: rgba(7,6,10,.6); }
@@ -215,6 +217,11 @@ body.menu-open .header__logo img { filter: brightness(0); }
 .menu.is-open .menu__list li:nth-child(3) a { transition-delay: .35s; }
 .menu.is-open .menu__list li:nth-child(4) a { transition-delay: .4s; }
 .menu.is-open .menu__list li:nth-child(5) a { transition-delay: .45s; }
+.menu.is-open .menu__list li:nth-child(6) a { transition-delay: .5s; }
+.menu.is-open .menu__list li:nth-child(7) a { transition-delay: .55s; }
+.menu.is-open .menu__list li:nth-child(8) a { transition-delay: .6s; }
+.menu.is-open .menu__list li:nth-child(9) a { transition-delay: .65s; }
+.menu.is-open .menu__list li:nth-child(10) a { transition-delay: .7s; }
 .menu__side { display: grid; gap: 16px; color: var(--ink); opacity: 0; transition: opacity .5s .5s; }
 .menu.is-open .menu__side { opacity: 1; }
 .menu__preview { width: min(26vw, 340px); aspect-ratio: 3/4; overflow: hidden; border-radius: 4px; transform: rotate(3deg); }
@@ -367,17 +374,6 @@ section, footer { position: relative; }
 .stat + .stat { padding-left: 16px; border-left: 1px solid rgba(7,6,10,.15); }
 .stat b { font-family: var(--f-display); font-weight: 900; font-size: clamp(40px, 4.4vw, 72px); line-height: .9; }
 .stat small { font-size: 13px; color: rgba(7,6,10,.6); }
-
-/* the quiet link to paddock.html */
-.driver__why {
-  display: inline-grid; grid-template-columns: auto auto; align-items: center; gap: 2px 18px; margin-top: 40px;
-  padding: 14px 22px 14px 0; border-bottom: 2px solid var(--ink);
-}
-.driver__why .mono { grid-column: 1 / -1; color: var(--red); font-size: 10px; }
-.driver__why b { font-family: var(--f-display); font-weight: 900; text-transform: uppercase; font-size: clamp(28px, 2.6vw, 40px); line-height: 1; }
-.driver__why i { font-style: normal; font-size: 24px; transition: transform .5s var(--ease-out); }
-.driver__why:hover i { transform: translateX(8px); }
-.driver__why:hover b { color: var(--red); }
 
 .manifesto {
   margin: 160px 0 0; max-width: 22ch;

@@ -1230,6 +1230,7 @@
      ------------------------------------------------------------------------ */
   function navigation() {
     const header = $('#header'), menu = $('#menu'), btn = $('#menuBtn');
+    menu.setAttribute('data-lenis-prevent', ''); // the menu scrolls on its own when the screen is short
     let open = false;
     const setMenu = (v) => {
       open = v;
