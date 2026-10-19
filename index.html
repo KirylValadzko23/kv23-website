@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Kiryl Valadzko — KV23 Sim Racing</title>
   <meta name="description" content="Kiryl Valadzko — sim racer #23. The evolution of the KV23 rig, from the first lap to the current cockpit." />
-  <meta name="theme-color" content="#07060a" />
+  <meta name="theme-color" content="#d2e0bc" />
   <link rel="icon" href="assets/img/kv23-logo.png" />
   <link rel="canonical" href="https://kirylvaladzko23.github.io/kv23-website/" />
 
@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;600;800;900&family=Instrument+Serif:ital@0;1&family=Mrs+Saint+Delafield&family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=8402f10b" />
+  <link rel="stylesheet" href="css/style.css?v=8028c706" />
 </head>
 <body class="is-loading">
 
@@ -45,25 +45,23 @@
     <p class="loader__call" id="loaderCall">Lights out<span> and away we go</span></p>
   </div>
 
-  <!-- ============ CURSOR / GRAIN ============ -->
-  <div class="cursor" aria-hidden="true"><span class="cursor__label"></span></div>
-  <div class="cursor-dot" aria-hidden="true"></div>
+  <!-- ============ GRAIN ============ -->
   <div class="grain" aria-hidden="true"></div>
 
   <!-- ============ HEADER ============ -->
   <header class="header" id="header">
-    <a href="#top" class="header__logo" data-magnetic aria-label="KV23 home">
+    <a href="#top" class="header__logo" aria-label="KV23 home">
       <img src="assets/img/kv23-logo.png" alt="KV23" width="539" height="389" />
     </a>
     <nav class="header__nav" aria-label="Chapters">
       <a href="#driver" data-roll>The Driver</a>
       <a href="#evolution" data-roll>Evolution</a>
-      <a href="#ontrack" data-roll>On Track</a>
+      <a href="sim.html" data-roll>On Track</a>
       <a href="#r2r" data-roll>Road to Racing</a>
       <a href="karting.html" data-roll>Karting</a>
       <a href="#partners" data-roll>Partners</a>
     </nav>
-    <button class="header__menu" id="menuBtn" aria-expanded="false" aria-controls="menu" data-magnetic>
+    <button class="header__menu" id="menuBtn" aria-expanded="false" aria-controls="menu">
       <span data-roll>Chapters</span>
       <span class="burger"><i></i><i></i></span>
     </button>
@@ -77,7 +75,8 @@
         <li><a href="#top"><small>00</small><span data-roll>Grid</span></a></li>
         <li><a href="#driver"><small>01</small><span data-roll>The Driver</span></a></li>
         <li><a href="#evolution"><small>02</small><span data-roll>Evolution</span></a></li>
-        <li><a href="#ontrack"><small>03</small><span data-roll>On Track</span></a></li>
+        <li><a href="build.html"><small>↗</small><span data-roll>The Build</span></a></li>
+        <li><a href="sim.html"><small>↗</small><span data-roll>On Track</span></a></li>
         <li><a href="#r2r"><small>04</small><span data-roll>Road to Racing</span></a></li>
         <li><a href="karting.html"><small>↗</small><span data-roll>Karting</span></a></li>
         <li><a href="#partners"><small>05</small><span data-roll>Partners</span></a></li>
@@ -90,27 +89,10 @@
     </div>
   </div>
 
-  <!-- ============ TIMING TOWER (section nav) ============ -->
-  <aside class="tower" id="tower" aria-label="Section timing">
-    <div class="tower__head mono"><span>LAP</span><b id="lapNo">1</b><span>/7</span></div>
-    <ol class="tower__list">
-      <li data-target="#top"><span class="pos">1</span><span class="bar"></span><span class="code">GRD</span><span class="gap mono">LEADER</span></li>
-      <li data-target="#driver"><span class="pos">2</span><span class="bar"></span><span class="code">DRV</span><span class="gap mono">+0.000</span></li>
-      <li data-target="#evolution"><span class="pos">3</span><span class="bar"></span><span class="code">EVO</span><span class="gap mono">+0.000</span></li>
-      <li data-target="#ontrack"><span class="pos">4</span><span class="bar"></span><span class="code">TRK</span><span class="gap mono">+0.000</span></li>
-      <li data-target="#r2r"><span class="pos">5</span><span class="bar"></span><span class="code">R2R</span><span class="gap mono">+0.000</span></li>
-      <li data-target="#partners"><span class="pos">6</span><span class="bar"></span><span class="code">PTN</span><span class="gap mono">+0.000</span></li>
-      <li data-target="#finish"><span class="pos">7</span><span class="bar"></span><span class="code">FIN</span><span class="gap mono">+0.000</span></li>
-    </ol>
-  </aside>
-
   <main id="smooth">
 
     <!-- ============ HERO / GRID ============ -->
     <section class="hero" id="top" data-section>
-      <canvas class="hero__canvas" id="speedCanvas"></canvas>
-      <div class="hero__glow"></div>
-
       <div class="hero__meta hero__meta--tl mono" data-intro>
         <span>SIM → REAL</span>
         <span>DRIVER Nº 23 · CANADA</span>
@@ -154,7 +136,7 @@
 
       <div class="driver__grid">
         <div class="licence-wrap">
-          <div class="licence" id="licence" data-cursor="Flip" tabindex="0" role="button" aria-label="Driver licence card, press to flip">
+          <div class="licence" id="licence" tabindex="0" role="button" aria-label="Driver licence card, press to flip">
             <div class="licence__face licence__front">
               <div class="licence__holo"></div>
               <div class="licence__top">
@@ -208,23 +190,23 @@
           <span class="outline" data-split>THE</span>
           <span data-split>EVOLUTION</span>
         </h2>
-        <p class="evolution__sub" data-reveal>From a wheel clamped to a desk to a full aluminium cockpit. Five years, five setups. Keep scrolling and the garage drives sideways.</p>
+        <p class="evolution__sub" data-reveal>From a wheel clamped to a desk to a full aluminium cockpit. Five years, six setups. Keep scrolling and the garage drives sideways.</p>
       </div>
 
       <!-- Pinned on scroll: vertical scroll drives the collage sideways (Lando Norris-style) -->
       <div class="evo" id="evo">
-        <svg class="evo__contours" id="evoContours" aria-hidden="true"></svg>
+        <div class="evo__terrain" aria-hidden="true"><svg class="evo__contours" id="evoContours"></svg></div>
 
         <div class="evo__track" id="evoTrack">
           <div class="evo__quote" data-speed="0.9">
-            <p>Five setups. <b>One</b> obsession: finding the <b>next tenth</b>, then building the rig to chase it.</p>
+            <p>Six setups. <b>One</b> obsession: finding the <b>next tenth</b>, then building the rig to chase it.</p>
             <span class="evo__sign" aria-label="Signed Kiryl, number 23">Kiryl <small>#23</small></span>
           </div>
 
           <figure class="evo__item evo__item--1" data-speed="1.06">
             <span class="evo__ghost" aria-hidden="true">2022</span>
             <figcaption class="evo__cap mono"><b>2022</b> · Stage 01 — The desk</figcaption>
-            <button class="evo__img" type="button" data-cursor="Open" aria-label="Open the 2022 rig photo">
+            <button class="evo__img" type="button" aria-label="Open the 2022 rig photo" style="--pos: 42% 50%">
               <img src="assets/rig/2022.jpg" width="1272" height="1106" loading="lazy" alt="2022 rig: a Logitech wheel clamped to a white desk with dual monitors, Logitech pedals on the floor and a red-and-black gaming chair" />
             </button>
             <div class="evo__spec">
@@ -236,7 +218,7 @@
           <figure class="evo__item evo__item--2" data-speed="0.94">
             <span class="evo__ghost" aria-hidden="true">2023</span>
             <figcaption class="evo__cap mono"><b>2023</b> · Stage 02 — The stand</figcaption>
-            <button class="evo__img" type="button" data-cursor="Open" aria-label="Open the 2023 rig photo">
+            <button class="evo__img" type="button" aria-label="Open the 2023 rig photo" style="--pos: 55% 50%">
               <img src="assets/rig/2023.jpg" width="1277" height="1039" loading="lazy" alt="2023 rig: the Logitech wheel moved onto a wheel-stand cockpit with its own racing seat and a shifter mount, tucked under the desk" />
             </button>
             <div class="evo__spec">
@@ -248,7 +230,7 @@
           <figure class="evo__item evo__item--3" data-speed="1.08">
             <span class="evo__ghost" aria-hidden="true">2024</span>
             <figcaption class="evo__cap mono"><b>2024</b> · Stage 03 — Direct drive</figcaption>
-            <button class="evo__img" type="button" data-cursor="Open" aria-label="Open the 2024 rig photo">
+            <button class="evo__img" type="button" aria-label="Open the 2024 rig photo">
               <img src="assets/rig/2024.jpg" width="1246" height="1600" loading="lazy" alt="2024 rig: a Fanatec direct-drive wheel base with a McLaren GT3 wheel and Fanatec pedals on the cockpit stand" />
             </button>
             <div class="evo__spec">
@@ -260,7 +242,7 @@
           <figure class="evo__item evo__item--4" data-speed="0.95">
             <span class="evo__ghost" aria-hidden="true">2025</span>
             <figcaption class="evo__cap mono"><b>2025</b> · Stage 04 — The corner</figcaption>
-            <button class="evo__img" type="button" data-cursor="Open" aria-label="Open the 2025 rig photo">
+            <button class="evo__img" type="button" aria-label="Open the 2025 rig photo" style="--pos: 50% 60%">
               <img src="assets/rig/2025.jpg" width="900" height="1600" loading="lazy" alt="2025 rig: the Fanatec setup in its own corner with a monitor on a side table, racing gloves on the seat and F1 posters on the wall" />
             </button>
             <div class="evo__spec">
@@ -269,20 +251,33 @@
             </div>
           </figure>
 
-          <figure class="evo__item evo__item--5 is-current" data-speed="1.04">
+          <figure class="evo__item evo__item--5" data-speed="1.04">
             <span class="evo__ghost" aria-hidden="true">2026</span>
-            <figcaption class="evo__cap mono"><b>2026</b> · Stage 05 — The cockpit <i class="evo__live">Current rig</i></figcaption>
-            <button class="evo__img" type="button" data-cursor="Open" aria-label="Open the 2026 rig photo">
-              <img src="assets/rig/2026.jpg" width="1600" height="1600" loading="lazy" alt="2026 rig: a Trak Racer aluminium-profile cockpit with a Trak Racer x Fanatec bucket seat, rig-mounted screens showing the KV23 logo and the McLaren GT3 wheel" />
+            <figcaption class="evo__cap mono"><b>2026</b> · Stage 05 — The cockpit</figcaption>
+            <button class="evo__img" type="button" aria-label="Open the 2026 cockpit photo" style="--pos: 50% 62%">
+              <img src="assets/rig/2026-cockpit.jpg" width="909" height="1600" loading="lazy" alt="2026 rig: the new Trak Racer aluminium cockpit with a black fiberglass bucket seat, one monitor showing the KV23 logo on a triple-screen stand, a keyboard tray and the McLaren GT3 wheel" />
+            </button>
+            <div class="evo__spec">
+              <h3>The cockpit</h3>
+              <ul><li>Trak Racer TR120S V2 aluminium cockpit</li><li>GT Pro fiberglass bucket seat</li><li>Triple-screen stand, one screen to start</li></ul>
+            </div>
+          </figure>
+
+          <figure class="evo__item evo__item--6 is-current" data-speed="0.97">
+            <span class="evo__ghost" aria-hidden="true">NOW</span>
+            <figcaption class="evo__cap mono"><b>2026</b> · Stage 06 — Triple screens <i class="evo__live">Current rig</i></figcaption>
+            <button class="evo__img" type="button" aria-label="Open the current rig photo" style="--pos: 48% 50%">
+              <img src="assets/rig/2026.jpg" width="1600" height="1600" loading="lazy" alt="Current rig: the Trak Racer cockpit with three Dell screens on the rig stand showing the KV23 logo, the bucket seat and the McLaren GT3 wheel" />
             </button>
             <div class="evo__spec">
               <h3>The current rig</h3>
-              <ul><li>Trak Racer aluminium-profile cockpit</li><li>Trak Racer × Fanatec bucket seat</li><li>Rig-mounted screens</li></ul>
+              <ul><li>Three Dell screens on the rig</li><li>Fanatec CSL DD + McLaren GT3 V2</li><li>Fanatec ClubSport V3 pedals</li></ul>
+              <a class="evo__build" href="build.html">See the full build <span aria-hidden="true">→</span></a>
             </div>
           </figure>
 
           <div class="evo__outro" data-speed="0.9">
-            <span class="mono">Stage 06 <i class="blink">_</i></span>
+            <span class="mono">Stage 07 <i class="blink">_</i></span>
             <b>To be<br />continued</b>
           </div>
         </div>
@@ -294,6 +289,7 @@
           <button type="button">2024</button>
           <button type="button">2025</button>
           <button type="button">2026</button>
+          <button type="button">Now</button>
         </nav>
         <p class="evo__hint mono" aria-hidden="true">Scroll <span>→</span></p>
       </div>
@@ -316,108 +312,33 @@
       <button class="lightbox__close mono" type="button">Close ✕</button>
     </div>
 
-    <!-- ============ CHAPTER 03 — ON TRACK (iRacing) ============ -->
-    <section class="ontrack" id="ontrack" data-section>
+    <!-- ============ CHAPTER 03 — ON TRACK (teaser; the full sim racing file is sim.html) ============ -->
+    <section class="otteaser" id="ontrack" data-section>
       <div class="ontrack__head">
         <div class="chapter-tag mono" data-reveal><span>03</span> On Track</div>
         <h2 class="ontrack__title" aria-label="On Track">
           <span data-split>ON</span>
           <span class="outline" data-split>TRACK</span>
         </h2>
-        <p class="ontrack__sub" data-reveal>iRacing · Sports Car. From the Porsche Cup to the GT3 Regional Tour, one split at a time. <span class="mono">Stats as of Oct 15, 2026</span></p>
       </div>
-
-      <!-- stats board: career / 2026 toggle -->
-      <div class="board" id="board" data-reveal>
-        <div class="board__tabs" role="tablist" aria-label="Stats period">
-          <button type="button" role="tab" aria-selected="true" data-set="career">Career</button>
-          <button type="button" role="tab" aria-selected="false" data-set="y2026">2026 season</button>
-          <i class="board__pill" aria-hidden="true"></i>
-        </div>
-        <div class="board__grid">
-          <div class="cell cell--hero"><small class="mono">Starts</small><b data-k="starts">173</b></div>
-          <div class="cell cell--hero"><small class="mono">Wins</small><b data-k="wins">19</b><em data-k="winp" data-fmt="pct">10.98%</em></div>
-          <div class="cell"><small class="mono">Poles</small><b data-k="poles">19</b></div>
-          <div class="cell"><small class="mono">Top 5</small><b data-k="top5">66</b><em data-k="top5p" data-fmt="pct">38.15%</em></div>
-          <div class="cell"><small class="mono">Total laps</small><b data-k="laps">1,680</b></div>
-          <div class="cell"><small class="mono">Laps led</small><b data-k="led">276</b><em data-k="ledp" data-fmt="pct">16.43%</em></div>
-          <div class="cell"><small class="mono">Avg start → finish</small><b><span data-k="avgStart">6</span><i>→</i><span data-k="avgFinish">9</span></b></div>
-          <div class="cell"><small class="mono">Incidents / race</small><b data-k="inc" data-fmt="3dp">5.855</b></div>
-        </div>
-      </div>
-
-      <!-- iRating history chart (built in JS) -->
-      <div class="irchart" data-reveal>
-        <div class="irchart__head">
-          <div class="irchart__now">
-            <span class="mono">iRating · Sports Car</span>
-            <b id="irNow">2037</b>
-            <span class="mono" id="irNowDate">Oct 15, 2026</span>
-          </div>
-          <ul class="irchart__facts mono">
-            <li><span>Low</span><b>905</b><small>Dec 2025</small></li>
-            <li><span>Summer season</span><b class="up">+421</b><small>Jul 08 – Aug 07</small></li>
-            <li><span>Promoted</span><b class="lic-b">Class B</b><small>Oct 2026</small></li>
+      <div class="otteaser__body">
+        <div class="otteaser__copy">
+          <p class="ontrack__sub" data-reveal>iRacing · Sports Car · Class B. From the Porsche Cup to the GT3 Regional Tour, and a first GT3 win at Imola. The full file has the stats, the iRating climb and every GT3 race.</p>
+          <ul class="kteaser__stats">
+            <li><b data-count="4605">0</b><small class="mono">Laps driven</small></li>
+            <li><b data-count="2725">0</b><small class="mono">Sessions</small></li>
+            <li><b data-count="2037">0</b><small class="mono">iRating</small></li>
+            <li><b>B</b><small class="mono">Licence</small></li>
           </ul>
+          <a class="kteaser__cta" href="sim.html">Open the sim racing file <span aria-hidden="true">→</span></a>
         </div>
-        <div class="irchart__plot" id="irPlot" data-cursor="Scrub">
-          <svg id="irSvg" role="img" aria-label="iRating from about 1400 in October 2025, down to 905 in December 2025, then climbing to 2037 by October 2026"></svg>
-          <div class="irchart__tip" id="irTip" aria-hidden="true"><b></b><span></span></div>
-        </div>
-        <p class="irchart__note mono">Traced from the iRacing profile chart · hover or drag to scrub</p>
-      </div>
-
-      <!-- licence progression -->
-      <div class="lics">
-        <p class="mono lics__title" data-reveal>Licence progression</p>
-        <ol class="lics__track">
-          <li class="lic lic--c">
-            <span class="lic__slot"></span>
-            <span class="mono lic__when">Jul 08 – Aug 07</span>
-            <b class="lic__class">Class C</b>
-            <dl><div><dt>SR</dt><dd>2.82 <i class="up">+1.15</i></dd></div><div><dt>iR</dt><dd>1917 <i class="up">+421</i></dd></div></dl>
-          </li>
-          <li class="lic lic--c">
-            <span class="lic__slot"></span>
-            <span class="mono lic__when">Before promotion</span>
-            <b class="lic__class">Class C</b>
-            <dl><div><dt>SR</dt><dd>3.62</dd></div><div><dt>iR</dt><dd>2027</dd></div></dl>
-          </li>
-          <li class="lic lic--b lic--promo">
-            <span class="lic__slot"></span>
-            <span class="mono lic__when">Promoted ★</span>
-            <b class="lic__class">Class B</b>
-            <dl><div><dt>SR</dt><dd>3.50</dd></div><div><dt>iR</dt><dd>2078</dd></div></dl>
-            <small class="lic__note">Eligible for Class B Sports Car series</small>
-          </li>
-          <li class="lic lic--b">
-            <span class="lic__slot"></span>
-            <span class="mono lic__when">Latest</span>
-            <b class="lic__class">Class B</b>
-            <dl><div><dt>SR</dt><dd>2.84</dd></div><div><dt>iR</dt><dd>2052</dd></div></dl>
-          </li>
-        </ol>
-      </div>
-
-      <!-- recent races -->
-      <div class="racelog">
-        <div class="racelog__head" data-reveal>
-          <p class="mono">Recent official races</p>
-          <div class="racelog__nav">
-            <button type="button" class="rail-btn" data-rail="raceRail" data-dir="-1" aria-label="Scroll races left">←</button>
-            <button type="button" class="rail-btn" data-rail="raceRail" data-dir="1" aria-label="Scroll races right">→</button>
-          </div>
-        </div>
-        <ol class="rail racelog__rail" id="raceRail" data-cursor="Drag">
-          <li class="race race--gt3"><span class="mono race__date">Oct 14, 2026 · 7:45 PM</span><b class="race__series">GT3 Regional Tour</b><span class="race__track">Imola · Grand Prix</span><span class="mono race__meta">GT3 · Split 1 · SOF 2921</span><div class="race__delta"><span><small>iR</small>1998 <i class="up">+7</i></span><span><small>SR</small>2.53 <i class="down">−0.61</i></span></div></li>
-          <li class="race race--gt3"><span class="mono race__date">Oct 14, 2026 · 6:45 PM</span><b class="race__series">GT3 Regional Tour</b><span class="race__track">Imola · Grand Prix</span><span class="mono race__meta">GT3 · Split 2 · SOF 1851</span><div class="race__delta"><span><small>iR</small>1991 <i class="up">+34</i></span><span><small>SR</small>3.14 <i class="down">−0.01</i></span></div></li>
-          <li class="race race--gt3"><span class="mono race__date">Oct 12, 2026 · 8:45 PM</span><b class="race__series">GT3 Regional Tour</b><span class="race__track">Imola · Grand Prix</span><span class="mono race__meta">GT3 · Split 1 · SOF 3081</span><div class="race__delta"><span><small>iR</small>2053 <i class="down">−25</i></span><span><small>SR</small>3.67 <i class="up">+0.17</i></span></div></li>
-          <li class="race"><span class="mono race__date">Oct 8, 2026 · 6:45 PM</span><b class="race__series">Porsche Cup</b><span class="race__track">Mount Panorama</span><span class="mono race__meta">911 Cup 992.2 · Split 3 · SOF 1835</span><div class="race__delta"><span><small>iR</small>2025 <i class="up">+66</i></span><span><small>SR</small>3.86 <i class="up">+0.15</i></span></div></li>
-          <li class="race"><span class="mono race__date">Oct 7, 2026 · 10:45 PM</span><b class="race__series">Porsche Cup</b><span class="race__track">Mount Panorama</span><span class="mono race__meta">911 Cup 992.2 · Split 2 · SOF 2051</span><div class="race__delta"><span><small>iR</small>1972 <i class="up">+39</i></span><span><small>SR</small>3.58 <i class="up">+0.01</i></span></div></li>
-          <li class="race"><span class="mono race__date">Oct 6, 2026 · 8:45 PM</span><b class="race__series">Porsche Cup</b><span class="race__track">Mount Panorama</span><span class="mono race__meta">911 Cup 992.2 · Split 3 · SOF 1814</span><div class="race__delta"><span><small>iR</small>2015 <i class="up">+30</i></span><span><small>SR</small>3.77 <i class="up">+0.13</i></span></div></li>
-          <li class="race"><span class="mono race__date">Oct 4, 2026 · 10:45 PM</span><b class="race__series">Porsche Cup</b><span class="race__track">Sebring · International</span><span class="mono race__meta">911 Cup 992.2 · Split 2 · SOF 2043</span><div class="race__delta"><span><small>iR</small>1985 <i class="down">−42</i></span><span><small>SR</small>3.64 <i class="up">+0.02</i></span></div></li>
-          <li class="race"><span class="mono race__date">Sep 30, 2026 · 6:45 PM</span><b class="race__series">Porsche Cup</b><span class="race__track">Sebring · International</span><span class="mono race__meta">911 Cup 992.2 · Split 4 · SOF 1681</span><div class="race__delta"><span><small>iR</small>1750 <i class="up">+70</i></span><span><small>SR</small>3.51 <i class="up">+0.58</i></span></div></li>
-        </ol>
+        <a class="otcard" href="sim.html#gt3" aria-label="First GT3 win, Imola, October 15, 2026. Open the GT3 progression" data-reveal>
+          <span class="mono otcard__date">Oct 15, 2026 · 6:45 PM · GT3 Regional Tour</span>
+          <b class="otcard__pos">P1</b>
+          <b class="otcard__series">First GT3 win</b>
+          <span class="otcard__track">Imola · Grand Prix · Porsche 911 GT3 R (992)</span>
+          <span class="mono otcard__meta"><span>Start <b>P1</b></span><span>Inc <b>1x</b></span><span>SoF <b>1,748</b></span><span>Points <b>106</b></span></span>
+        </a>
       </div>
     </section>
 
@@ -449,9 +370,9 @@
             <li><b data-count="70">0</b><small class="mono">Sessions</small></li>
             <li><b>P13</b><small class="mono">League 2024</small></li>
           </ul>
-          <a class="kteaser__cta" href="karting.html" data-cursor="Open">Open the karting file <span aria-hidden="true">→</span></a>
+          <a class="kteaser__cta" href="karting.html">Open the karting file <span aria-hidden="true">→</span></a>
         </div>
-        <a class="kteaser__media" href="karting.html" aria-label="Open the karting page" data-cursor="Open" data-reveal>
+        <a class="kteaser__media" href="karting.html" aria-label="Open the karting page" data-reveal>
           <img class="kteaser__back" src="assets/karting/tag-helmet.jpg" width="788" height="1400" loading="lazy" alt="" />
           <img class="kteaser__front" src="assets/karting/league-helmet.jpg" width="1050" height="1400" loading="lazy" alt="Kiryl in kart 91 on the grid at the TAG E-Karting League" />
           <span class="kteaser__tag mono">League 2024 · RaceFacer · photos</span>
@@ -459,12 +380,12 @@
       </div>
 
       <div class="episodes">
-        <button type="button" class="ep" data-yt="JhWwEKcYf4E" data-cursor="Play" data-reveal>
+        <button type="button" class="ep" data-yt="JhWwEKcYf4E" data-reveal>
           <span class="ep__img"><img src="assets/content/JhWwEKcYf4E.jpg" width="960" height="540" loading="lazy" alt="Thumbnail: Dream or delusion? Sim to real" /><i class="ep__play" aria-hidden="true"></i><span class="mono ep__dur">4:35</span></span>
           <span class="mono ep__no">Road to Racing · Episode 01</span>
           <b class="ep__title">Is My Racing Dream Even Realistic?</b>
         </button>
-        <button type="button" class="ep" data-yt="9CaiRlim-jY" data-cursor="Play" data-reveal>
+        <button type="button" class="ep" data-yt="9CaiRlim-jY" data-reveal>
           <span class="ep__img"><img src="assets/content/9CaiRlim-jY.jpg" width="960" height="540" loading="lazy" alt="Thumbnail: This was harder than I expected, at a kart track" /><i class="ep__play" aria-hidden="true"></i><span class="mono ep__dur">34:37</span></span>
           <span class="mono ep__no">Road to Racing · Episode 02</span>
           <b class="ep__title">This Started Worse Than I Expected…</b>
@@ -480,25 +401,25 @@
           </div>
         </div>
         <ul class="rail shorts__rail" id="shortsRail">
-          <li><button type="button" class="short" data-yt="7__Loa_NG8E" data-short data-cursor="Play"><img src="assets/content/7__Loa_NG8E.jpg" width="540" height="960" loading="lazy" alt="" /><b>How To Drive The 296 GT3 (Beginner Friendly)</b></button></li>
-          <li><button type="button" class="short" data-yt="VowPeK_QKec" data-short data-cursor="Play"><img src="assets/content/VowPeK_QKec.jpg" width="540" height="960" loading="lazy" alt="" /><b>I Raced A Toyota GR Cup Driver…</b></button></li>
-          <li><button type="button" class="short" data-yt="6KasZ1vUFBs" data-short data-cursor="Play"><img src="assets/content/6KasZ1vUFBs.jpg" width="540" height="960" loading="lazy" alt="" /><b>One Life. One Shot.</b></button></li>
-          <li><button type="button" class="short" data-yt="bx_UrVxNdoI" data-short data-cursor="Play"><img src="assets/content/bx_UrVxNdoI.jpg" width="540" height="960" loading="lazy" alt="" /><b>The Deciding Race…</b></button></li>
-          <li><button type="button" class="short" data-yt="wlOIkOMCejA" data-short data-cursor="Play"><img src="assets/content/wlOIkOMCejA.jpg" width="540" height="960" loading="lazy" alt="" /><b>Is It Ever Enough?</b></button></li>
-          <li><button type="button" class="short" data-yt="1wXY0Dyp5kI" data-short data-cursor="Play"><img src="assets/content/1wXY0Dyp5kI.jpg" width="540" height="960" loading="lazy" alt="" /><b>Focus On Improving, Not Proving.</b></button></li>
-          <li><button type="button" class="short" data-yt="Ei4AMxyO9E8" data-short data-cursor="Play"><img src="assets/content/Ei4AMxyO9E8.jpg" width="540" height="960" loading="lazy" alt="" /><b>Qualifying Is So Peaceful… Until It Isn't</b></button></li>
-          <li><button type="button" class="short" data-yt="2aeMaSzKaiQ" data-short data-cursor="Play"><img src="assets/content/2aeMaSzKaiQ.jpg" width="540" height="960" loading="lazy" alt="" /><b>iRacing C License Series Tier List</b></button></li>
-          <li><button type="button" class="short" data-yt="lAAhOLETuxg" data-short data-cursor="Play"><img src="assets/content/lAAhOLETuxg.jpg" width="540" height="960" loading="lazy" alt="" /><b>Sim Racing Is Supposed To Be Cheap… Right?</b></button></li>
-          <li><button type="button" class="short" data-yt="tdhqiFSHhRI" data-short data-cursor="Play"><img src="assets/content/tdhqiFSHhRI.jpg" width="540" height="960" loading="lazy" alt="" /><b>Do It In This Life.</b></button></li>
-          <li class="short-more"><a href="https://www.youtube.com/@KirylValadzko/shorts" target="_blank" rel="noopener noreferrer" data-cursor="Visit"><b>All shorts</b><span>↗</span></a></li>
+          <li><button type="button" class="short" data-yt="7__Loa_NG8E" data-short><img src="assets/content/7__Loa_NG8E.jpg" width="540" height="960" loading="lazy" alt="" /><b>How To Drive The 296 GT3 (Beginner Friendly)</b></button></li>
+          <li><button type="button" class="short" data-yt="VowPeK_QKec" data-short><img src="assets/content/VowPeK_QKec.jpg" width="540" height="960" loading="lazy" alt="" /><b>I Raced A Toyota GR Cup Driver…</b></button></li>
+          <li><button type="button" class="short" data-yt="6KasZ1vUFBs" data-short><img src="assets/content/6KasZ1vUFBs.jpg" width="540" height="960" loading="lazy" alt="" /><b>One Life. One Shot.</b></button></li>
+          <li><button type="button" class="short" data-yt="bx_UrVxNdoI" data-short><img src="assets/content/bx_UrVxNdoI.jpg" width="540" height="960" loading="lazy" alt="" /><b>The Deciding Race…</b></button></li>
+          <li><button type="button" class="short" data-yt="wlOIkOMCejA" data-short><img src="assets/content/wlOIkOMCejA.jpg" width="540" height="960" loading="lazy" alt="" /><b>Is It Ever Enough?</b></button></li>
+          <li><button type="button" class="short" data-yt="1wXY0Dyp5kI" data-short><img src="assets/content/1wXY0Dyp5kI.jpg" width="540" height="960" loading="lazy" alt="" /><b>Focus On Improving, Not Proving.</b></button></li>
+          <li><button type="button" class="short" data-yt="Ei4AMxyO9E8" data-short><img src="assets/content/Ei4AMxyO9E8.jpg" width="540" height="960" loading="lazy" alt="" /><b>Qualifying Is So Peaceful… Until It Isn't</b></button></li>
+          <li><button type="button" class="short" data-yt="2aeMaSzKaiQ" data-short><img src="assets/content/2aeMaSzKaiQ.jpg" width="540" height="960" loading="lazy" alt="" /><b>iRacing C License Series Tier List</b></button></li>
+          <li><button type="button" class="short" data-yt="lAAhOLETuxg" data-short><img src="assets/content/lAAhOLETuxg.jpg" width="540" height="960" loading="lazy" alt="" /><b>Sim Racing Is Supposed To Be Cheap… Right?</b></button></li>
+          <li><button type="button" class="short" data-yt="tdhqiFSHhRI" data-short><img src="assets/content/tdhqiFSHhRI.jpg" width="540" height="960" loading="lazy" alt="" /><b>Do It In This Life.</b></button></li>
+          <li class="short-more"><a href="https://www.youtube.com/@KirylValadzko/shorts" target="_blank" rel="noopener noreferrer"><b>All shorts</b><span>↗</span></a></li>
         </ul>
       </div>
 
       <div class="socials">
-        <a class="social social--yt" href="https://www.youtube.com/@KirylValadzko" target="_blank" rel="noopener noreferrer" data-cursor="Visit" data-reveal>
+        <a class="social social--yt" href="https://www.youtube.com/@KirylValadzko" target="_blank" rel="noopener noreferrer" data-reveal>
           <span class="mono">YouTube</span><b>@KirylValadzko</b><small>Road to Racing episodes &amp; shorts</small><i>↗</i>
         </a>
-        <a class="social social--ig" href="https://www.instagram.com/kirylvaladzkoracing/" target="_blank" rel="noopener noreferrer" data-cursor="Visit" data-reveal>
+        <a class="social social--ig" href="https://www.instagram.com/kirylvaladzkoracing/" target="_blank" rel="noopener noreferrer" data-reveal>
           <span class="mono">Instagram</span><b>@kirylvaladzkoracing</b><small>Racing driver · KV23 · R2R</small><i>↗</i>
         </a>
       </div>
@@ -552,7 +473,7 @@
 
       <div class="partners__cta" data-reveal>
         <p>Got a seat, a race, a product or an idea?</p>
-        <a class="partners__btn" href="https://ig.me/m/kirylvaladzkoracing" target="_blank" rel="noopener noreferrer" data-cursor="DM" data-magnetic>Message me on Instagram <span aria-hidden="true">↗</span></a>
+        <a class="partners__btn" href="https://ig.me/m/kirylvaladzkoracing" target="_blank" rel="noopener noreferrer">Message me on Instagram <span aria-hidden="true">↗</span></a>
       </div>
     </section>
 
@@ -567,13 +488,10 @@
           <li><a href="https://www.instagram.com/kirylvaladzkoracing/" target="_blank" rel="noopener noreferrer" data-roll>Instagram</a></li>
           <li><a href="https://www.youtube.com/@KirylValadzko" target="_blank" rel="noopener noreferrer" data-roll>YouTube</a></li>
         </ul>
-        <button class="boxbox" id="boxBox" data-magnetic data-cursor="Pit">
-          <span class="mono">Radio</span><b>"Box, box."</b><small class="mono">back to the grid ↑</small>
-        </button>
       </div>
       <div class="finish__legal mono">
         <span>© <span id="year">2026</span> Kiryl Valadzko · KV23</span>
-        <span class="finish__build">build 3e97087c</span>
+        <span class="finish__build">build 98d7e814</span>
       </div>
     </footer>
   </main>
@@ -582,10 +500,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
-  <script type="importmap">
-    { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
-  </script>
-  <script src="js/main.js?v=3e97087c"></script>
-  <script type="module" src="js/speed3d.js?v=113adee9"></script>
+  <script src="js/main.js?v=98d7e814"></script>
 </body>
 </html>

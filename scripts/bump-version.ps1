@@ -5,7 +5,7 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
 $utf8 = New-Object Text.UTF8Encoding $false
 
-$assets = 'css/style.css', 'js/main.js', 'js/speed3d.js'
+$assets = 'css/style.css', 'js/main.js'
 $tags = @{}
 foreach ($a in $assets) {
   $bytes = [IO.File]::ReadAllBytes((Join-Path $root $a))

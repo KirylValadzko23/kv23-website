@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Karting — KV23 · Kiryl Valadzko</title>
   <meta name="description" content="Kiryl Valadzko's real seat time: 70 timed rental-karting sessions on RaceFacer and the 2024 TAG E-Karting League, night by night." />
-  <meta name="theme-color" content="#07060a" />
+  <meta name="theme-color" content="#d2e0bc" />
   <link rel="icon" href="assets/img/kv23-logo.png" />
   <link rel="canonical" href="https://kirylvaladzko23.github.io/kv23-website/karting.html" />
 
@@ -25,29 +25,27 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;600;800;900&family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=8402f10b" />
+  <link rel="stylesheet" href="css/style.css?v=8028c706" />
 </head>
 <body class="kpage-body">
 
-  <!-- ============ CURSOR / GRAIN ============ -->
-  <div class="cursor" aria-hidden="true"><span class="cursor__label"></span></div>
-  <div class="cursor-dot" aria-hidden="true"></div>
+  <!-- ============ GRAIN ============ -->
   <div class="grain" aria-hidden="true"></div>
 
   <!-- ============ HEADER ============ -->
   <header class="header" id="header">
-    <a href="index.html" class="header__logo" data-magnetic aria-label="KV23 home">
+    <a href="index.html" class="header__logo" aria-label="KV23 home">
       <img src="assets/img/kv23-logo.png" alt="KV23" width="539" height="389" />
     </a>
     <nav class="header__nav" aria-label="Site">
       <a href="index.html#driver" data-roll>The Driver</a>
       <a href="index.html#evolution" data-roll>Evolution</a>
-      <a href="index.html#ontrack" data-roll>On Track</a>
+      <a href="sim.html" data-roll>On Track</a>
       <a href="index.html#r2r" data-roll>Road to Racing</a>
       <a href="karting.html" aria-current="page" data-roll>Karting</a>
       <a href="index.html#partners" data-roll>Partners</a>
     </nav>
-    <button class="header__menu" id="menuBtn" aria-expanded="false" aria-controls="menu" data-magnetic>
+    <button class="header__menu" id="menuBtn" aria-expanded="false" aria-controls="menu">
       <span data-roll>Chapters</span>
       <span class="burger"><i></i><i></i></span>
     </button>
@@ -61,7 +59,8 @@
         <li><a href="index.html"><small>00</small><span data-roll>Grid</span></a></li>
         <li><a href="index.html#driver"><small>01</small><span data-roll>The Driver</span></a></li>
         <li><a href="index.html#evolution"><small>02</small><span data-roll>Evolution</span></a></li>
-        <li><a href="index.html#ontrack"><small>03</small><span data-roll>On Track</span></a></li>
+        <li><a href="build.html"><small>↗</small><span data-roll>The Build</span></a></li>
+        <li><a href="sim.html"><small>↗</small><span data-roll>On Track</span></a></li>
         <li><a href="index.html#r2r"><small>04</small><span data-roll>Road to Racing</span></a></li>
         <li><a href="#top" aria-current="page"><small>↗</small><span data-roll>Karting</span></a></li>
         <li><a href="index.html#partners"><small>05</small><span data-roll>Partners</span></a></li>
@@ -78,7 +77,7 @@
 
     <!-- ============ KARTING HERO ============ -->
     <section class="kpage__hero" id="top">
-      <a class="kpage__back mono" href="index.html#r2r" data-cursor="Back">← Back to KV23</a>
+      <a class="kpage__back mono" href="index.html#r2r">← Back to KV23</a>
       <div class="chapter-tag mono" data-intro><span>02</span> Road to Racing · Real seat time</div>
       <h1 class="kpage__title" aria-label="Real seat time">
         <span data-split>REAL SEAT</span>
@@ -117,7 +116,7 @@
               <b>00:43<i>.464</i></b>
               <span class="mono kboard__last">P2 of 10 · TAG E-Karting · Oct 5, 2026</span>
             </div>
-            <a class="kboard__link mono" href="https://www.racefacer.com/en/profile/kiryl.valadzko.2" target="_blank" rel="noopener noreferrer" data-cursor="Visit">Full profile on RaceFacer ↗</a>
+            <a class="kboard__link mono" href="https://www.racefacer.com/en/profile/kiryl.valadzko.2" target="_blank" rel="noopener noreferrer">Full profile on RaceFacer ↗</a>
           </div>
           <div class="kboard kboard--charts" data-reveal>
             <div class="ksplit" id="kartSplit"><!-- finishing positions, built in main.js --></div>
@@ -223,13 +222,10 @@
           <li><a href="https://www.instagram.com/kirylvaladzkoracing/" target="_blank" rel="noopener noreferrer" data-roll>Instagram</a></li>
           <li><a href="https://www.youtube.com/@KirylValadzko" target="_blank" rel="noopener noreferrer" data-roll>YouTube</a></li>
         </ul>
-        <a class="boxbox" href="index.html#r2r" data-magnetic data-cursor="Pit">
-          <span class="mono">Radio</span><b>"Box, box."</b><small class="mono">back to KV23 ↩</small>
-        </a>
       </div>
       <div class="finish__legal mono">
         <span>© <span id="year">2026</span> Kiryl Valadzko · KV23</span>
-        <span class="finish__build">build 3e97087c</span>
+        <span class="finish__build">build 98d7e814</span>
       </div>
     </footer>
   </main>
@@ -238,6 +234,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
-  <script src="js/main.js?v=3e97087c"></script>
+  <script src="js/main.js?v=98d7e814"></script>
 </body>
 </html>

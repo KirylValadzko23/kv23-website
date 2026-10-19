@@ -1,7 +1,6 @@
 /* ==========================================================================
    KV23 — main interactions
    Smooth scroll (Lenis) + GSAP ScrollTrigger, with graceful fallbacks.
-   Shared state lives on window.KV so the WebGL scene (speed3d.js) can read it.
    ========================================================================== */
 (() => {
   'use strict';
@@ -13,12 +12,11 @@
   const lerp = (a, b, t) => a + (b - a) * t;
 
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
   const hasGSAP = typeof window.gsap !== 'undefined';
   if (hasGSAP && window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
 
-  // shared telemetry (read by speed3d.js)
-  const KV = (window.KV = { velocity: 0, speed01: 0, boost: 0, mouse: { x: 0, y: 0 } });
+  // scroll speed, shared by the marquee and the rails
+  const KV = { velocity: 0 };
 
   /* ------------------------------------------------------------------------
      Smooth scroll
@@ -104,44 +102,25 @@
   $$('[data-split]').forEach((el) => splits.set(el, splitChars(el)));
 
   /* ------------------------------------------------------------------------
-     Cursor + magnetic elements
+     Terrain lines behind every page: one fixed layer, drawn once per screen width
      ------------------------------------------------------------------------ */
-  addEventListener('pointermove', (e) => {
-    KV.mouse.x = (e.clientX / innerWidth) * 2 - 1;
-    KV.mouse.y = (e.clientY / innerHeight) * 2 - 1;
-  }, { passive: true });
-
-  if (finePointer && !reduced) {
-    const ring = $('.cursor'), dot = $('.cursor-dot'), label = $('.cursor__label');
-    let mx = innerWidth / 2, my = innerHeight / 2, rx = mx, ry = my;
-    addEventListener('pointermove', (e) => { mx = e.clientX; my = e.clientY; }, { passive: true });
-    addEventListener('pointerdown', () => ring.classList.add('is-down'));
-    addEventListener('pointerup', () => ring.classList.remove('is-down'));
-    const loop = () => {
-      rx = lerp(rx, mx, 0.18); ry = lerp(ry, my, 0.18);
-      ring.style.transform = `translate3d(${rx}px, ${ry}px, 0)`;
-      dot.style.transform = `translate3d(${mx}px, ${my}px, 0)`;
-      requestAnimationFrame(loop);
+  function backdrop() {
+    const ns = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('class', 'bgfx');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+    document.body.prepend(svg);
+    let drawnW = 0;
+    const draw = () => {
+      if (innerWidth === drawnW) return; // phones resize vertically as the address bar slides: keep the lines still
+      drawnW = innerWidth;
+      const w = innerWidth, h = Math.max(innerHeight, screen.height || 0, 640);
+      svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+      svg.innerHTML = `<path d="${contourPaths(w, h, 7)}"/>`;
     };
-    loop();
-    document.addEventListener('pointerover', (e) => {
-      const t = e.target.closest('[data-cursor]');
-      if (t) { label.textContent = t.dataset.cursor; ring.classList.add('has-label'); }
-      else ring.classList.remove('has-label');
-    });
-
-    $$('[data-magnetic]').forEach((el) => {
-      el.addEventListener('pointermove', (e) => {
-        const r = el.getBoundingClientRect();
-        const x = e.clientX - (r.left + r.width / 2), y = e.clientY - (r.top + r.height / 2);
-        el.style.transform = `translate(${x * 0.3}px, ${y * 0.4}px)`;
-      });
-      el.addEventListener('pointerleave', () => {
-        el.style.transition = 'transform .6s cubic-bezier(.16,1,.3,1)';
-        el.style.transform = '';
-        setTimeout(() => (el.style.transition = ''), 600);
-      });
-    });
+    draw();
+    addEventListener('resize', draw);
   }
 
   /* ------------------------------------------------------------------------
@@ -157,13 +136,9 @@
     l.style.setProperty('--c', `rgb(${Math.round(lerp(200, 40, t))}, ${Math.round(lerp(10, 0, t))}, ${Math.round(lerp(40, 10, t))})`);
     stack.appendChild(l);
   }
-  if (heroLogo && !reduced) {
-    let tx = 0, ty = 0;
+  if (heroLogo && !reduced) { // a slow idle sway, so the extrusion reads as 3D
     const tiltLoop = (now) => {
-      const idleX = Math.sin(now / 1800) * 6, idleY = Math.cos(now / 2300) * 10;
-      tx = lerp(tx, KV.mouse.x * 28 + idleY, 0.06);
-      ty = lerp(ty, -KV.mouse.y * 20 + idleX, 0.06);
-      heroLogo.style.transform = `rotateY(${tx}deg) rotateX(${ty}deg)`;
+      heroLogo.style.transform = `rotateY(${(Math.cos(now / 2300) * 14).toFixed(2)}deg) rotateX(${(Math.sin(now / 1800) * 7).toFixed(2)}deg)`;
       requestAnimationFrame(tiltLoop);
     };
     requestAnimationFrame(tiltLoop);
@@ -231,8 +206,6 @@
   function intro() {
     document.body.classList.remove('is-loading');
     if (lenis) lenis.start();
-    if (has('#tower')) $('#tower').classList.add('is-visible');
-    KV.boost = 1;
 
     if (!hasGSAP || reduced) {
       $$('[data-reveal]').forEach((el) => { el.style.opacity = 1; el.style.transform = 'none'; });
@@ -259,8 +232,7 @@
       .to('.hero__row--b', { xPercent: -14, ease: 'none' }, 0)
       // logo exits up and away from the name instead of growing over it; fromTo so the scrub never captures mid-intro values
       .fromTo('.hero__logo', { y: 0, scale: 1, opacity: 1 }, { y: '-30vh', scale: 0.7, opacity: 0, ease: 'power1.in', immediateRender: false }, 0)
-      .fromTo('.hero__bottom, .hero__meta', { opacity: 1, y: 0 }, { opacity: 0, y: -40, ease: 'none', immediateRender: false }, 0)
-      .to('.hero__canvas', { opacity: 0.35, ease: 'none' }, 0);
+      .fromTo('.hero__bottom, .hero__meta', { opacity: 1, y: 0 }, { opacity: 0, y: -40, ease: 'none', immediateRender: false }, 0);
 
     // split headings outside the hero
     splits.forEach((chars, el) => {
@@ -392,13 +364,6 @@
         tl.call(() => letters.forEach((l) => l.classList.remove('is-lit')), null, letters.length * 0.45 + 0.7);
       },
     });
-
-    // socials: a soft spotlight follows the pointer
-    if (finePointer) $$('.social').forEach((el) => el.addEventListener('pointermove', (e) => {
-      const r = el.getBoundingClientRect();
-      el.style.setProperty('--mx', e.clientX - r.left + 'px');
-      el.style.setProperty('--my', e.clientY - r.top + 'px');
-    }));
   }
 
   // number counters
@@ -498,56 +463,6 @@
     };
     card.addEventListener('pointerup', endDrag);
     card.addEventListener('pointercancel', endDrag);
-  }
-
-  /* ------------------------------------------------------------------------
-     Timing tower — section nav styled like a live timing screen
-     ------------------------------------------------------------------------ */
-  function tower() {
-    const rows = $$('.tower__list li');
-    if (!rows.length) return;
-    const sections = rows.map((r) => $(r.dataset.target));
-    const lap = $('#lapNo');
-    rows.forEach((r) => r.addEventListener('click', () => scrollToTarget(r.dataset.target)));
-
-    let lastActive = -1;
-    const update = () => {
-      const probe = scrollY + innerHeight * 0.4;
-      let active = 0;
-      sections.forEach((s, i) => { if (s.offsetTop <= probe) active = i; });
-      rows.forEach((r, i) => {
-        const gap = $('.gap', r);
-        if (i === active) gap.textContent = i === 0 ? 'LEADER' : 'LIVE';
-        else {
-          const d = (sections[i].offsetTop - scrollY) / 1000;
-          gap.textContent = (d >= 0 ? '+' : '−') + Math.abs(d).toFixed(3);
-        }
-      });
-      if (active !== lastActive) {
-        rows.forEach((r, i) => { r.classList.toggle('is-active', i === active); r.classList.toggle('is-done', i < active); });
-        lap.textContent = active + 1;
-        lastActive = active;
-      }
-    };
-    addEventListener('scroll', update, { passive: true });
-    addEventListener('resize', update);
-    update();
-  }
-
-  /* ------------------------------------------------------------------------
-  /* ------------------------------------------------------------------------
-     Scroll speed → shared telemetry for the hero's WebGL streaks
-     ------------------------------------------------------------------------ */
-  function telemetry() {
-    let speed = 0;
-    const loop = () => {
-      const target = Math.min(340, Math.abs(KV.velocity) * 7.5);
-      speed = lerp(speed, target, target > speed ? 0.1 : 0.04);
-      KV.speed01 = speed / 340;
-      KV.boost *= 0.975;
-      requestAnimationFrame(loop);
-    };
-    loop();
   }
 
   /* ------------------------------------------------------------------------
@@ -740,6 +655,97 @@
       clearTimeout(rt);
       rt = setTimeout(() => { if (plot.clientWidth !== builtW) { builtW = plot.clientWidth; build(); } }, 150);
     });
+    new IntersectionObserver(([e], io) => { if (e.isIntersecting) { draw(); io.disconnect(); } }, { threshold: 0.4 }).observe(plot);
+  }
+
+  /* ------------------------------------------------------------------------
+     On Track — GT3 progression: every GT3 Regional Tour race, first to latest
+     From the iRacing results list (2026 S4 · week 5, Imola GP, Porsche 911 GT3 R (992)); practice sessions left out.
+     ------------------------------------------------------------------------ */
+  const GT3_RACES = [ // date, time, start, finish, incidents, championship points, strength of field
+    ['Oct 12', '8:45 PM', 13, 14, 0, 34, 3081],
+    ['Oct 12', '9:45 PM', 2, 17, 20, 13, 1927],
+    ['Oct 13', '7:45 PM', 1, 17, 11, 11, 1695],
+    ['Oct 13', '8:45 PM', 2, 3, 2, 97, 1898],
+    ['Oct 14', '6:45 PM', 2, 6, 5, 79, 1851],
+    ['Oct 14', '7:45 PM', 8, 11, 13, 64, 2921],
+    ['Oct 14', '8:45 PM', 7, 14, 6, 30, 2752],
+    ['Oct 14', '9:45 PM', 14, 13, 1, 43, 2920],
+    ['Oct 15', '6:45 PM', 1, 1, 1, 106, 1748],
+    ['Oct 15', '7:45 PM', 7, 9, 5, 78, 2622],
+    ['Oct 15', '9:45 PM', 7, 10, 7, 56, 2374],
+  ].map(([date, time, start, fin, inc, pts, sof], i) => ({ n: i + 1, date, time, start, fin, inc, pts, sof }));
+
+  function gt3Progression() {
+    const plot = $('#gt3Plot'), svg = $('#gt3Svg'), body = $('#gt3Body');
+    if (!plot) return;
+    const R = GT3_RACES, worst = 20;
+    const make = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+
+    // summary + table
+    const avg = (k) => (R.reduce((a, r) => a + r[k], 0) / R.length).toFixed(1);
+    $('#gt3Sum').innerHTML = `
+      <li><b>P${Math.min(...R.map((r) => r.fin))}</b><small class="mono">Best finish</small></li>
+      <li><b>${R.length}</b><small class="mono">GT3 races</small></li>
+      <li><b>${R.filter((r) => r.fin <= 3).length}</b><small class="mono">Podiums</small></li>
+      <li><b>${avg('start')}<i>→</i>${avg('fin')}</b><small class="mono">Avg start → finish</small></li>`;
+    R.slice().reverse().forEach((r) => { // latest first in the table
+      const tr = make('tr', r.fin === 1 ? 'is-win' : r.fin <= 3 ? 'is-pod' : '');
+      tr.append(make('td', null, String(r.n).padStart(2, '0')));
+      const when = make('th', null, `${r.date} · ${r.time}`); when.scope = 'row'; tr.append(when);
+      tr.append(make('td', null, `P${r.start}`));
+      const fin = make('td', 'g3-pos'); fin.append(make('i', null, r.fin < r.start ? `▲${r.start - r.fin}` : r.fin > r.start ? `▼${r.fin - r.start}` : '='), document.createTextNode(`P${r.fin}`));
+      tr.append(fin, make('td', null, `${r.inc}x`), make('td', null, r.pts), make('td', null, r.sof.toLocaleString('en-US')));
+      body.append(tr);
+    });
+
+    // chart: finishing position per race (P1 on top), the hollow ring is where it started
+    let drawn = false, built = 0;
+    const build = () => {
+      const W = plot.clientWidth, H = plot.clientHeight;
+      const m = { l: 34, r: 16, t: 26, b: 44 };
+      const x = (i) => m.l + (i / (R.length - 1)) * (W - m.l - m.r);
+      const y = (p) => m.t + ((p - 1) / (worst - 1)) * (H - m.t - m.b);
+      let grid = '', axis = '';
+      [1, 5, 10, 15, 20].forEach((p) => {
+        grid += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(p)}" y2="${y(p)}"/>`;
+        axis += `<text x="${m.l - 10}" y="${y(p) + 3}" text-anchor="end">P${p}</text>`;
+      });
+      // race number under every point, the day under the first race of each day
+      R.forEach((r, i) => {
+        axis += `<text x="${x(i)}" y="${H - 24}" text-anchor="middle">${String(r.n).padStart(2, '0')}</text>`;
+        const day = i && W < 620 ? r.date.replace('Oct ', '') : r.date; // narrow: "Oct 12", then just "13", "14"…
+        if (!i || R[i - 1].date !== r.date) axis += `<text class="g3-day" x="${x(i)}" y="${H - 6}" text-anchor="${i ? 'middle' : 'start'}">${day}</text>`;
+      });
+      const line = R.map((r, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(r.fin).toFixed(1)}`).join('');
+      const moves = R.map((r, i) => `<line class="g3-move" x1="${x(i)}" x2="${x(i)}" y1="${y(r.start)}" y2="${y(r.fin)}"/>`).join('');
+      const starts = R.map((r, i) => `<circle class="g3-start" cx="${x(i)}" cy="${y(r.start)}" r="4.5"/>`).join('');
+      const fins = R.map((r, i) => `<circle class="g3-fin${r.fin <= 3 ? ' is-pod' : ''}" cx="${x(i)}" cy="${y(r.fin)}" r="5"/>`).join('');
+      const lbls = R.map((r, i) => `<text class="g3-lbl" x="${x(i)}" y="${y(r.fin) + (r.fin > 15 ? -12 : 18)}" text-anchor="middle">${r.fin}</text>`).join('');
+      const wi = R.findIndex((r) => r.fin === 1);
+      const win = wi < 0 ? '' : `<g class="g3-win"><circle cx="${x(wi)}" cy="${y(1)}" r="9" opacity=".25"/><text x="${x(wi)}" y="${y(1) - 14}" text-anchor="middle">First GT3 win</text></g>`;
+      svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+      svg.innerHTML = `<g class="g3-grid">${grid}</g><g class="g3-axis">${axis}</g><g class="g3-moves">${moves}</g>
+        <path class="g3-line" d="${line}"/>${win}<g class="g3-starts">${starts}</g><g class="g3-fins">${fins}</g><g class="g3-lbls">${lbls}</g>`;
+      built = W;
+      if (!drawn && hasGSAP && !reduced) {
+        const p = $('.g3-line', svg), len = p.getTotalLength();
+        p.style.strokeDasharray = len; p.style.strokeDashoffset = len;
+        $$('.g3-moves, .g3-starts, .g3-fins, .g3-lbls, .g3-win', svg).forEach((g) => (g.style.opacity = 0));
+      }
+    };
+    const draw = () => {
+      if (drawn) return;
+      drawn = true;
+      if (!hasGSAP || reduced) return;
+      const p = $('.g3-line', svg);
+      gsap.to(p, { strokeDashoffset: 0, duration: 2, ease: 'power2.inOut', onComplete: () => (p.style.strokeDasharray = 'none') });
+      gsap.to($$('.g3-fins, .g3-starts, .g3-moves, .g3-lbls', svg), { opacity: 1, duration: 0.7, delay: 0.6, stagger: 0.15 });
+      gsap.fromTo($('.g3-win', svg), { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.8, delay: 1.9, ease: 'back.out(2)' });
+    };
+    build();
+    let rt;
+    addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (plot.clientWidth !== built) build(); }, 150); }); // width changes only
     new IntersectionObserver(([e], io) => { if (e.isIntersecting) { draw(); io.disconnect(); } }, { threshold: 0.4 }).observe(plot);
   }
 
@@ -1160,7 +1166,7 @@
       box.textContent = '';
       eps.forEach((v) => {
         const b = el('button', 'ep');
-        b.type = 'button'; b.dataset.yt = v.id; b.dataset.cursor = 'Play'; b.setAttribute('data-reveal', '');
+        b.type = 'button'; b.dataset.yt = v.id; b.setAttribute('data-reveal', '');
         const frame = el('span', 'ep__img');
         frame.append(img(safeSrc(v.thumb), 960, 540, `Thumbnail: ${v.title}`), el('i', 'ep__play'));
         frame.lastChild.setAttribute('aria-hidden', 'true');
@@ -1178,7 +1184,7 @@
       rail.textContent = '';
       shorts.forEach((v) => {
         const li = el('li'), b = el('button', 'short');
-        b.type = 'button'; b.dataset.yt = v.id; b.dataset.short = ''; b.dataset.cursor = 'Play';
+        b.type = 'button'; b.dataset.yt = v.id; b.dataset.short = '';
         b.append(img(safeSrc(v.thumb), 540, 960, ''), el('b', null, v.title));
         if (v.views) b.append(el('small', 'mono short__views', `${views.format(v.views)} views`));
         if (isNew(shorts, v)) b.append(el('span', 'mono short__new', 'New'));
@@ -1232,16 +1238,14 @@
       lastY = y;
     }, { passive: true });
 
-    if (has('#boxBox')) $('#boxBox').addEventListener('click', () => { KV.boost = 1; scrollToTarget(0, { duration: 2.2 }); });
     if (has('#year')) $('#year').textContent = new Date().getFullYear();
   }
 
   /* ------------------------------------------------------------------------
      Evolution — vertical scroll drives a sideways photo collage
      ------------------------------------------------------------------------ */
-  function contourPaths(w, h) {
+  function contourPaths(w, h, seed = 23) {
     // deterministic pseudo-random so the "terrain" is the same on every visit
-    let seed = 23;
     const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
     const smooth = (pts, closed) => {
       const mid = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
@@ -1289,12 +1293,26 @@
     const pinned = true;
     let centers = [], lay = [], dist = 0, active = -1, pin = null, bend = 0, lastS = NaN;
 
+    // the corners are wide, sweeping curves (up to 1.5 screens of scroll to turn), not a tight flick.
+    // The track is sized around them: extra run-in (--lead) so the first photos still reach centre stage once the
+    // turn is done, and a run-out timed so "To be continued" sits fully on screen while the gallery starts to rise
+    const outro = $('.evo__outro', track);
     const measure = () => {
-      dist = Math.max(0, track.offsetWidth - innerWidth);
+      const W = innerWidth, H = innerHeight;
+      const B = pin ? Math.min(H * 1.5, W * 2.2) : 0;
+      track.style.setProperty('--lead', (pin ? Math.max(0, Math.round(B - H * 0.6)) : 0) + 'px');
+      if (pin) {
+        const last = items[items.length - 1], outroLeft = Math.round(last.offsetLeft + last.offsetWidth + W * 0.12);
+        const u = Math.sqrt(0.6 * B * H); // scroll into the turn-out at which the gallery has risen 15% of the screen
+        const run = Math.round(outroLeft - W * 0.12 + B - u + H * 0.15); // …and the outro is 12% in from the left then
+        track.style.width = run + W + 'px';
+        outro.style.left = outroLeft + 'px';
+      }
+      dist = Math.max(0, track.offsetWidth - W);
       centers = floaters.map((el) => el.offsetLeft + el.offsetWidth / 2);
       if (pin) {
         pin.style.height = evo.offsetHeight + dist + 'px';
-        bend = Math.min(innerHeight * 0.6, dist / 2); // length of the curve into / out of the sideways run
+        bend = Math.min(B, dist * 0.45); // length of the curve into / out of the sideways run
         lastS = NaN;
       }
       // lay each photo along the camera's diagonal, so it sits at its designed height the moment it's centred
@@ -1480,13 +1498,13 @@
   /* ------------------------------------------------------------------------
      Boot
      ------------------------------------------------------------------------ */
+  backdrop();
   navigation();
   marquee();
   licence();
-  tower();
-  telemetry();
   statsBoard();
   iRatingChart();
+  gt3Progression();
   rails();
   videoModal();
   kartingStats(); // before counters(), which picks up its [data-count] cells
