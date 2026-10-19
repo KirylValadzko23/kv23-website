@@ -512,6 +512,11 @@ section, footer { position: relative; }
 .lightbox__prev { left: 14px; } .lightbox__next { right: 14px; }
 .lightbox__close { top: 22px; right: var(--gutter); padding: 10px 16px; border-radius: 99px; border: 1px solid var(--line); }
 .lightbox__close:hover { background: #fff; color: #000; }
+/* the site-wide photo viewer reuses the lightbox: a label, one line of caption, the count */
+.is-zoomable { cursor: zoom-in; }
+.is-zoomable:focus-visible { outline: 2px solid var(--red); outline-offset: 4px; }
+.pview .lightbox__fig { align-items: end; }
+.pview__text { margin: 0; font-size: 18px; line-height: 1.45; color: var(--fg); max-width: 30ch; }
 
 /* ==========================================================================
    FINISH
@@ -1223,7 +1228,7 @@ section, footer { position: relative; }
 .pverse span { font-family: var(--f-display); font-weight: 900; font-size: clamp(80px, 11vw, 190px); line-height: .82; color: transparent; -webkit-text-stroke: 2px var(--ink); }
 .pverse small { margin-top: 14px; color: var(--mute); font-size: 10px; }
 .pphoto { margin: 0; display: grid; gap: 8px; width: min(100%, 380px, 34vh); justify-self: center; padding: 8px 8px 12px; border-radius: 6px; background: #fff; rotate: -2deg; box-shadow: 0 24px 40px -24px rgba(7,6,10,.55); }
-.pphoto img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 3px; }
+.pphoto img { width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 3px; }
 .pphoto figcaption { font-size: 10px; color: rgba(7,6,10,.6); }
 .pclose { margin-top: 120px; display: grid; gap: 24px; }
 .pclose__words { margin: 0; display: flex; flex-wrap: wrap; gap: 0 .3em; font-family: var(--f-display); font-weight: 900; text-transform: uppercase; font-size: clamp(48px, 8vw, 140px); line-height: .9; }
@@ -1231,9 +1236,37 @@ section, footer { position: relative; }
 .pclose__words span:last-child { color: var(--red); -webkit-text-stroke: 0; }
 
 /* homepage: the "outside the track" block inside The Driver */
-.dout { margin-top: 130px; padding-top: 60px; border-top: 1px solid var(--line); }
-.dout .kteaser { margin: 0; }
-.dout .karting__title em { color: var(--red); }
+.dout { margin-top: 140px; padding-top: 70px; border-top: 1px solid var(--line); }
+.dout__title {
+  margin: 18px 0 0; display: flex; flex-wrap: wrap; gap: 0 .2em;
+  font-family: var(--f-display); font-weight: 900; text-transform: uppercase;
+  font-size: clamp(64px, 13vw, 240px); line-height: .82;
+}
+.dout__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 50px clamp(40px, 6vw, 110px); align-items: center; margin-top: 60px; }
+.dout__copy { display: grid; gap: 24px; align-content: start; }
+.dout__lead { margin: 0; font-family: "Instrument Serif", Georgia, serif; font-size: clamp(30px, 3.2vw, 52px); line-height: 1.06; }
+.dout__copy .karting__lead { justify-self: start; max-width: 52ch; color: rgba(21,24,15,.75); }
+.dout__values { list-style: none; margin: 4px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--line); }
+.dout__values li { display: grid; gap: 2px; padding: 16px 12px 16px 0; border-bottom: 1px solid var(--line); }
+.dout__values li:nth-child(even) { padding-left: 16px; border-left: 1px solid var(--line); }
+.dout__values b { font-family: var(--f-display); font-weight: 900; text-transform: uppercase; font-size: clamp(30px, 2.8vw, 46px); line-height: .95; }
+.dout__values li:first-child b { color: var(--red); }
+.dout__values small { font-size: 10px; color: var(--mute); }
+.dout__copy .kteaser__cta { margin-top: 6px; }
+/* three pinned photos, big */
+.dout__media { position: relative; aspect-ratio: 1 / 1.08; }
+.dout__ph {
+  position: absolute; margin: 0; display: grid; gap: 6px; padding: 8px 8px 12px; border-radius: 6px; background: #fff;
+  box-shadow: 0 30px 50px -25px rgba(7,6,10,.55); transition: rotate .7s var(--ease-out), translate .7s var(--ease-out);
+}
+.dout__ph img { width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 3px; }
+.dout__ph figcaption { font-size: 10px; color: rgba(7,6,10,.6); }
+.dout__ph--a { left: 0; top: 6%; width: 44%; rotate: -6deg; }
+.dout__ph--b { left: 27%; top: 0; width: 50%; rotate: 2deg; z-index: 2; }
+.dout__ph--c { right: 0; bottom: 0; width: 40%; rotate: 7deg; z-index: 3; }
+.dout__media:hover .dout__ph--a { rotate: -9deg; translate: -10px 0; }
+.dout__media:hover .dout__ph--c { rotate: 10deg; translate: 10px 6px; }
+.dout__media .kteaser__tag { z-index: 4; left: 2%; bottom: 4%; }
 
 /* ---------- the build (build.html) ---------- */
 .bpage { padding: 110px var(--gutter) 150px; }
@@ -1241,7 +1274,7 @@ section, footer { position: relative; }
 /* sized so the photo always fits the screen while it sticks */
 .bpage__photos { position: sticky; top: calc(var(--header-h) + 24px); width: min(100%, calc((100vh - var(--header-h) - 120px) * .75)); }
 .bpage__photo { margin: 0; display: grid; gap: 8px; }
-.bpage__photo img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 6px; box-shadow: 0 40px 70px -40px rgba(21,24,15,.7); }
+.bpage__photo img { width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 6px; box-shadow: 0 40px 70px -40px rgba(21,24,15,.7); }
 .bpage__photo figcaption { font-size: 10px; color: var(--mute); }
 .bgroup { padding: 34px 0 30px; border-top: 1px solid var(--line); }
 .bgroup:first-child { border-top: 0; padding-top: 0; }
@@ -1293,6 +1326,8 @@ section, footer { position: relative; }
   .bpage__grid, .pstory, .pstory--flip { grid-template-columns: 1fr; }
   .offers.pchange { grid-template-columns: 1fr; }
   .pwall--3 { grid-template-columns: repeat(2, 1fr); }
+  .dout__grid { grid-template-columns: 1fr; }
+  .dout__media { width: 100%; max-width: 520px; justify-self: center; }
   .pchange li + li { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); }
   .bpage__photos { position: static; width: min(100%, 420px); }
   .kteaser__media { width: 100%; max-width: 440px; justify-self: center; }

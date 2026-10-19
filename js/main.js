@@ -282,7 +282,7 @@
     });
 
     // big outlined titles drift sideways
-    [['.evolution__title .outline', '.evolution__intro', 12], ['.ontrack__title .outline', '.ontrack__head', 10], ['.kpage__title .outline', '.kpage__hero', 10], ['.partners__title .outline', '.partners__head', 14]]
+    [['.dout__title .outline', '.dout', 10], ['.evolution__title .outline', '.evolution__intro', 12], ['.ontrack__title .outline', '.ontrack__head', 10], ['.kpage__title .outline', '.kpage__hero', 10], ['.partners__title .outline', '.partners__head', 14]]
       .forEach(([el, trigger, x]) => has(el) && gsap.to(el, { xPercent: x, ease: 'none', scrollTrigger: { trigger, scrub: true } }));
 
     // Road to Racing roadmap: the line fills up to where Kiryl is now
@@ -1501,6 +1501,85 @@
   }
 
   /* ------------------------------------------------------------------------
+     Photo viewer — any photo on the site (walls, polaroids, the build, the league) opens full screen,
+     like the Evolution lightbox, with its caption; arrows step through the photos on that page
+     ------------------------------------------------------------------------ */
+  function photoViewer() {
+    const imgs = $$('.kwall img, .pphoto img, .bpage__photo img, .kleague__img img, .dout__ph img');
+    if (!imgs.length) return;
+    const lb = document.createElement('div');
+    lb.className = 'lightbox pview';
+    lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', 'Photo'); lb.setAttribute('aria-hidden', 'true');
+    lb.innerHTML = `<div class="lightbox__bg"></div>
+      <figure class="lightbox__fig"><img alt="" /><figcaption><span class="mono lightbox__stage"></span><p class="pview__text"></p><span class="mono lightbox__count"></span></figcaption></figure>
+      <button class="lightbox__btn lightbox__prev" type="button" aria-label="Previous photo">←</button>
+      <button class="lightbox__btn lightbox__next" type="button" aria-label="Next photo">→</button>
+      <button class="lightbox__close mono" type="button">Close ✕</button>`;
+    document.body.appendChild(lb);
+    const big = $('img', lb), stage = $('.lightbox__stage', lb), text = $('.pview__text', lb), count = $('.lightbox__count', lb);
+    const pad = (n) => String(n).padStart(2, '0');
+    // caption: the photo's own label (the mono line under a polaroid, or its figcaption) and its one-liner, else the alt text
+    const data = imgs.map((im) => {
+      const box = im.closest('li, figure');
+      const label = box && !box.classList.contains('kleague') ? box.querySelector(':scope > .mono, :scope > figcaption') : null;
+      const line = box ? box.querySelector(':scope > small') : null;
+      return { src: im.currentSrc || im.src, alt: im.alt, stage: label ? label.textContent.trim() : '', text: line ? line.textContent.trim() : im.alt };
+    });
+    let idx = 0, open = false, lastFocus = null;
+    const fill = (i) => {
+      const d = data[i];
+      big.src = d.src; big.alt = d.alt;
+      stage.textContent = d.stage; stage.hidden = !d.stage;
+      text.textContent = d.text;
+      count.textContent = data.length > 1 ? `${pad(i + 1)} / ${pad(data.length)}` : '';
+    };
+    const show = (i, from) => {
+      idx = (i + data.length) % data.length;
+      fill(idx);
+      if (!open) {
+        open = true; lastFocus = document.activeElement;
+        lb.classList.add('is-open'); lb.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('menu-open');
+        if (lenis) lenis.stop();
+        $('.lightbox__close', lb).focus({ preventScroll: true });
+        if (from && hasGSAP && !reduced) { // grow the photo out of where it was on the page
+          gsap.set(big, { clearProps: 'all' });
+          (big.decode ? big.decode() : Promise.resolve()).catch(() => {}).then(() => {
+            const a = from.getBoundingClientRect(), b = big.getBoundingClientRect();
+            gsap.from(big, { x: a.left - b.left, y: a.top - b.top, scaleX: a.width / b.width, scaleY: a.height / b.height, transformOrigin: '0 0', duration: 0.8, ease: 'expo.out' });
+          });
+        }
+      } else if (hasGSAP && !reduced) gsap.fromTo(big, { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.5, ease: 'expo.out' });
+    };
+    const close = () => {
+      if (!open) return;
+      open = false;
+      lb.classList.remove('is-open'); lb.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('menu-open');
+      if (lenis) lenis.start();
+      if (lastFocus) lastFocus.focus({ preventScroll: true });
+    };
+    imgs.forEach((im, i) => {
+      im.classList.add('is-zoomable');
+      im.tabIndex = 0; im.setAttribute('role', 'button');
+      im.addEventListener('click', (e) => { e.preventDefault(); show(i, im); });
+      im.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(i, im); } });
+    });
+    const one = data.length < 2;
+    $$('.lightbox__btn', lb).forEach((b) => (b.hidden = one));
+    $('.lightbox__prev', lb).addEventListener('click', () => show(idx - 1));
+    $('.lightbox__next', lb).addEventListener('click', () => show(idx + 1));
+    $('.lightbox__close', lb).addEventListener('click', close);
+    $('.lightbox__bg', lb).addEventListener('click', close);
+    addEventListener('keydown', (e) => {
+      if (!open) return;
+      if (e.key === 'Escape') close();
+      else if (e.key === 'ArrowRight' && !one) show(idx + 1);
+      else if (e.key === 'ArrowLeft' && !one) show(idx - 1);
+    });
+  }
+
+  /* ------------------------------------------------------------------------
      Boot
      ------------------------------------------------------------------------ */
   backdrop();
@@ -1513,6 +1592,7 @@
   rails();
   videoModal();
   paddockVideo();
+  photoViewer();
   kartingStats(); // before counters(), which picks up its [data-count] cells
   leagueNights();
   counters();
