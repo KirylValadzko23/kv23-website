@@ -2,11 +2,11 @@
    KV23 — Kiryl Valadzko
    ========================================================================== */
 
-/* the site is cream with dark ink type; data panels (timing screens), the licence card and the
+/* the site is cream with dark ink type; data panels (timing screens) and the
    partners + footer block keep a dark "night" palette through .dk, which swaps the tokens back */
 :root {
-  --bg: #d2e0bc;         /* cream page */
-  --contour: #b4bda6;    /* the wavy terrain lines */
+  --bg: #f4f7e6;         /* cream page */
+  --contour: #d5dbc4;    /* the wavy terrain lines */
   --ink: #15180f;        /* type + dark fills */
   --night: #07060a;      /* dark surfaces */
   --ink-3: #1a1218;
@@ -31,7 +31,7 @@
 }
 
 /* dark surfaces: the original night palette */
-.dk, .board, .irchart, .race, .gt3, .lic, .licence__face, .kboard, .kleague, .knights, .social, .otcard,
+.dk, .board, .irchart, .race, .gt3, .lic, .kboard, .kleague, .knights, .social, .otcard,
 .partners, .finish, .lightbox, .vmodal {
   --fg: #f4f1ec;
   --mute: rgba(244, 241, 236, 0.56);
@@ -53,13 +53,15 @@ html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 .lenis.lenis-stopped { overflow: hidden; }
 
-/* the terrain lines behind every page (drawn in main.js), fixed so the page slides over them */
-.bgfx { position: fixed; left: 0; top: 0; width: 100%; height: 100vh; height: 100lvh; z-index: -1; pointer-events: none; }
+/* the terrain lines behind every page (drawn in main.js): one map the length of the page, so it scrolls with
+   everything else and every part of the page has its own stretch of terrain */
+.bgfx { position: absolute; inset: 0; overflow: hidden; z-index: -1; pointer-events: none; }
+.bgfx svg { display: block; width: 100%; }
 .bgfx path { fill: none; stroke: var(--contour); stroke-width: 1; vector-effect: non-scaling-stroke; }
 
 body {
-  margin: 0;
-  background: transparent; /* the cream lives on <html>, so the fixed terrain lines (z-index -1) show through */
+  margin: 0; position: relative; /* the terrain map is sized to the body */
+  background: transparent; /* the cream lives on <html>, so the terrain lines (z-index -1) show through */
   color: var(--fg);
   font-family: var(--f-body);
   font-size: 16px;
@@ -329,23 +331,21 @@ section, footer { position: relative; }
 .licence__face {
   position: absolute; inset: 0; border-radius: 18px; overflow: hidden;
   backface-visibility: hidden; -webkit-backface-visibility: hidden;
-  background: linear-gradient(160deg, #1c1218, #07060a 60%);
-  color: var(--fg);
-  box-shadow: 0 40px 80px -20px rgba(40, 0, 10, .55), 0 0 0 1px rgba(255,255,255,.08) inset;
-  padding: 22px; display: flex; flex-direction: column; gap: 16px;
+  /* a clean, light card for the bright page: white stock, ink type, a red stripe */
+  background: linear-gradient(165deg, #ffffff, #f1f4e2 75%);
+  color: var(--ink);
+  box-shadow: 0 40px 70px -34px rgba(21, 24, 15, .45), 0 0 0 1px rgba(21, 24, 15, .08) inset;
+  padding: 26px 22px 22px; display: flex; flex-direction: column; gap: 16px;
 }
-.licence__back { transform: rotateY(180deg); background: linear-gradient(200deg, #6b0014, #1a0006 70%); }
-.licence__holo {
-  position: absolute; inset: 0; pointer-events: none; mix-blend-mode: color-dodge; opacity: .5;
-  background:
-    radial-gradient(circle at var(--mx) var(--my), rgba(255,255,255,.35), transparent 40%),
-    linear-gradient(115deg, transparent 20%, rgba(255, 45, 85, .35) 35%, rgba(76, 201, 255, .3) 50%, rgba(177, 76, 255, .3) 62%, transparent 80%);
-  background-size: 100% 100%, 250% 250%;
-  background-position: center, var(--mx) var(--my);
+.licence__face::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 6px; background: var(--red); }
+.licence__back { transform: rotateY(180deg); background: linear-gradient(195deg, #ffffff, #eef2dd 75%); }
+.licence__holo { /* soft sheen that follows the tilt */
+  position: absolute; inset: 0; pointer-events: none; opacity: .7;
+  background: radial-gradient(circle at var(--mx) var(--my), rgba(255,255,255,.75), transparent 45%);
 }
 .licence__top { display: flex; justify-content: space-between; align-items: center; color: var(--mute); }
 .licence__top span { text-align: right; line-height: 1.5; }
-.licence__mark { width: 58px; }
+.licence__mark { width: 58px; filter: brightness(0); }
 .licence__photo { flex: 1; border-radius: 10px; overflow: hidden; min-height: 0; }
 .licence__photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; transform: scale(1.06); }
 .licence__info { display: flex; justify-content: space-between; align-items: flex-end; }
@@ -353,14 +353,13 @@ section, footer { position: relative; }
 .licence__info small { color: var(--mute); font-size: 9px; }
 .licence__info b { font-family: var(--f-display); font-weight: 800; font-size: 26px; line-height: 1; letter-spacing: .02em; }
 .licence__info div:last-child b { font-size: 46px; color: var(--hot); }
-.licence__chip { position: absolute; right: 22px; top: 50%; width: 38px; height: 30px; border-radius: 5px; background: linear-gradient(135deg, #e6c87a, #8a6a28); opacity: .85; }
-.licence__back-head { color: rgba(255,255,255,.7); margin: 0; }
+.licence__back-head { color: var(--red); margin: 0; }
 .licence__dl { margin: 0; display: grid; gap: 14px; }
-.licence__dl div { border-bottom: 1px solid rgba(255,255,255,.15); padding-bottom: 10px; }
-.licence__dl dt { font-family: var(--f-mono); font-size: 10px; color: rgba(255,255,255,.6); text-transform: uppercase; letter-spacing: .1em; }
+.licence__dl div { border-bottom: 1px solid var(--line); padding-bottom: 10px; }
+.licence__dl dt { font-family: var(--f-mono); font-size: 10px; color: var(--mute); text-transform: uppercase; letter-spacing: .1em; }
 .licence__dl dd { margin: 2px 0 0; font-family: var(--f-display); font-weight: 800; font-size: 26px; text-transform: uppercase; line-height: 1.05; }
-.licence__barcode { margin-top: auto; height: 46px; background: repeating-linear-gradient(90deg, #fff 0 2px, transparent 2px 4px, #fff 4px 5px, transparent 5px 9px, #fff 9px 12px, transparent 12px 14px); opacity: .8; }
-.licence__back-logo { position: absolute; right: 22px; bottom: 86px; width: 90px; opacity: .25; }
+.licence__barcode { margin-top: auto; height: 46px; background: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 4px, var(--ink) 4px 5px, transparent 5px 9px, var(--ink) 9px 12px, transparent 12px 14px); opacity: .8; }
+.licence__back-logo { position: absolute; right: 22px; bottom: 86px; width: 90px; opacity: .07; filter: brightness(0); }
 .licence-hint { color: rgba(7,6,10,.5); }
 
 .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 56px; border-top: 1px solid rgba(7,6,10,.15); }
@@ -397,18 +396,6 @@ section, footer { position: relative; }
 }
 .evo-pin { position: relative; }
 .evo.is-pinned { overflow: hidden; position: sticky; top: 0; will-change: transform; }
-/* the gallery carries its own terrain, which travels with the camera; its top and bottom edges fade into the
-   page's fixed lines, so there's no seam while the gallery turns the corner */
-.evo__terrain {
-  position: absolute; inset: 0; overflow: hidden; pointer-events: none; background: var(--bg);
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent);
-          mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 84%, transparent);
-}
-.evo__contours {
-  position: absolute; top: 0; left: 0; height: 100%; width: 200vw;
-  pointer-events: none; will-change: transform;
-}
-.evo__contours path { fill: none; stroke: var(--contour); stroke-width: 1; vector-effect: non-scaling-stroke; }
 /* --lead (set in main.js) is the extra run-in and run-out the wide bends need, so the photos still land where they were designed */
 .evo__track { position: relative; height: 100%; will-change: transform; width: calc(var(--tw) + var(--lead, 0px) * 2); }
 
@@ -489,20 +476,6 @@ section, footer { position: relative; }
 }
 .blink { font-style: normal; animation: live 1s steps(1) infinite; }
 
-.evo__ruler {
-  position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%); z-index: 3;
-  display: flex; align-items: center; gap: clamp(10px, 3vw, 46px);
-  padding: 10px 18px; border-radius: 99px;
-  background: color-mix(in srgb, currentColor 6%, transparent); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-}
-.evo__rail { position: absolute; left: 18px; right: 18px; bottom: 6px; height: 2px; background: color-mix(in srgb, currentColor 15%, transparent); border-radius: 2px; overflow: hidden; }
-.evo__rail i { position: absolute; inset: 0; background: var(--red); transform-origin: left; transform: scaleX(0); }
-.evo__ruler button {
-  position: relative; font-family: var(--f-mono); font-size: 12px; letter-spacing: .06em; opacity: .45;
-  padding: 4px 2px 8px; transition: opacity .3s, color .3s;
-}
-.evo__ruler button:hover { opacity: .85; }
-.evo__ruler button.is-active { opacity: 1; color: var(--hot); }
 .evo__hint { position: absolute; right: var(--gutter); bottom: 34px; opacity: .55; display: flex; gap: 8px; transition: opacity .4s; }
 .evo__hint span { display: inline-block; animation: nudge 1.4s var(--ease-io) infinite; }
 @keyframes nudge { 50% { transform: translateX(6px); } }
@@ -1265,8 +1238,6 @@ section, footer { position: relative; }
   .evo__item--6 { --x: 506vw; --y: 9vh;  --w: min(72vw, 45vh); }
   .evo__outro   { --x: 600vw; --y: 30vh; }
   .evo__ghost { font-size: 34vw; right: 0; top: -14%; }
-  .evo__ruler { gap: 12px; padding: 8px 14px; bottom: 22px; }
-  .evo__ruler button { font-size: 10px; }
   .evo__hint { display: none; }
   .lightbox { padding: 70px 16px 90px; }
   .lightbox__fig { grid-template-columns: 1fr; gap: 18px; }

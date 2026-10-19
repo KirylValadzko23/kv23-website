@@ -102,25 +102,34 @@
   $$('[data-split]').forEach((el) => splits.set(el, splitChars(el)));
 
   /* ------------------------------------------------------------------------
-     Terrain lines behind every page: one fixed layer, drawn once per screen width
+     Terrain lines behind every page: one map as long as the page, so it scrolls with the content
+     and each part of the page sits on its own stretch of terrain. Drawn in 1000px bands, each with
+     its own seed, and redrawn only when the width changes or the page grows past what's drawn.
      ------------------------------------------------------------------------ */
   function backdrop() {
-    const ns = 'http://www.w3.org/2000/svg';
-    const svg = document.createElementNS(ns, 'svg');
-    svg.setAttribute('class', 'bgfx');
-    svg.setAttribute('aria-hidden', 'true');
-    svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
-    document.body.prepend(svg);
-    let drawnW = 0;
+    // the map sits in a clipped box the size of the page, so its own (taller) height never adds scroll
+    const box = document.createElement('div');
+    box.className = 'bgfx';
+    box.setAttribute('aria-hidden', 'true');
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    box.appendChild(svg);
+    document.body.prepend(box);
+    const BAND = 1000;
+    let drawnW = 0, drawnH = 0;
     const draw = () => {
-      if (innerWidth === drawnW) return; // phones resize vertically as the address bar slides: keep the lines still
-      drawnW = innerWidth;
-      const w = innerWidth, h = Math.max(innerHeight, screen.height || 0, 640);
+      const w = document.documentElement.clientWidth, need = document.body.offsetHeight;
+      if (w === drawnW && need <= drawnH) return;
+      const h = Math.ceil((need + innerHeight) / BAND) * BAND; // a screen of spare, so small growth needs no redraw
+      let d = '';
+      for (let b = 0; b * BAND < h; b++) d += contourPaths(w, BAND, 7 + b * 131, b * BAND);
       svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-      svg.innerHTML = `<path d="${contourPaths(w, h, 7)}"/>`;
+      svg.style.height = h + 'px';
+      svg.innerHTML = `<path d="${d}"/>`;
+      drawnW = w; drawnH = h;
     };
     draw();
-    addEventListener('resize', draw);
+    if (window.ResizeObserver) new ResizeObserver(draw).observe(document.body);
+    else addEventListener('resize', draw);
   }
 
   /* ------------------------------------------------------------------------
@@ -1242,19 +1251,19 @@
   }
 
   /* ------------------------------------------------------------------------
-     Evolution — vertical scroll drives a sideways photo collage
+     Terrain lines: contour "hills" and long flowing lines (drawn by backdrop())
      ------------------------------------------------------------------------ */
-  function contourPaths(w, h, seed = 23) {
+  function contourPaths(w, h, seed = 23, oy = 0) { // oy: shifts this stretch of terrain down the page
     // deterministic pseudo-random so the "terrain" is the same on every visit
     const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
     const smooth = (pts, closed) => {
       const mid = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
       const n = pts.length;
       let m = closed ? mid(pts[n - 1], pts[0]) : pts[0];
-      let d = `M${m[0].toFixed(1)},${m[1].toFixed(1)}`;
+      let d = `M${m[0].toFixed(0)},${m[1].toFixed(0)}`; // whole pixels: plenty for a background, half the markup
       for (let i = 0; i < (closed ? n : n - 1); i++) {
         const p = pts[i], q = mid(p, pts[(i + 1) % n]);
-        d += `Q${p[0].toFixed(1)},${p[1].toFixed(1)} ${q[0].toFixed(1)},${q[1].toFixed(1)}`;
+        d += `Q${p[0].toFixed(0)},${p[1].toFixed(0)} ${q[0].toFixed(0)},${q[1].toFixed(0)}`;
       }
       return d + (closed ? 'Z' : '');
     };
@@ -1268,7 +1277,7 @@
         for (let k = 0; k < 48; k++) {
           const t = (k / 48) * Math.PI * 2;
           const rr = r * (1 + 0.2 * Math.sin(2 * t + p1) + 0.1 * Math.sin(3 * t + p2) + 0.06 * Math.sin(5 * t + p3) * (i / rings));
-          pts.push([cx + Math.cos(t) * rr * 1.35, cy + Math.sin(t) * rr]);
+          pts.push([cx + Math.cos(t) * rr * 1.35, oy + cy + Math.sin(t) * rr]);
         }
         d += smooth(pts, true);
       }
@@ -1276,22 +1285,25 @@
     // long flowing lines between the hills
     for (let j = 0; j < 6; j++) {
       const y0 = h * (j + 0.5) / 6, a = 40 + rnd() * 50, f = 260 + rnd() * 200, ph = rnd() * 6.28, pts = [];
-      for (let x = -50; x <= w + 50; x += 60) pts.push([x, y0 + a * Math.sin(x / f + ph) + a * 0.4 * Math.sin(x / (f * 0.37) + ph * 2)]);
+      for (let x = -50; x <= w + 50; x += 60) pts.push([x, oy + y0 + a * Math.sin(x / f + ph) + a * 0.4 * Math.sin(x / (f * 0.37) + ph * 2)]);
       d += smooth(pts, false);
     }
     return d;
   }
 
+  /* ------------------------------------------------------------------------
+     Evolution — vertical scroll drives a sideways photo collage
+     ------------------------------------------------------------------------ */
   function evolution() {
-    const evo = $('#evo'), track = $('#evoTrack'), svg = $('#evoContours');
+    const evo = $('#evo'), track = $('#evoTrack');
     if (!evo) return;
     const floaters = $$('[data-speed]', track);
     const items = $$('.evo__item', track);
-    const rulerBtns = $$('#evoRuler button'), fill = $('#evoFill'), hint = $('.evo__hint', evo), sign = $('.evo__sign', evo);
+    const hint = $('.evo__hint', evo), sign = $('.evo__sign', evo);
     // the gallery always rides the vertical scroll (phones included): it only moves when you scroll, so it stays on
     // even with "reduce motion" switched on; only the decorative camera sway is dropped then
     const pinned = true;
-    let centers = [], lay = [], dist = 0, active = -1, pin = null, bend = 0, lastS = NaN;
+    let centers = [], lay = [], dist = 0, pin = null, bend = 0, lastS = NaN;
 
     // the corners are wide, sweeping curves (up to 1.5 screens of scroll to turn), not a tight flick.
     // The track is sized around them: extra run-in (--lead) so the first photos still reach centre stage once the
@@ -1317,11 +1329,6 @@
       }
       // lay each photo along the camera's diagonal, so it sits at its designed height the moment it's centred
       lay = floaters.map((el, i) => (pin ? DIVE * glide(clamp(centers[i] - innerWidth / 2, 0, dist)) : 0));
-      const w = Math.ceil(innerWidth + dist * 0.35 + 80), h = Math.ceil(evo.clientHeight + (pin ? DIVE * glide(dist) * 0.35 + 80 : 0));
-      svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-      svg.style.width = w + 'px';
-      svg.style.height = h + 'px';
-      svg.innerHTML = `<path d="${contourPaths(w, h)}"/>`;
     };
 
     // s = how far the page has scrolled past the top of the pin zone.
@@ -1336,15 +1343,10 @@
       return dist - s;
     };
     const trackX = (s) => clamp(-(s + screenTop(s)), -dist, 0);
-    const sFor = (x) => { // inverse of trackX (it only ever decreases)
-      let lo = -bend, hi = dist + bend;
-      for (let k = 0; k < 40; k++) { const mid = (lo + hi) / 2; if (trackX(mid) > x) lo = mid; else hi = mid; }
-      return hi;
-    };
 
     // the camera: on the straight it travels down-right at 330° (the scene slides up-left), easing into
     // and out of that slope, and drifts up and down in a slow, gentle wave on top of it.
-    // The whole scene moves as one; the year ruler stays put like a HUD.
+    // The photos move as one, over the page's own terrain lines, which keep scrolling up behind them.
     const DIVE = Math.tan(Math.PI / 6); // 30° below horizontal: sinks 0.58px per px travelled
     const glide = (u) => { // the slope's run after u px of sideways travel (eases from flat to 1:1 and back)
       const r = bend || 1, ease = (t) => r * (t ** 3 - t ** 4 / 2); // integral of a smoothstep ramp
@@ -1374,38 +1376,20 @@
       evo.style.transform = `translate3d(0,${(screenTop(s) - stuck).toFixed(2)}px,0)`;
       const x = trackX(s), y = -DIVE * glide(-x) + camera(s);
       track.style.transform = `translate3d(${x.toFixed(2)}px,${y.toFixed(2)}px,0)`;
-      update(x, y);
+      update(x);
     };
 
     // x = how far the track has moved (≤ 0), y = camera height
-    const update = (x, y = 0) => {
+    const update = (x) => {
       const mid = innerWidth / 2;
-      let best = 0, bestD = Infinity;
       floaters.forEach((el, i) => {
         const dx = centers[i] + x - mid;
         const speed = parseFloat(el.dataset.speed) || 1;
         el.style.transform = `translate3d(${(dx * (speed - 1)).toFixed(1)}px,${(lay[i] || 0).toFixed(1)}px,0)`; // depth: faster/slower than the track
-        if (el.classList.contains('evo__item')) {
-          el.style.setProperty('--focus', clamp(1 - Math.abs(dx) / (innerWidth * 0.5), 0, 1).toFixed(3));
-          const k = items.indexOf(el);
-          if (Math.abs(dx) < bestD) { bestD = Math.abs(dx); best = k; }
-        }
+        if (el.classList.contains('evo__item')) el.style.setProperty('--focus', clamp(1 - Math.abs(dx) / (innerWidth * 0.5), 0, 1).toFixed(3));
       });
-      svg.style.transform = `translate3d(${(x * 0.35).toFixed(1)}px,${(y * 0.35).toFixed(1)}px,0)`; // far layer: moves less
-      if (best !== active) { rulerBtns.forEach((b, i) => b.classList.toggle('is-active', i === best)); active = best; }
-      const p = dist ? -x / dist : 0;
-      fill.style.transform = `scaleX(${p.toFixed(4)})`;
-      hint.style.opacity = p > 0.03 ? 0 : '';
+      hint.style.opacity = dist && -x / dist > 0.03 ? 0 : '';
     };
-
-    // jump to a year: centre that photo
-    const xFor = (i) => clamp(-(centers[floaters.indexOf(items[i])] - innerWidth / 2), -dist, 0);
-    rulerBtns.forEach((b, i) => b.addEventListener('click', () => {
-      if (pin) {
-        const pinTop = pin.getBoundingClientRect().top + scrollY;
-        scrollToTarget(pinTop + clamp(sFor(xFor(i)), 0, dist), { duration: 1.8 });
-      } else evo.scrollTo({ left: -xFor(i), behavior: reduced ? 'auto' : 'smooth' });
-    }));
 
     new IntersectionObserver(([e], io) => { if (e.isIntersecting) { sign.classList.add('is-signed'); io.disconnect(); } }, { threshold: 0.6 }).observe(sign);
 
