@@ -352,6 +352,7 @@
     });
 
     // karting: photos get pinned to the wall one by one, the league photo drifts, the best lap flickers on like a timing screen
+    if (has('#pwall')) gsap.from('#pwall li', { y: 110, opacity: 0, scale: 0.9, duration: 1.1, ease: 'expo.out', stagger: 0.1, clearProps: 'transform,opacity', scrollTrigger: once('#pwall', 'top 88%') });
     if (has('#kwall')) gsap.from('#kwall li', { y: 110, opacity: 0, scale: 0.9, duration: 1.1, ease: 'expo.out', stagger: 0.08, clearProps: 'transform,opacity', scrollTrigger: once('#kwall', 'top 88%') });
     if (has('.kleague')) gsap.fromTo('.kleague__img img', { '--ky': '-5%' }, { '--ky': '5%', ease: 'none', scrollTrigger: { trigger: '.kleague', start: 'top bottom', end: 'bottom top', scrub: true } });
     if (has('.ksplit')) gsap.from('.ksplit__seg', { scaleX: 0, duration: 0.9, ease: 'expo.out', stagger: 0.12, scrollTrigger: once('.ksplit', 'top 90%') });
@@ -830,6 +831,24 @@
     closeBtn.addEventListener('click', close);
     $('.vmodal__bg', m).addEventListener('click', close);
     addEventListener('keydown', (e) => { if (open && e.key === 'Escape') close(); });
+  }
+
+  /* ------------------------------------------------------------------------
+     Why I race — the Montreal clip: muted loop that only plays while it's on screen, with a sound toggle
+     ------------------------------------------------------------------------ */
+  function paddockVideo() {
+    const v = $('#padVideo'), btn = $('#padSound');
+    if (!v) return;
+    new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && !reduced) v.play().catch(() => {});
+      else v.pause();
+    }, { threshold: 0.25 }).observe(v);
+    btn.addEventListener('click', () => {
+      v.muted = !v.muted;
+      if (!v.muted) v.play().catch(() => {});
+      btn.setAttribute('aria-pressed', String(!v.muted));
+      btn.textContent = v.muted ? 'Sound off' : 'Sound on';
+    });
   }
 
   /* ------------------------------------------------------------------------
@@ -1491,6 +1510,7 @@
   gt3Progression();
   rails();
   videoModal();
+  paddockVideo();
   kartingStats(); // before counters(), which picks up its [data-count] cells
   leagueNights();
   counters();

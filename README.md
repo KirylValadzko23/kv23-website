@@ -2,11 +2,12 @@
 
 Personal site of sim racer **Kiryl Valadzko (#23)**: the evolution of the KV23 rig, iRacing stats, rental karting and the TAG E-Karting League, and the *Road to Racing* YouTube series.
 
-Four pages, sharing `css/style.css` and `js/main.js` (which skips whatever a page doesn't have):
+Five pages, sharing `css/style.css` and `js/main.js` (which skips whatever a page doesn't have):
 
 - `index.html`: the main site
 - `sim.html`: the sim racing file (iRacing stats, iRating, licences, GT3 progression)
 - `build.html`: the current rig, part by part
+- `paddock.html`: why I race, and the 2026 Canadian Grand Prix (linked from The Driver)
 - `karting.html`: rental karting and the 2024 TAG E-Karting League in detail
 
 Plain HTML, CSS and JavaScript with no build step. Animation by [GSAP](https://gsap.com/) + ScrollTrigger and smooth scrolling by [Lenis](https://lenis.darkroom.engineering/), both loaded from CDNs. The cream background's terrain lines are drawn in `main.js`.
