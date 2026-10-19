@@ -1180,7 +1180,10 @@ section, footer { position: relative; }
 /* ---------- why I race (paddock.html) ---------- */
 .ppage { padding: 110px var(--gutter) 150px; }
 .ppage .kpage__sec + .pstory, .ppage .kpage__sec + .pstory__lead { margin-top: 10px; }
-.ppage #montreal { margin-top: 140px; }
+.ppage .kpage__sec { margin-top: 140px; }
+.ppage .kpage__sec:first-child { margin-top: 0; }
+.pstory--flip { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); }
+.pstory__why { margin-top: 40px; max-width: 46ch; font-family: "Instrument Serif", Georgia, serif; font-size: clamp(26px, 2.6vw, 40px); line-height: 1.12; color: var(--ink); }
 .pstory { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 30px clamp(40px, 6vw, 100px); align-items: end; }
 .pquote { margin: 0; }
 .pquote p {
@@ -1194,7 +1197,6 @@ section, footer { position: relative; }
 .pstory__link { justify-self: start; color: var(--red); border-bottom: 1px solid currentColor; padding-bottom: 2px; }
 .pstory--text { align-items: start; }
 .pstory--text .pstory__lead { max-width: none; }
-.ppage #changed { margin-top: 140px; }
 .offers.pchange { margin-top: 10px; grid-template-columns: repeat(3, 1fr); }
 .pwall { margin-top: 50px; }
 .pwall small { font-size: 13px; line-height: 1.4; color: rgba(21,24,15,.72); }
@@ -1267,7 +1269,7 @@ section, footer { position: relative; }
   .knights__body { grid-template-columns: 1fr; }
   .kteaser, .otteaser__body { grid-template-columns: 1fr; }
   .otcard { max-width: 520px; }
-  .bpage__grid, .pstory { grid-template-columns: 1fr; }
+  .bpage__grid, .pstory, .pstory--flip { grid-template-columns: 1fr; }
   .offers.pchange { grid-template-columns: 1fr; }
   .pchange li + li { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); }
   .bpage__photos { position: static; width: min(100%, 420px); }
