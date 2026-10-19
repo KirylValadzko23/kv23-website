@@ -615,6 +615,8 @@ window.KV_I18N = {
     "build.html|THE": "LE",
   },
   js: {
+    "Play video": "Lire la vidéo",
+    "Pause video": "Mettre la vidéo en pause",
     "Wins": "Victoires",
     "RaceFacer pts": "Pts RaceFacer",
     "Km driven": "Km parcourus",

@@ -975,11 +975,50 @@
   /* ------------------------------------------------------------------------
      Why I race — the Montreal clip: muted loops that only play while on screen; the full page adds a sound toggle
      ------------------------------------------------------------------------ */
+  // muted inline clips play while they're on screen. A phone can refuse (Low Power Mode, data saver), and
+  // reduced motion means no autoplay, so each clip has its own play/pause button, shown big in the middle
+  // whenever a clip should be playing but isn't
+  const clips = new WeakMap();
+  function clip(v) {
+    if (clips.has(v)) return clips.get(v);
+    v.defaultMuted = true; v.muted = true; // iOS checks the property, not just the attribute
+    v.playsInline = true;
+    const box = v.parentElement, btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'vbtn';
+    box.appendChild(btn);
+    let want = false, user = null; // user: 'play' or 'pause' once they've pressed the button
+    const paint = () => {
+      const on = !v.paused;
+      btn.textContent = on ? '❚❚' : '▶';
+      btn.setAttribute('aria-label', L(on ? 'Pause video' : 'Play video'));
+      box.classList.toggle('is-blocked', want && !on && user !== 'pause');
+    };
+    const go = () => {
+      if (reduced && user !== 'play') { paint(); return; }
+      const p = v.play();
+      if (p) p.catch(() => paint());
+    };
+    v.addEventListener('play', paint); v.addEventListener('pause', paint);
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation(); e.preventDefault();
+      if (v.paused) { user = 'play'; go(); } else { user = 'pause'; v.pause(); }
+      paint();
+    });
+    const api = {
+      show(on) {
+        if (on === want) return;
+        want = on;
+        if (on) { if (user !== 'pause' && v.paused) go(); } else if (!v.paused) v.pause();
+        paint();
+      },
+    };
+    paint();
+    clips.set(v, api);
+    return api;
+  }
+
   function paddockVideo() {
-    const io = new IntersectionObserver((entries) => entries.forEach((e) => {
-      if (e.isIntersecting && !reduced) e.target.play().catch(() => {});
-      else e.target.pause();
-    }), { threshold: 0.25 });
+    const io = new IntersectionObserver((entries) => entries.forEach((e) => clip(e.target).show(e.isIntersecting)), { threshold: 0.25 });
     $$('video[data-inview]').forEach((v) => io.observe(v));
     const v = $('#padVideo'), btn = $('#padSound');
     if (!v || !btn) return;
@@ -1580,6 +1619,7 @@
     if (!z) return;
     const sec = z.parentElement, intro = $('.zoom__intro', z), phs = $$('.zoom__ph', z), caps = $$('.zoom__caps li', z);
     const vids = phs.map((p) => $('video', p));
+    vids.forEach((v) => v && clip(v)); // their buttons exist from the start
     const smooth = (t) => (t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t));
     let W = 0, H = 0, STEP = 1, LIFE = 1, LEAD = 0, len = 1, top = 0, cyc = 1, lastS = NaN, cap = -1;
 
@@ -1599,7 +1639,7 @@
       const s = -sec.getBoundingClientRect().top;
       if (s === lastS) return;
       if (s < -H * 1.2 || s > len + H * 1.2) { // off screen: just make sure nothing keeps playing
-        if (lastS === lastS) { vids.forEach((v) => v && v.pause()); lastS = NaN; }
+        if (lastS === lastS) { vids.forEach((v) => v && clip(v).show(false)); lastS = NaN; }
         return;
       }
       lastS = s;
@@ -1617,8 +1657,8 @@
         el.style.opacity = op.toFixed(3);
         el.style.visibility = op < 0.01 ? 'hidden' : 'visible';
         const v = vids[i];
-        if (op < 0.01) { if (v && !v.paused) v.pause(); return; }
-        if (v && v.paused && !reduced) v.play().catch(() => {});
+        if (v) clip(v).show(op >= 0.01);
+        if (op < 0.01) return;
         // each photo keeps to its own side: it slides in from that edge as it fades in, settles, then
         // grows and leaves by the same edge, so the middle of the screen stays clear
         const w = el.offsetWidth, side = +el.dataset.x || 1, dy = parseFloat(el.dataset.y) || 0;

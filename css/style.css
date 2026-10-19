@@ -1252,6 +1252,15 @@ a.rcard:hover .rcard__go { transform: translateX(5px); }
   background: rgba(21,24,15,.7); color: #fff; font-size: 9px; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
 }
 .pwall__sound[aria-pressed="true"] { background: var(--red); }
+/* every inline clip: a small play/pause button, big in the middle when the phone wouldn't autoplay it */
+.vbtn {
+  position: absolute; right: 10px; top: 10px; z-index: 2; width: 34px; height: 34px; padding: 0; border: 0; border-radius: 50%;
+  display: grid; place-items: center; background: rgba(21,24,15,.62); color: #fff; font-size: 11px; line-height: 1; cursor: pointer;
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); transition: background .3s, transform .3s;
+}
+.vbtn:hover { background: var(--red); }
+.is-blocked > .vbtn { right: 50%; top: 50%; width: 64px; height: 64px; font-size: 20px; background: var(--red); transform: translate(50%, -50%); }
+.zoom__media { position: relative; }
 .pnext { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px 40px; margin-top: 120px; padding-top: 40px; border-top: 1px solid var(--line); }
 .pnext p { margin: 0; font-family: var(--f-display); font-weight: 900; text-transform: uppercase; font-size: clamp(34px, 4vw, 64px); line-height: .95; }
 .pnext__links { display: flex; flex-wrap: wrap; gap: 12px; }
