@@ -179,6 +179,13 @@ body.menu-open .header__logo img { filter: brightness(0); }
   body.menu-open .header { background: transparent; border-bottom-color: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
 .header__logo img { width: 54px; height: auto; }
+/* FR / EN: shows the language you'd switch to */
+.header__lang {
+  margin-left: auto; margin-right: -6px; padding: 7px 11px; border-radius: 99px; border: 1px solid currentColor;
+  font-size: 11px; letter-spacing: .1em; line-height: 1; opacity: .8; transition: opacity .3s;
+}
+.header__lang:hover, .header__lang:focus-visible { opacity: 1; }
+.header__nav { margin-left: auto; } /* the nav stays centred between the logo and FR / EN + Chapters */
 .header__nav { display: flex; gap: clamp(18px, 3vw, 44px); font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: .06em; }
 .header__menu { display: inline-flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: .06em; }
 .burger { display: grid; gap: 5px; width: 26px; }

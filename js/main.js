@@ -11,6 +11,66 @@
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
   const lerp = (a, b, t) => a + (b - a) * t;
 
+  /* ------------------------------------------------------------------------
+     Language (EN / FR). English is written in the pages; js/i18n.js holds the French.
+     The page is translated first thing, before any text gets split up for animation.
+     Choice: the FR / EN button (remembered), else the browser's language.
+     ------------------------------------------------------------------------ */
+  const I18N = window.KV_I18N || {};
+  const LANG = (() => {
+    let l = null;
+    try { l = localStorage.getItem('kv23-lang'); } catch (e) {}
+    if (l !== 'fr' && l !== 'en') l = /^fr\b/i.test(navigator.language || '') ? 'fr' : 'en';
+    return I18N.fr ? l : 'en';
+  })();
+  const FR = LANG === 'fr';
+  // strings built in this script: L('Week {n}', { n: 2 })
+  const L = (s, vars) => {
+    let out = (FR && I18N.js && I18N.js[s]) || s;
+    if (vars) out = out.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? vars[k] : m));
+    return out;
+  };
+  const LOCALE = FR ? 'fr-CA' : 'en-US';
+  const num = (n, dp = 0) => Number(n).toLocaleString(LOCALE, { minimumFractionDigits: dp, maximumFractionDigits: dp });
+  const MONTHS_FR = { Jan: 'janv.', Feb: 'févr.', Mar: 'mars', Apr: 'avr.', May: 'mai', Jun: 'juin', Jul: 'juil.', Aug: 'août', Sep: 'sept.', Oct: 'oct.', Nov: 'nov.', Dec: 'déc.' };
+  const day = (s) => (FR ? s.replace(/^([A-Z][a-z]{2}) (\d+)$/, (m, mo, d) => `${d} ${MONTHS_FR[mo] || mo}`) : s); // 'Oct 12' → '12 oct.'
+  const hhmm = (s) => (FR ? s.replace(/^(\d+):(\d+) (AM|PM)$/, (m, h, mi, ap) => `${(+h % 12) + (ap === 'PM' ? 12 : 0)} h ${mi}`) : s); // '8:45 PM' → '20 h 45'
+
+  function translatePage() {
+    const html = document.documentElement;
+    html.lang = LANG;
+    const btn = document.getElementById('langBtn');
+    if (btn) {
+      btn.textContent = FR ? 'EN' : 'FR';
+      btn.setAttribute('aria-label', FR ? 'Switch to English' : 'Passer en français');
+      btn.addEventListener('click', () => {
+        try { localStorage.setItem('kv23-lang', FR ? 'en' : 'fr'); sessionStorage.setItem('kv23-y', String(scrollY)); } catch (e) {}
+        location.reload();
+      });
+    }
+    if (!FR) return;
+    const dict = I18N.fr, page = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+    const tr = (k) => (dict[page + '|' + k] != null ? dict[page + '|' + k] : dict[k]);
+    const norm = (s) => s.replace(/\s+/g, ' ').trim();
+    const tt = tr(norm(document.title)); if (tt != null) document.title = tt;
+    document.querySelectorAll('meta[name=description], meta[property="og:title"], meta[property="og:description"]').forEach((m) => { const v = tr(norm(m.content)); if (v != null) m.content = v; });
+    // the same rule that listed the strings: an element with its own text is translated whole, children included
+    const hasText = (el) => [...el.childNodes].some((n) => n.nodeType === 3 && /[A-Za-zÀ-ÿ]/.test(n.textContent));
+    const visit = (root) => {
+      for (const el of root.children) {
+        if (/^(SCRIPT|STYLE|SVG|NOSCRIPT)$/i.test(el.tagName)) continue;
+        if (hasText(el)) { const v = tr(norm(el.innerHTML)); if (v != null) el.innerHTML = v; }
+        else visit(el);
+      }
+    };
+    visit(document.body);
+    document.querySelectorAll('[alt], [aria-label], [title]').forEach((el) => ['alt', 'aria-label', 'title'].forEach((a) => {
+      const v0 = el.getAttribute(a); if (!v0) return;
+      const v = tr(norm(v0)); if (v != null) el.setAttribute(a, v);
+    }));
+  }
+  translatePage();
+
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const hasGSAP = typeof window.gsap !== 'undefined';
   if (hasGSAP && window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
@@ -490,9 +550,9 @@
     const fields = $$('[data-k]', board);
     const fmt = (el, v) => {
       const f = el.dataset.fmt;
-      if (f === 'pct') return v.toFixed(2) + '%';
-      if (f === '3dp') return v.toFixed(3);
-      return Math.round(v).toLocaleString('en-US');
+      if (f === 'pct') return num(v, 2) + (FR ? ' %' : '%');
+      if (f === '3dp') return num(v, 3);
+      return num(Math.round(v));
     };
     const show = (set, fromZero) => {
       const data = STATS[set];
@@ -537,15 +597,15 @@
     ['2026-09-21', 1565], ['2026-09-30', 1750], ['2026-10-04', 2030], ['2026-10-10', 1975], ['2026-10-15', 2037],
   ].map(([d, v]) => ({ t: new Date(d + 'T12:00:00').getTime(), v, d }));
   const IR_MARKS = [
-    { d: '2025-12-20', label: 'Low · 905', dy: 26 },
-    { d: '2026-08-08', label: 'Summer season +421', dy: -22 },
-    { d: '2026-10-15', label: 'Class B · 2037', dy: -22, anchor: 'end' },
+    { d: '2025-12-20', label: L('Low · 905'), dy: 26 },
+    { d: '2026-08-08', label: L('Summer season +421'), dy: -22 },
+    { d: '2026-10-15', label: L('Class B · 2037'), dy: -22, anchor: 'end' },
   ];
 
   function iRatingChart() {
     const plot = $('#irPlot'), svg = $('#irSvg'), tip = $('#irTip');
     if (!plot) return;
-    const dateFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const dateFmt = new Intl.DateTimeFormat(LOCALE, { month: 'short', day: 'numeric', year: 'numeric' });
     const pts = IRATING;
     let geo = null, drawn = false;
 
@@ -563,7 +623,9 @@
       for (let v = 1000; v <= 2200; v += 200) grid += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(v)}" y2="${y(v)}"/>`;
       let axis = '';
       for (let v = 1000; v <= 2200; v += 400) axis += `<text x="${m.l - 10}" y="${y(v) + 3}" text-anchor="end">${v}</text>`;
-      const months = [['2025-11-01', 'Nov'], ['2026-01-01', 'Jan 26'], ['2026-03-01', 'Mar'], ['2026-05-01', 'May'], ['2026-07-01', 'Jul'], ['2026-09-01', 'Sep']];
+      const months = FR
+        ? [['2025-11-01', 'nov.'], ['2026-01-01', 'janv. 26'], ['2026-03-01', 'mars'], ['2026-05-01', 'mai'], ['2026-07-01', 'juil.'], ['2026-09-01', 'sept.']]
+        : [['2025-11-01', 'Nov'], ['2026-01-01', 'Jan 26'], ['2026-03-01', 'Mar'], ['2026-05-01', 'May'], ['2026-07-01', 'Jul'], ['2026-09-01', 'Sep']];
       const narrow = W < 520;
       months.forEach(([d, lbl], i) => {
         if (narrow && i % 2) return;
@@ -693,19 +755,19 @@
     const make = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
 
     // summary + table
-    const avg = (k) => (R.reduce((a, r) => a + r[k], 0) / R.length).toFixed(1);
+    const avg = (k) => num(R.reduce((a, r) => a + r[k], 0) / R.length, 1);
     $('#gt3Sum').innerHTML = `
-      <li><b>P${Math.min(...R.map((r) => r.fin))}</b><small class="mono">Best finish</small></li>
-      <li><b>${R.length}</b><small class="mono">GT3 races</small></li>
-      <li><b>${R.filter((r) => r.fin <= 3).length}</b><small class="mono">Podiums</small></li>
-      <li><b>${avg('start')}<i>→</i>${avg('fin')}</b><small class="mono">Avg start → finish</small></li>`;
+      <li><b>P${Math.min(...R.map((r) => r.fin))}</b><small class="mono">${L('Best finish')}</small></li>
+      <li><b>${R.length}</b><small class="mono">${L('GT3 races')}</small></li>
+      <li><b>${R.filter((r) => r.fin <= 3).length}</b><small class="mono">${L('Podiums')}</small></li>
+      <li><b>${avg('start')}<i>→</i>${avg('fin')}</b><small class="mono">${L('Avg start → finish')}</small></li>`;
     R.slice().reverse().forEach((r) => { // latest first in the table
       const tr = make('tr', r.fin === 1 ? 'is-win' : r.fin <= 3 ? 'is-pod' : '');
       tr.append(make('td', null, String(r.n).padStart(2, '0')));
-      const when = make('th', null, `${r.date} · ${r.time}`); when.scope = 'row'; tr.append(when);
+      const when = make('th', null, `${day(r.date)} · ${hhmm(r.time)}`); when.scope = 'row'; tr.append(when);
       tr.append(make('td', null, `P${r.start}`));
       const fin = make('td', 'g3-pos'); fin.append(make('i', null, r.fin < r.start ? `▲${r.start - r.fin}` : r.fin > r.start ? `▼${r.fin - r.start}` : '='), document.createTextNode(`P${r.fin}`));
-      tr.append(fin, make('td', null, `${r.inc}x`), make('td', null, r.pts), make('td', null, r.sof.toLocaleString('en-US')));
+      tr.append(fin, make('td', null, `${r.inc}x`), make('td', null, r.pts), make('td', null, num(r.sof)));
       body.append(tr);
     });
 
@@ -724,8 +786,8 @@
       // race number under every point, the day under the first race of each day
       R.forEach((r, i) => {
         axis += `<text x="${x(i)}" y="${H - 24}" text-anchor="middle">${String(r.n).padStart(2, '0')}</text>`;
-        const day = i && W < 620 ? r.date.replace('Oct ', '') : r.date; // narrow: "Oct 12", then just "13", "14"…
-        if (!i || R[i - 1].date !== r.date) axis += `<text class="g3-day" x="${x(i)}" y="${H - 6}" text-anchor="${i ? 'middle' : 'start'}">${day}</text>`;
+        const dd = i && W < 620 ? r.date.replace('Oct ', '') : day(r.date); // narrow: "Oct 12", then just "13", "14"…
+        if (!i || R[i - 1].date !== r.date) axis += `<text class="g3-day" x="${x(i)}" y="${H - 6}" text-anchor="${i ? 'middle' : 'start'}">${dd}</text>`;
       });
       const line = R.map((r, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(r.fin).toFixed(1)}`).join('');
       const moves = R.map((r, i) => `<line class="g3-move" x1="${x(i)}" x2="${x(i)}" y1="${y(r.start)}" y2="${y(r.fin)}"/>`).join('');
@@ -733,7 +795,7 @@
       const fins = R.map((r, i) => `<circle class="g3-fin${r.fin <= 3 ? ' is-pod' : ''}" cx="${x(i)}" cy="${y(r.fin)}" r="5"/>`).join('');
       const lbls = R.map((r, i) => `<text class="g3-lbl" x="${x(i)}" y="${y(r.fin) + (r.fin > 15 ? -12 : 18)}" text-anchor="middle">${r.fin}</text>`).join('');
       const wi = R.findIndex((r) => r.fin === 1);
-      const win = wi < 0 ? '' : `<g class="g3-win"><circle cx="${x(wi)}" cy="${y(1)}" r="9" opacity=".25"/><text x="${x(wi)}" y="${y(1) - 14}" text-anchor="middle">First GT3 win</text></g>`;
+      const win = wi < 0 ? '' : `<g class="g3-win"><circle cx="${x(wi)}" cy="${y(1)}" r="9" opacity=".25"/><text x="${x(wi)}" y="${y(1) - 14}" text-anchor="middle">${L('First GT3 win')}</text></g>`;
       svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
       svg.innerHTML = `<g class="g3-grid">${grid}</g><g class="g3-axis">${axis}</g><g class="g3-moves">${moves}</g>
         <path class="g3-line" d="${line}"/>${win}<g class="g3-starts">${starts}</g><g class="g3-fins">${fins}</g><g class="g3-lbls">${lbls}</g>`;
@@ -848,7 +910,7 @@
       v.muted = !v.muted;
       if (!v.muted) v.play().catch(() => {});
       btn.setAttribute('aria-pressed', String(!v.muted));
-      btn.textContent = v.muted ? 'Sound off' : 'Sound on';
+      btn.textContent = v.muted ? L('Sound off') : L('Sound on');
     });
   }
 
@@ -880,9 +942,9 @@
       c.append(b, s);
       box.append(c);
     };
-    [['wins', 'Wins', true], ['podiums', 'Podiums', true], ['sessions', 'Sessions'], ['points', 'RaceFacer pts'], ['km', 'Km driven']]
+    [['wins', L('Wins'), true], ['podiums', L('Podiums'), true], ['sessions', L('Sessions')], ['points', L('RaceFacer pts')], ['km', L('Km driven')]]
       .forEach(([k, label, hot]) => KARTING[k] != null && cell(label, KARTING[k], { count: true, hot }));
-    if (KARTING.time) cell('Seat time', KARTING.time);
+    if (KARTING.time) cell(L('Seat time'), KARTING.time);
 
     const make = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
 
@@ -893,12 +955,12 @@
       const parts = [['p1', 'P1', sp.p1], ['p2', 'P2', sp.p2], ['p3', 'P3', sp.p3], ['rest', 'P4+', sp.rest]];
       const bar = make('div', 'ksplit__bar'), legend = make('div', 'ksplit__legend mono');
       bar.setAttribute('role', 'img');
-      bar.setAttribute('aria-label', parts.map(([, l, n]) => `${l}: ${n}`).join(', ') + ` of ${total} sessions`);
+      bar.setAttribute('aria-label', parts.map(([, l, n]) => `${l}: ${n}`).join(', ') + L(' of {n} sessions', { n: total }));
       parts.forEach(([k, l, n]) => {
         const seg = make('i', `ksplit__seg ksplit__seg--${k}`); seg.style.flexGrow = n; bar.append(seg);
         const key = make('span', `ksplit__key ksplit__key--${k}`); key.append(make('b', null, n), ` ${l}`); legend.append(key);
       });
-      split.append(make('p', 'mono kboard__label', `Finishing positions · ${total} sessions`), bar, legend);
+      split.append(make('p', 'mono kboard__label', L('Finishing positions · {n} sessions', { n: total })), bar, legend);
     }
 
     // season by season: bar height = sessions, red = wins, pale = other podiums
@@ -908,19 +970,19 @@
       const cols = make('div', 'kyears__cols');
       KARTING.years.forEach((d) => {
         const col = make('div', 'kyears__col');
-        col.setAttribute('aria-label', `${d.y}: ${d.s} sessions, ${d.w} wins, ${d.p} podiums`);
+        col.setAttribute('aria-label', L('{y}: {s} sessions, {w} wins, {p} podiums', { y: d.y, s: d.s, w: d.w, p: d.p }));
         const track = make('div', 'kyears__track'), bar = make('div', 'kyears__bar');
         bar.style.height = (d.s / max) * 100 + '%';
         [['rest', d.s - d.p], ['pod', d.p - d.w], ['win', d.w]].forEach(([k, n]) => { if (n > 0) { const s = make('i', `kyears__seg kyears__seg--${k}`); s.style.flexGrow = n; bar.append(s); } });
         bar.append(make('span', 'kyears__n mono', d.s));
-        if (d.note) bar.append(make('em', 'kyears__note mono', d.note));
+        if (d.note) bar.append(make('em', 'kyears__note mono', L(d.note)));
         track.append(bar);
-        col.append(track, make('b', 'kyears__y', d.y), make('small', 'kyears__wp mono', `${d.w}W · ${d.p}P`));
+        col.append(track, make('b', 'kyears__y', d.y), make('small', 'kyears__wp mono', L('{w}W · {p}P', { w: d.w, p: d.p })));
         cols.append(col);
       });
       const key = make('p', 'kyears__key mono');
-      key.append(make('span', 'kyears__k kyears__k--win', 'Wins'), make('span', 'kyears__k kyears__k--pod', 'Podiums'), make('span', 'kyears__k kyears__k--rest', 'Other'));
-      years.append(make('p', 'mono kboard__label', 'Season by season · sessions'), cols, key);
+      key.append(make('span', 'kyears__k kyears__k--win', L('Wins')), make('span', 'kyears__k kyears__k--pod', L('Podiums')), make('span', 'kyears__k kyears__k--rest', L('Other')));
+      years.append(make('p', 'mono kboard__label', L('Season by season · sessions')), cols, key);
     }
   }
 
@@ -1001,9 +1063,10 @@
     const tabsBox = $('#knightsTabs'), body = $('#knightsBody');
     if (!tabsBox || !body) return;
     const { pts, weeks, me } = LEAGUE;
-    const ROUNDS = [['q', 'Qualifying'], ['pf', 'Pre-final'], ['f', 'Final']];
+    const ROUNDS = [['q', L('Qualifying')], ['pf', L('Pre-final')], ['f', L('Final')]];
     const make = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
-    const lap = (v) => v.toFixed(3);
+    const lap = (v) => num(v, 3);
+    const who = (n) => (FR ? n.replace(/^Driver /, 'Pilote ') : n); // anonymised names read 'Pilote 07' in French
 
     // a fastest lap is only certain when the score can't come from a position alone (16, 21, 25, 31…)
     const isFL = (k, v) => k !== 'q' && !pts[k].includes(v) && pts[k].includes(v - 1);
@@ -1028,9 +1091,9 @@
     };
 
     // RaceFacer timing sheet for one session of the night: on-track order, laps, gap, best lap
-    const SESSIONS = [['p', 'Practice'], ['q', 'Qualifying'], ['pf', 'Pre-final'], ['f', 'Race']];
+    const SESSIONS = [['p', L('Practice')], ['q', L('Qualifying')], ['pf', L('Pre-final')], ['f', L('Race')]];
     let session = 'f';
-    const gapText = (g) => (g === 'L' ? 'Leader' : g === '-' ? '—' : /^\+\d+L$/.test(g) ? `+${g.slice(1, -1)} lap${g === '+1L' ? '' : 's'}` : `+${g}`);
+    const gapText = (g) => (g === 'L' ? L('Leader') : g === '-' ? '—' : /^\+\d+L$/.test(g) ? L(g === '+1L' ? '+{n} lap' : '+{n} laps', { n: g.slice(1, -1) }) : `+${FR ? g.replace('.', ',') : g}`);
     const timingTable = (holder, w) => {
       const rows = w.timing[session].split(', ').map((r) => {
         const t = r.split(' '), best = t.pop(), gap = t.pop(), laps = t.pop(); // the name is whatever is left ("Driver 07")
@@ -1040,23 +1103,23 @@
       const race = session === 'pf' || session === 'f';
       const table = make('table', 'kgroup ktiming__table');
       const head = make('tr');
-      ['#', 'Driver', 'Laps', race ? 'Gap' : 'To P1', 'Best lap'].forEach((h) => { const th = make('th', null, h); th.scope = 'col'; head.append(th); });
+      ['#', L('Driver'), L('Laps'), race ? L('Gap') : L('To P1'), L('Best lap')].forEach((h) => { const th = make('th', null, h); th.scope = 'col'; head.append(th); });
       const thead = make('thead'); thead.append(head);
       const tbody = make('tbody');
       rows.forEach((r, i) => {
         const tr = make('tr', r.name === me ? 'is-me' : '');
         tr.append(make('td', 'kgroup__rank', i + 1));
-        const name = make('th', null, r.name); name.scope = 'row'; tr.append(name);
+        const name = make('th', null, who(r.name)); name.scope = 'row'; tr.append(name);
         tr.append(make('td', null, r.laps), make('td', 'ktiming__gap', gapText(r.gap)));
         const best = make('td', 'ktiming__best', r.best ? lap(r.best) : '—');
-        if (r.best === fastest) { best.classList.add('is-fl'); best.title = 'Fastest lap of the session'; }
+        if (r.best === fastest) { best.classList.add('is-fl'); best.title = L('Fastest lap of the session'); }
         tr.append(best);
         tbody.append(tr);
       });
       table.append(thead, tbody);
       const note = make('p', 'mono ktiming__note', race
-        ? 'Order on track at the flag. The official result can differ after the officials’ corrections and penalties: the points table above is the final word.'
-        : 'Ranked by best lap.');
+        ? L('Order on track at the flag. The official result can differ after the officials’ corrections and penalties: the points table above is the final word.')
+        : L('Ranked by best lap.'));
       holder.textContent = '';
       holder.append(table, note);
       if (hasGSAP && !reduced) gsap.fromTo($$('tbody tr', table), { x: -12, opacity: 0 }, { x: 0, opacity: 1, duration: 0.45, ease: 'expo.out', stagger: 0.025 });
@@ -1078,16 +1141,16 @@
         const t = make('div', 'kround');
         t.append(make('small', 'mono', label));
         const big = make('b', 'kround__pos', p.pos ? `P${p.pos}` : '—');
-        if (p.fl) { const fl = make('i', 'fl-dot'); fl.title = 'Fastest lap'; big.append(fl); }
-        t.append(big, make('span', 'kround__pts mono', `${w.me[k]} pts`));
+        if (p.fl) { const fl = make('i', 'fl-dot'); fl.title = L('Fastest lap'); big.append(fl); }
+        t.append(big, make('span', 'kround__pts mono', L('{n} pts', { n: w.me[k] })));
         const [best, avg, worst] = w.laps[k];
-        const l = make('span', 'kround__lap mono' + (best === bestOfNight ? ' is-best' : ''), `best ${lap(best)}`);
+        const l = make('span', 'kround__lap mono' + (best === bestOfNight ? ' is-best' : ''), L('best {t}', { t: lap(best) }));
         t.append(l);
-        if (avg != null) t.append(make('span', 'kround__range mono', `avg ${lap(avg)} · worst ${lap(worst)}`));
+        if (avg != null) t.append(make('span', 'kround__range mono', L('avg {a} · worst {w}', { a: lap(avg), w: lap(worst) })));
         tiles.append(t);
       });
       const sum = make('div', 'knights__sum');
-      [[`${total}`, 'points on the night'], [mine ? `P${mine.rank}` : '—', mine ? `in my group of ${rows.length}` : 'group not recorded'], [`P${w.champ}`, 'championship after']]
+      [[`${total}`, L('points on the night')], [mine ? `P${mine.rank}` : '—', mine ? L('in my group of {n}', { n: rows.length }) : L('group not recorded')], [`P${w.champ}`, L('championship after')]]
         .forEach(([v, l]) => { const d = make('div'); d.append(make('b', null, v), make('small', 'mono', l)); sum.append(d); });
       side.append(tiles, sum);
 
@@ -1095,21 +1158,21 @@
       const right = make('div', 'knights__group');
       if (rows) {
         const table = make('table', 'kgroup');
-        table.append(make('caption', 'mono', `My group · week ${wi + 1} · ranked by points on the night`));
+        table.append(make('caption', 'mono', L('My group · week {n} · ranked by points on the night', { n: wi + 1 })));
         const head = make('tr');
-        ['#', 'Driver', 'Qualif', 'Pre-final', 'Final', 'Pts'].forEach((h) => { const th = make('th', null, h); th.scope = 'col'; head.append(th); });
+        ['#', L('Driver'), L('Qualif'), L('Pre-final'), L('Final'), L('Pts')].forEach((h) => { const th = make('th', null, h); th.scope = 'col'; head.append(th); });
         const thead = make('thead'); thead.append(head);
         const tbody = make('tbody');
         rows.forEach((r) => {
           const tr = make('tr', r.name === me ? 'is-me' : '');
           tr.append(make('td', 'kgroup__rank', r.rank));
-          const name = make('th', null, r.name); name.scope = 'row'; tr.append(name);
+          const name = make('th', null, who(r.name)); name.scope = 'row'; tr.append(name);
           ROUNDS.forEach(([k]) => {
             const td = make('td');
             if (r[k] == null) td.append(make('span', 'kgroup__dns', 'DNS'));
             else {
               td.append(make('b', null, r[k]), make('sup', 'mono', `P${r.pos[k]}`));
-              if (r.fl[k]) { td.classList.add('is-fl'); td.title = 'Fastest lap'; }
+              if (r.fl[k]) { td.classList.add('is-fl'); td.title = L('Fastest lap'); }
             }
             tr.append(td);
           });
@@ -1120,7 +1183,7 @@
         right.append(table);
       } else {
         const empty = make('div', 'knights__empty');
-        empty.append(make('b', null, 'No group sheet for this night'), make('p', null, 'My positions here are read from the official points and the RaceFacer timing.'));
+        empty.append(make('b', null, L('No group sheet for this night')), make('p', null, L('My positions here are read from the official points and the RaceFacer timing.')));
         right.append(empty);
       }
 
@@ -1128,10 +1191,10 @@
       if (w.timing) {
         const box = make('div', 'ktiming');
         const head = make('div', 'ktiming__head');
-        head.append(make('p', 'mono ktiming__label', 'Timing sheets · RaceFacer'));
+        head.append(make('p', 'mono ktiming__label', L('Timing sheets · RaceFacer')));
         const stabs = make('div', 'ktiming__tabs');
         stabs.setAttribute('role', 'tablist');
-        stabs.setAttribute('aria-label', 'Session');
+        stabs.setAttribute('aria-label', L('Session'));
         const holder = make('div', 'ktiming__holder');
         SESSIONS.forEach(([k, label]) => {
           const b = make('button', null, label);
@@ -1157,7 +1220,7 @@
     weeks.forEach((w, i) => {
       const b = make('button');
       b.type = 'button'; b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', String(i === 0));
-      b.append(make('b', null, `Week ${i + 1}`), make('small', 'mono', w.date));
+      b.append(make('b', null, L('Week {n}', { n: i + 1 })), make('small', 'mono', day(w.date)));
       b.addEventListener('click', () => {
         if (b.getAttribute('aria-selected') === 'true') return;
         $$('button', tabsBox).forEach((x) => x.setAttribute('aria-selected', String(x === b)));
@@ -1184,7 +1247,7 @@
   function renderYouTube(data) {
     const isId = (id) => /^[\w-]{11}$/.test(id);
     const safeSrc = (s) => (/^(assets\/|https:\/\/i\.ytimg\.com\/)/.test(s) ? s : '');
-    const views = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 });
+    const views = new Intl.NumberFormat(LOCALE, { notation: 'compact', maximumFractionDigits: 1 });
     const isNew = (list, v) => v === list[0] && Date.now() - new Date(v.published).getTime() < 7 * 864e5; // only the latest, if it's this week's
     const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
     const img = (src, w, h, alt) => { const i = el('img'); i.src = src; i.width = w; i.height = h; i.loading = 'lazy'; i.decoding = 'async'; i.alt = alt; return i; };
@@ -1197,11 +1260,11 @@
         const b = el('button', 'ep');
         b.type = 'button'; b.dataset.yt = v.id; b.setAttribute('data-reveal', '');
         const frame = el('span', 'ep__img');
-        frame.append(img(safeSrc(v.thumb), 960, 540, `Thumbnail: ${v.title}`), el('i', 'ep__play'));
+        frame.append(img(safeSrc(v.thumb), 960, 540, L('Thumbnail: {t}', { t: v.title })), el('i', 'ep__play'));
         frame.lastChild.setAttribute('aria-hidden', 'true');
         if (v.duration) frame.append(el('span', 'mono ep__dur', v.duration));
-        if (isNew(eps, v)) frame.append(el('span', 'mono ep__new', 'New'));
-        const no = `Road to Racing · Episode ${String(v.no).padStart(2, '0')}` + (v.views ? ` · ${views.format(v.views)} views` : '');
+        if (isNew(eps, v)) frame.append(el('span', 'mono ep__new', L('New')));
+        const no = L('Road to Racing · Episode {n}', { n: String(v.no).padStart(2, '0') }) + (v.views ? ' · ' + L('{n} views', { n: views.format(v.views) }) : '');
         b.append(frame, el('span', 'mono ep__no', no), el('b', 'ep__title', v.title));
         box.append(b);
       });
@@ -1215,13 +1278,13 @@
         const li = el('li'), b = el('button', 'short');
         b.type = 'button'; b.dataset.yt = v.id; b.dataset.short = '';
         b.append(img(safeSrc(v.thumb), 540, 960, ''), el('b', null, v.title));
-        if (v.views) b.append(el('small', 'mono short__views', `${views.format(v.views)} views`));
-        if (isNew(shorts, v)) b.append(el('span', 'mono short__new', 'New'));
+        if (v.views) b.append(el('small', 'mono short__views', L('{n} views', { n: views.format(v.views) })));
+        if (isNew(shorts, v)) b.append(el('span', 'mono short__new', L('New')));
         li.append(b);
         rail.append(li);
       });
       if (more) rail.append(more);
-      $('.shorts__head p').textContent = 'Shorts · latest from YouTube';
+      $('.shorts__head p').textContent = L('Shorts · latest from YouTube');
     }
   }
 
@@ -1509,12 +1572,12 @@
     if (!imgs.length) return;
     const lb = document.createElement('div');
     lb.className = 'lightbox pview';
-    lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', 'Photo'); lb.setAttribute('aria-hidden', 'true');
+    lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', L('Photo')); lb.setAttribute('aria-hidden', 'true');
     lb.innerHTML = `<div class="lightbox__bg"></div>
       <figure class="lightbox__fig"><img alt="" /><figcaption><span class="mono lightbox__stage"></span><p class="pview__text"></p><span class="mono lightbox__count"></span></figcaption></figure>
-      <button class="lightbox__btn lightbox__prev" type="button" aria-label="Previous photo">←</button>
-      <button class="lightbox__btn lightbox__next" type="button" aria-label="Next photo">→</button>
-      <button class="lightbox__close mono" type="button">Close ✕</button>`;
+      <button class="lightbox__btn lightbox__prev" type="button" aria-label="${L('Previous photo')}">←</button>
+      <button class="lightbox__btn lightbox__next" type="button" aria-label="${L('Next photo')}">→</button>
+      <button class="lightbox__close mono" type="button">${L('Close ✕')}</button>`;
     document.body.appendChild(lb);
     const big = $('img', lb), stage = $('.lightbox__stage', lb), text = $('.pview__text', lb), count = $('.lightbox__count', lb);
     const pad = (n) => String(n).padStart(2, '0');
@@ -1602,6 +1665,15 @@
     intro();
     scrollAnimations();
     if (window.ScrollTrigger) ScrollTrigger.refresh();
+    // just switched language: come back to the same spot on the page
+    let backTo = null;
+    try { backTo = sessionStorage.getItem('kv23-y'); sessionStorage.removeItem('kv23-y'); } catch (e) {}
+    if (backTo !== null && !location.hash) {
+      const y = +backTo;
+      const go = () => { if (lenis) lenis.resize(); scrollToTarget(y, { immediate: true, duration: 0, force: true }); };
+      go();
+      (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => requestAnimationFrame(go));
+    }
     // arriving with a #section (e.g. karting.html → index.html#partners): land on it once the layout is final,
     // i.e. after the web fonts (which change heading heights) and the page have loaded
     const hash = location.hash && location.hash.length > 1 ? location.hash : null;
