@@ -834,15 +834,16 @@
   }
 
   /* ------------------------------------------------------------------------
-     Why I race — the Montreal clip: muted loop that only plays while it's on screen, with a sound toggle
+     Why I race — the Montreal clip: muted loops that only play while on screen; the full page adds a sound toggle
      ------------------------------------------------------------------------ */
   function paddockVideo() {
+    const io = new IntersectionObserver((entries) => entries.forEach((e) => {
+      if (e.isIntersecting && !reduced) e.target.play().catch(() => {});
+      else e.target.pause();
+    }), { threshold: 0.25 });
+    $$('video[data-inview]').forEach((v) => io.observe(v));
     const v = $('#padVideo'), btn = $('#padSound');
-    if (!v) return;
-    new IntersectionObserver(([e]) => {
-      if (e.isIntersecting && !reduced) v.play().catch(() => {});
-      else v.pause();
-    }, { threshold: 0.25 }).observe(v);
+    if (!v || !btn) return;
     btn.addEventListener('click', () => {
       v.muted = !v.muted;
       if (!v.muted) v.play().catch(() => {});

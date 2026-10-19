@@ -778,8 +778,8 @@ section, footer { position: relative; }
 }
 .kteaser__cta:hover { background: var(--red); gap: 20px; }
 .kteaser__media { position: relative; display: block; aspect-ratio: 1 / 1.1; }
-.kteaser__media img {
-  position: absolute; width: 62%; height: auto; aspect-ratio: 3 / 4; object-fit: cover;
+.kteaser__media img, .kteaser__media video {
+  position: absolute; width: 62%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; background: #fff;
   border: 8px solid #fff; border-bottom-width: 34px; border-radius: 6px; box-shadow: 0 30px 50px -25px rgba(7,6,10,.6);
   transition: rotate .7s var(--ease-out), translate .7s var(--ease-out);
 }
@@ -1170,6 +1170,17 @@ section, footer { position: relative; }
 .gt3__table tr.is-pod td.g3-pos { color: var(--hot); }
 .gt3__note { margin: 12px 0 0; font-size: 10px; line-height: 1.6; color: var(--mute); }
 
+/* ---------- why I race: homepage teaser ---------- */
+.whyteaser { padding: 40px var(--gutter) 40px; overflow: hidden; }
+.whyteaser .kteaser { margin: 0; }
+.whyteaser .display em { color: var(--red); }
+.whyteaser__quote {
+  margin: 6px 0 0; max-width: 26ch; font-family: "Instrument Serif", Georgia, serif;
+  font-size: clamp(26px, 2.6vw, 40px); line-height: 1.08;
+}
+.whyteaser__quote b { font-weight: 400; font-style: italic; color: var(--red); }
+.whyteaser .karting__lead { color: rgba(21,24,15,.75); }
+
 /* ---------- why I race (paddock.html) ---------- */
 .ppage { padding: 110px var(--gutter) 150px; }
 .ppage .kpage__sec + .pstory, .ppage .kpage__sec + .pstory__lead { margin-top: 10px; }
@@ -1185,7 +1196,12 @@ section, footer { position: relative; }
 .pstory__side p, .pstory__lead { margin: 0; font-size: clamp(17px, 1.4vw, 20px); line-height: 1.55; color: rgba(21,24,15,.78); }
 .pstory__lead { max-width: 58ch; }
 .pstory__link { justify-self: start; color: var(--red); border-bottom: 1px solid currentColor; padding-bottom: 2px; }
+.pstory--text { align-items: start; }
+.pstory--text .pstory__lead { max-width: none; }
+.ppage #changed { margin-top: 140px; }
+.offers.pchange { margin-top: 10px; grid-template-columns: repeat(3, 1fr); }
 .pwall { margin-top: 50px; }
+.pwall small { font-size: 13px; line-height: 1.4; color: rgba(21,24,15,.72); }
 .pwall__frame { position: relative; aspect-ratio: 3 / 4; border-radius: 3px; overflow: hidden; background: var(--ink); }
 .pwall__frame video { width: 100%; height: 100%; object-fit: cover; display: block; }
 .pwall__sound {
@@ -1256,6 +1272,8 @@ section, footer { position: relative; }
   .kteaser, .otteaser__body { grid-template-columns: 1fr; }
   .otcard { max-width: 520px; }
   .bpage__grid, .pstory { grid-template-columns: 1fr; }
+  .offers.pchange { grid-template-columns: 1fr; }
+  .pchange li + li { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); }
   .bpage__photos { position: static; width: min(100%, 420px); }
   .kteaser__media { width: 100%; max-width: 440px; justify-self: center; }
   .kteaser__stats, .kpage__stats { grid-template-columns: repeat(2, auto); gap: 16px 34px; }
