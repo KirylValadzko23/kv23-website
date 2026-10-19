@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;600;800;900&family=Instrument+Serif:ital@0;1&family=Mrs+Saint+Delafield&family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=c501d42a" />
+  <link rel="stylesheet" href="css/style.css?v=25b3c22b" />
 </head>
 <body class="is-loading">
 
@@ -138,7 +138,8 @@
       <div class="chapter-tag mono" data-reveal><span>01</span> The Driver</div>
 
       <div class="driver__grid">
-        <div class="licence-wrap">
+        <div class="licence-wrap folder folder--left">
+          <p class="folder__tab mono"><i></i>General info</p>
           <div class="licence" id="licence" tabindex="0" role="button" aria-label="Driver licence card, press to flip">
             <div class="licence__face licence__front">
               <div class="licence__holo"></div>
@@ -171,12 +172,15 @@
         <div class="driver__copy">
           <h2 class="display" data-split>From sim<br />to <em>real.</em></h2>
           <p class="lead" data-reveal>I'm Kiryl, a Canadian sim racer on the Road to Racing: turning hours in the rig into a seat in real motorsport. The target is GT3.</p>
-          <div class="stats" data-reveal>
-            <div class="stat"><b data-count="2037">0</b><small>iRating · Sports Car</small></div>
-            <div class="stat"><b data-count="19">0</b><small>iRacing wins</small></div>
-            <div class="stat"><b data-count="19">0</b><small>Pole positions</small></div>
-            <div class="stat"><b data-count="173">0</b><small>Race starts</small></div>
-          </div>
+          <div class="folder" data-reveal>
+            <p class="folder__tab mono"><i></i>Stats</p>
+            <div class="stats">
+              <div class="stat"><small>iRating · Sports Car</small><b data-count="2037">0</b></div>
+              <div class="stat"><small>iRacing wins</small><b data-count="19">0</b></div>
+              <div class="stat"><small>Pole positions</small><b data-count="19">0</b></div>
+              <div class="stat"><small>Race starts</small><b data-count="173">0</b></div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -221,9 +225,9 @@
       </div>
     </section>
 
-    <!-- ============ WHY I RACE (ride ↙; the full story is paddock.html) ============ -->
+    <!-- ============ WHY I RACE (ride ↖: it climbs while you scroll down; the full story is paddock.html) ============ -->
     <section class="rsec" id="why" data-section>
-      <div class="ride ride--why" data-ride data-dir="-1" data-dive="35">
+      <div class="ride ride--why" data-ride data-dir="-1" data-dive="-30">
         <div class="ride__track">
           <div class="ride__item ride__intro" data-lane="0.4" data-speed="0.92">
             <p class="mono karting__kicker"><span>✦</span> Off track · Canadian Grand Prix 2026</p>
@@ -235,24 +239,53 @@
             <p class="mono ride__kick">All in</p>
             <p>So I went all in on racing. Then Montreal made it real: walking the Formula 2 paddock, with caps signed by Rafael Câmara, Dino Beganovic and Alba Larsen.</p>
           </div>
-          <figure class="ride__item ride__ph" data-lane="0.82" data-speed="0.96" style="--r:-4deg"><img src="assets/paddock/pitlane.jpg" width="900" height="1600" loading="lazy" alt="The empty pit lane and garages at Circuit Gilles Villeneuve a few weeks before the Grand Prix" /><figcaption><span class="mono">Weeks before the GP</span><small>An empty pit lane, waiting.</small></figcaption></figure>
-          <figure class="ride__item ride__ph" data-lane="0.1" data-speed="1.04" style="--r:3deg"><img src="assets/paddock/curbs.jpg" width="900" height="1600" loading="lazy" alt="Red, white and blue curbs on a corner of Circuit Gilles Villeneuve" /><figcaption><span class="mono">Circuit Gilles Villeneuve</span><small>The curbs, before race weekend.</small></figcaption></figure>
-          <figure class="ride__item ride__ph ride__ph--video" data-lane="0.7" data-speed="0.95" style="--r:-3deg"><div class="ride__media"><video src="assets/paddock/podium.mp4#t=0.1" muted loop playsinline preload="metadata" data-inview aria-label="The Canadian Grand Prix podium, filmed from the crowd"></video></div><figcaption><span class="mono">The podium</span><small>Race day, from the crowd.</small></figcaption></figure>
-          <figure class="ride__item ride__ph" data-lane="0.12" data-speed="1.05" style="--r:5deg"><img src="assets/paddock/alba-signing.jpg" width="1200" height="1600" loading="lazy" alt="Alba Larsen in her red Ferrari team kit signing for fans in the paddock" /><figcaption><span class="mono">Alba Larsen</span><small>F1 Academy, signing in the paddock.</small></figcaption></figure>
-          <figure class="ride__item ride__ph" data-lane="0.84" data-speed="0.96" style="--r:-4deg"><img src="assets/paddock/larsen.jpg" width="1200" height="1600" loading="lazy" alt="Kiryl handing a white cap to Alba Larsen, number 12, to sign in front of the F1 Academy garage" /><figcaption><span class="mono">My cap, signed</span><small>Outside Ferrari's F1 Academy garage.</small></figcaption></figure>
-          <figure class="ride__item ride__ph" data-lane="0.2" data-speed="1.04" style="--r:3deg"><img src="assets/paddock/f1academy-post.jpg" width="1174" height="1600" loading="lazy" alt="An F1 Academy Instagram post of the paddock crowd, with Kiryl in a red hoodie on the right" /><figcaption><span class="mono">Caught on camera</span><small>In an F1 Academy post: red hoodie, on the right.</small></figcaption></figure>
-          <figure class="ride__item ride__ph ride__ph--video" data-lane="0.78" data-speed="0.95" style="--r:-3deg"><div class="ride__media"><video src="assets/paddock/invasion.mp4#t=0.1" muted loop playsinline preload="metadata" data-inview aria-label="Fans waiting at the fence for the track invasion at the end of the race"></video></div><figcaption><span class="mono">Track invasion</span><small>Waiting for the gates to open.</small></figcaption></figure>
-          <figure class="ride__item ride__ph" data-lane="0.14" data-speed="1.05" style="--r:4deg"><img src="assets/paddock/kimi.jpg" width="1200" height="1600" loading="lazy" alt="Kimi Antonelli in the crowd outside, fans holding up phones" /><figcaption><span class="mono">Kimi Antonelli</span><small>A few steps away.</small></figcaption></figure>
-          <figure class="ride__item ride__ph" data-lane="0.8" data-speed="0.96" style="--r:-5deg"><img src="assets/paddock/leclerc.jpg" width="915" height="1600" loading="lazy" alt="Charles Leclerc driving a red Ferrari road car on a Montreal street" /><figcaption><span class="mono">Charles Leclerc</span><small>Spotted in the Ferrari.</small></figcaption></figure>
-          <figure class="ride__item ride__ph" data-lane="0.2" data-speed="1.04" style="--r:3deg"><img src="assets/paddock/redbull-boss.jpg" width="913" height="1600" loading="lazy" alt="Red Bull's team boss signing for fans outside the drivers' hotel" /><figcaption><span class="mono">Red Bull's team boss</span><small>At the drivers' hotel.</small></figcaption></figure>
-          <figure class="ride__item ride__ph" data-lane="0.82" data-speed="0.95" style="--r:-3deg"><img src="assets/paddock/academy-1.jpg" width="906" height="1600" loading="lazy" alt="Dino Beganovic in a Ferrari team jacket signing a white cap for Kiryl" /><figcaption><span class="mono">Dino Beganovic</span><small>Ferrari Driver Academy.</small></figcaption></figure>
-          <figure class="ride__item ride__ph" data-lane="0.16" data-speed="1.05" style="--r:4deg"><img src="assets/paddock/academy-2.jpg" width="924" height="1600" loading="lazy" alt="Sebastián Montoya in a Prema team shirt signing for Kiryl in the paddock" /><figcaption><span class="mono">Sebastián Montoya</span><small>In the Prema paddock.</small></figcaption></figure>
-          <div class="ride__item ride__outro" data-lane="0.55" data-outro>
+          <div class="ride__item ride__pull" data-lane="0.62" data-speed="0.97">
+            <p class="mono ride__pull-tag"><span></span>Montreal, 2026</p>
+            <blockquote class="ride__pull-quote">“Everything I'd only ever seen through a monitor was right there.”</blockquote>
+            <div class="ride__pull-body">
+              <figure class="ride__pull-ph"><img src="assets/paddock/larsen.jpg" width="1200" height="1600" loading="lazy" alt="Kiryl handing a white cap to Alba Larsen, number 12, to sign in front of the F1 Academy garage" /><figcaption class="sr-only">My cap, signed</figcaption></figure>
+              <div class="ride__pull-text">
+                <p>The garages, the cars, the drivers walking past with a pen in their hand and a session to get back to.</p>
+                <p>It's one thing to watch racing. It's another to stand in the paddock and know that's where you want to be.</p>
+              </div>
+            </div>
+          </div>
+          <figure class="ride__item ride__ph" data-lane="0.18" data-speed="1.04" style="--r:-3deg"><img src="assets/paddock/academy-1.jpg" width="906" height="1600" loading="lazy" alt="Dino Beganovic in a Ferrari team jacket signing a white cap for Kiryl" /><figcaption><span class="mono">Dino Beganovic</span><small>Ferrari Driver Academy.</small></figcaption></figure>
+          <div class="ride__item ride__outro" data-lane="0.5" data-outro>
             <p class="ride__words ride__words--sm">It turned racing from something I admired into something I had to <span>chase</span>.</p>
             <a class="kteaser__cta" href="paddock.html">Read the full story <span aria-hidden="true">→</span></a>
           </div>
         </div>
-        <p class="ride__hint mono" aria-hidden="true"><span>←</span> Scroll</p>
+        <p class="ride__hint mono" aria-hidden="true"><span>↖</span> Scroll</p>
+      </div>
+    </section>
+
+    <!-- ============ RACE WEEKEND (zoom: the photos fly past on both sides) ============ -->
+    <section class="zsec" id="weekend" data-section>
+      <div class="zoom" data-zoom>
+        <div class="zoom__intro">
+          <p class="mono karting__kicker"><span>✦</span> Montreal · Canadian Grand Prix 2026</p>
+          <h2 class="zoom__title">Race <span class="outline">weekend</span></h2>
+          <p class="mono zoom__hint">Scroll to go in</p>
+        </div>
+        <div class="zoom__field">
+          <figure class="zoom__ph" data-group="0" data-x="-1" data-y="-0.2"><img src="assets/paddock/pitlane.jpg" width="900" height="1600" loading="lazy" alt="The empty pit lane and garages at Circuit Gilles Villeneuve a few weeks before the Grand Prix" /><figcaption class="sr-only">Weeks before the GP</figcaption></figure>
+          <figure class="zoom__ph" data-group="0" data-x="1" data-y="0.25"><img src="assets/paddock/curbs.jpg" width="900" height="1600" loading="lazy" alt="Red, white and blue curbs on a corner of Circuit Gilles Villeneuve" /><figcaption class="sr-only">Circuit Gilles Villeneuve</figcaption></figure>
+          <figure class="zoom__ph" data-group="1" data-x="-1" data-y="0.2"><img src="assets/paddock/alba-signing.jpg" width="1200" height="1600" loading="lazy" alt="Alba Larsen in her red Ferrari team kit signing for fans in the paddock" /><figcaption class="sr-only">Alba Larsen</figcaption></figure>
+          <figure class="zoom__ph" data-group="1" data-x="1" data-y="-0.25"><img src="assets/paddock/f1academy-post.jpg" width="1174" height="1600" loading="lazy" alt="An F1 Academy Instagram post of the paddock crowd, with Kiryl in a red hoodie on the right" /><figcaption class="sr-only">Caught on camera</figcaption></figure>
+          <figure class="zoom__ph" data-group="1" data-x="-1" data-y="-0.3"><img src="assets/paddock/academy-2.jpg" width="924" height="1600" loading="lazy" alt="Sebastián Montoya in a Prema team shirt signing for Kiryl in the paddock" /><figcaption class="sr-only">Sebastián Montoya</figcaption></figure>
+          <figure class="zoom__ph" data-group="2" data-x="1" data-y="0.15"><img src="assets/paddock/kimi.jpg" width="1200" height="1600" loading="lazy" alt="Kimi Antonelli in the crowd outside, fans holding up phones" /><figcaption class="sr-only">Kimi Antonelli</figcaption></figure>
+          <figure class="zoom__ph" data-group="2" data-x="-1" data-y="0.1"><img src="assets/paddock/leclerc.jpg" width="915" height="1600" loading="lazy" alt="Charles Leclerc driving a red Ferrari road car on a Montreal street" /><figcaption class="sr-only">Charles Leclerc</figcaption></figure>
+          <figure class="zoom__ph" data-group="2" data-x="1" data-y="-0.2"><img src="assets/paddock/redbull-boss.jpg" width="913" height="1600" loading="lazy" alt="Red Bull's team boss signing for fans outside the drivers' hotel" /><figcaption class="sr-only">Red Bull's team boss</figcaption></figure>
+          <figure class="zoom__ph zoom__ph--video" data-group="3" data-x="-1" data-y="-0.1"><div class="zoom__media"><video src="assets/paddock/podium.mp4#t=0.1" muted loop playsinline preload="none" aria-label="The Canadian Grand Prix podium, filmed from the crowd"></video></div></figure>
+          <figure class="zoom__ph zoom__ph--video" data-group="3" data-x="1" data-y="0.2"><div class="zoom__media"><video src="assets/paddock/invasion.mp4#t=0.1" muted loop playsinline preload="none" aria-label="Fans waiting at the fence for the track invasion at the end of the race"></video></div></figure>
+        </div>
+        <ol class="zoom__caps" aria-label="The weekend, in four parts">
+          <li><span class="mono">01</span> Circuit Gilles Villeneuve · weeks before</li>
+          <li><span class="mono">02</span> The paddock · F1 Academy and Prema</li>
+          <li><span class="mono">03</span> Around town · the drivers</li>
+          <li><span class="mono">04</span> Race day · podium and track invasion</li>
+        </ol>
       </div>
     </section>
 
@@ -426,11 +459,10 @@
       </div>
 
       <ol class="roadmap" id="roadmap">
-        <li class="is-done"><span class="mono">01</span><b>Sim racing</b><small>iRacing · Class B · GT3 Regional Tour</small></li>
-        <li class="is-now"><span class="mono">02</span><b>Real seat time</b><small>Rental karting · RaceFacer Expert</small></li>
-        <li><span class="mono">03</span><b>Real racing</b><small>Next on the road</small></li>
-        <li class="is-goal"><span class="mono">04</span><b>GT3</b><small>The destination</small></li>
-        <i class="roadmap__line" aria-hidden="true"><i></i></i>
+        <li class="is-done"><a class="rcard" href="sim.html"><span class="rcard__img"><img src="assets/rig/2026-cockpit.jpg" width="1200" height="1600" loading="lazy" alt="" /></span><span class="mono rcard__no">01 · Done</span><span class="rcard__row"><b>Sim racing</b><i class="rcard__go" aria-hidden="true">→</i></span><small>iRacing · Class B · GT3 Regional Tour</small></a></li>
+        <li class="is-now"><a class="rcard" href="karting.html"><span class="rcard__img"><img src="assets/karting/outdoor-kart.jpg" width="1600" height="1200" loading="lazy" alt="" /></span><span class="mono rcard__no">02 · Now</span><span class="rcard__row"><b>Real seat time</b><i class="rcard__go" aria-hidden="true">→</i></span><small>Rental karting · RaceFacer Expert</small></a></li>
+        <li><div class="rcard"><span class="rcard__img"><img src="assets/outside/sentra-cup.jpg" width="1600" height="1200" loading="lazy" alt="" /></span><span class="mono rcard__no">03 · Next</span><span class="rcard__row"><b>Real racing</b></span><small>Next on the road</small></div></li>
+        <li class="is-goal"><div class="rcard"><span class="rcard__img"><img src="assets/outside/supra.jpg" width="1200" height="1600" loading="lazy" alt="" /></span><span class="mono rcard__no">04 · Goal</span><span class="rcard__row"><b>GT3</b></span><small>The destination</small></div></li>
       </ol>
 
       <!-- step 02: real seat time. The full story (RaceFacer, league night by night, photos) lives on karting.html -->
@@ -566,7 +598,7 @@
       </div>
       <div class="finish__legal mono">
         <span>© <span id="year">2026</span> Kiryl Valadzko · KV23</span>
-        <span class="finish__build">build a08682c5</span>
+        <span class="finish__build">build 96f346c4</span>
       </div>
     </footer>
   </main>
@@ -575,7 +607,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
-  <script src="js/i18n.js?v=12384281"></script>
-  <script src="js/main.js?v=e891361d"></script>
+  <script src="js/i18n.js?v=9a3f80b3"></script>
+  <script src="js/main.js?v=c11ce4ce"></script>
 </body>
 </html>

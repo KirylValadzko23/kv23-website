@@ -15,7 +15,7 @@ Plain HTML, CSS and JavaScript with no build step. Animation by [GSAP](https://g
 
 ## Homepage rides
 
-On the homepage, Outside the Track (→), Why I Race (↙), the Evolution (↘) and On Track (←) are *rides*: the vertical scroll turns into travel in one direction (`ride()` in `js/main.js`; set per section with `data-dir` and `data-dive`). The contour-line background is one endless map on a canvas whose camera follows the same direction.
+On the homepage, Outside the Track (→), Why I Race (↖, it climbs while you scroll down), the Evolution (↘) and On Track (←) are *rides*: the vertical scroll turns into travel in one direction (`ride()` in `js/main.js`; set per section with `data-dir` and `data-dive`, a negative dive goes up). Race Weekend, between Why I Race and the Evolution, flies forward instead: its photos come out of the distance and pass on the left and right (`weekendZoom()`; each photo's `data-x` is its side, `data-group` picks the caption). The contour-line background is one endless map on a canvas whose camera follows the same direction, and zooms in during Race Weekend.
 
 ## English and French
 

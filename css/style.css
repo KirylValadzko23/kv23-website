@@ -381,6 +381,18 @@ section, footer { position: relative; }
 .stat b { font-family: var(--f-display); font-weight: 900; font-size: clamp(40px, 4.4vw, 72px); line-height: .9; }
 .stat small { font-size: 13px; color: rgba(7,6,10,.6); }
 
+/* folder cards: a soft panel with a tab on top (The Driver's licence and stats) */
+.folder { position: relative; margin-top: 76px; padding: 26px 28px 30px; border-radius: 14px 0 14px 14px; background: rgba(21,24,15,.06); }
+.folder--left { border-radius: 0 14px 14px 14px; }
+.folder__tab { position: absolute; bottom: 100%; right: 0; margin: 0; padding: 13px 22px 9px 24px; display: flex; align-items: center; gap: 22px; border-radius: 12px 12px 0 0; background: inherit; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink); }
+.folder--left .folder__tab { right: auto; left: 0; }
+.folder__tab i { width: 8px; height: 8px; border-radius: 50%; background: var(--red); }
+.folder .stats { margin-top: 0; border-top: 0; grid-template-columns: repeat(2, 1fr); gap: 0 32px; }
+.folder .stat, .folder .stat + .stat { padding: 14px 0 22px; border-left: 0; border-top: 1px solid rgba(7,6,10,.4); margin-top: 0; }
+.folder .stat small { font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: rgba(7,6,10,.72); }
+.folder .stat b { font-size: clamp(52px, 5.4vw, 92px); }
+.licence-wrap.folder { margin-top: 48px; padding: 30px 24px 22px; }
+
 .manifesto {
   margin: 160px 0 0; max-width: 22ch;
   font-family: var(--f-display); font-weight: 800; text-transform: uppercase;
@@ -714,22 +726,24 @@ section, footer { position: relative; }
 .r2r__head { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: end; margin-bottom: 70px; }
 .r2r__head .lead { color: rgba(7,6,10,.72); justify-self: end; }
 
-.roadmap { --p: 0.3; position: relative; list-style: none; margin: 0 0 90px; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-.roadmap li { position: relative; padding-top: 40px; display: grid; gap: 4px; }
-.roadmap li::before {
-  content: ""; position: absolute; left: 0; top: 0; width: 20px; height: 20px; border-radius: 50%;
-  background: var(--bg); border: 2px solid rgba(7,6,10,.25); z-index: 1;
-}
-.roadmap li.is-done::before { background: var(--ink); border-color: var(--ink); }
-.roadmap li.is-now::before { background: var(--red); border-color: var(--red); box-shadow: 0 0 0 0 rgba(225,6,44,.5); animation: pulse 1.8s infinite; }
-.roadmap li.is-goal::before { background: conic-gradient(#000 25%, #fff 0 50%, #000 0 75%, #fff 0) 0 0 / 10px 10px; border-color: var(--ink); }
-@keyframes pulse { 70% { box-shadow: 0 0 0 14px rgba(225,6,44,0); } 100% { box-shadow: 0 0 0 0 rgba(225,6,44,0); } }
-.roadmap span { color: rgba(7,6,10,.45); }
-.roadmap b { font-family: var(--f-display); font-weight: 900; text-transform: uppercase; font-size: clamp(30px, 3vw, 46px); line-height: .95; }
-.roadmap li.is-goal b { color: var(--red); }
-.roadmap small { color: rgba(7,6,10,.65); font-size: 14px; }
-.roadmap__line { position: absolute; left: 10px; right: 0; top: 9px; height: 2px; background: rgba(7,6,10,.12); }
-.roadmap__line i { position: absolute; inset: 0; background: var(--red); transform-origin: left; transform: scaleX(var(--p)); }
+/* the four steps as dark cards, each one a step lower than the last */
+.roadmap { list-style: none; margin: 0 0 110px; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(14px, 2vw, 32px); align-items: start; }
+.roadmap li:nth-child(2) { margin-top: 26px; }
+.roadmap li:nth-child(3) { margin-top: 52px; }
+.roadmap li:nth-child(4) { margin-top: 78px; }
+.rcard { position: relative; display: grid; gap: 6px; padding: 14px 14px 24px; border-radius: 10px; background: var(--night); color: #f4f1ec; text-decoration: none; transition: transform .6s var(--ease-out); }
+.rcard__img { display: block; aspect-ratio: 1; overflow: hidden; border-radius: 6px; margin-bottom: 16px; background: #1a1720; }
+.rcard__img img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--ease-out); }
+a.rcard:hover { transform: translateY(-8px); }
+a.rcard:hover .rcard__img img { transform: scale(1.06); }
+.rcard__no { font-size: 10px; color: rgba(244,241,236,.5); }
+.is-now .rcard__no { color: #ff2d55; }
+.rcard__row { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.rcard b { font-family: var(--f-display); font-weight: 900; text-transform: uppercase; font-size: clamp(30px, 3vw, 46px); line-height: .92; }
+.is-goal .rcard b { color: #ff2d55; }
+.rcard small { font-size: 14px; line-height: 1.4; color: rgba(244,241,236,.72); }
+.rcard__go { flex: none; margin-top: .2em; font-style: normal; font-size: 22px; line-height: 1; transition: transform .4s var(--ease-out); }
+a.rcard:hover .rcard__go { transform: translateX(5px); }
 
 /* ==========================================================================
    PARTNERS
@@ -1346,6 +1360,35 @@ section, footer { position: relative; }
 .ride__hint span { display: inline-block; animation: nudge 1.4s var(--ease-io) infinite; }
 .ride--why .ride__hint span, .ride--ontrack .ride__hint span { animation-name: nudgeLeft; }
 @keyframes nudgeLeft { 50% { transform: translateX(-6px); } }
+/* a pull quote on a ride: tag on the left, the quote, then a photo beside the story */
+.ride__pull { width: min(60vw, 1000px); display: grid; grid-template-columns: minmax(150px, .3fr) 1fr; gap: 0 40px; padding-top: 22px; border-top: 1px solid rgba(7,6,10,.5); }
+.ride__pull-tag { margin: 0; display: flex; align-items: center; gap: 28px; align-self: start; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.ride__pull-tag span { width: 8px; height: 8px; border-radius: 50%; background: var(--ink); }
+.ride__pull-quote { margin: 0; font-size: clamp(24px, 2.3vw, 40px); line-height: 1.12; font-weight: 500; letter-spacing: -.01em; }
+.ride__pull-body { grid-column: 2; display: grid; grid-template-columns: .85fr 1fr; gap: 28px; align-items: start; margin-top: 28px; }
+.ride__pull-ph { margin: 0; }
+.ride__pull-ph img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 5px; }
+.ride__pull-text p { margin: 0 0 16px; font-size: clamp(15px, 1.2vw, 19px); line-height: 1.45; }
+
+/* ==========================================================================
+   RACE WEEKEND (zoom: the scroll flies the camera forward)
+   ========================================================================== */
+.zsec { position: relative; height: calc(100vh + var(--zlen, 300vh)); height: calc(100svh + var(--zlen, 300svh)); }
+.zoom { position: sticky; top: 0; height: 100vh; height: 100svh; min-height: 560px; overflow: hidden; }
+.zoom__intro { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 20px; padding: 0 var(--gutter); text-align: center; will-change: transform, opacity; }
+.zoom__intro .karting__kicker { margin: 0; }
+.zoom__title { margin: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 0 .2em; font-family: var(--f-display); font-weight: 900; text-transform: uppercase; font-size: clamp(64px, 12.5vw, 230px); line-height: .84; }
+.zoom__hint { margin: 0; opacity: .55; }
+.zoom__field { position: absolute; inset: 0; }
+.zoom__ph { --zw: min(25vw, 42vh); position: absolute; left: 50%; top: 50%; width: var(--zw); margin: 0; opacity: 0; visibility: hidden; will-change: transform, opacity; cursor: zoom-in; }
+.zoom__ph img, .zoom__media { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 4px; box-shadow: 0 40px 70px -40px rgba(7,6,10,.55); }
+.zoom__media { overflow: hidden; background: var(--ink); }
+.zoom__media video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.zoom__ph--video { cursor: default; }
+.zoom__caps { position: absolute; left: var(--gutter); right: var(--gutter); bottom: 34px; height: 1.4em; margin: 0; padding: 0; list-style: none; font-size: clamp(15px, 1.3vw, 21px); font-weight: 500; text-align: center; z-index: 400; }
+.zoom__caps li { position: absolute; inset: 0; opacity: 0; transform: translateY(12px); transition: opacity .5s, transform .6s var(--ease-out); }
+.zoom__caps li.is-on { opacity: 1; transform: none; }
+.zoom__caps .mono { margin-right: 10px; font-size: 11px; color: var(--red); }
 /* ---------- reveal defaults (JS adds .in) ---------- */
 .js [data-reveal] { opacity: 0; transform: translateY(40px); }
 
@@ -1366,6 +1409,7 @@ section, footer { position: relative; }
   .stats { grid-template-columns: 1fr 1fr; }
   .stat:nth-child(3) { border-left: 0; padding-left: 0; }
   .stat:nth-child(n+3) { border-top: 1px solid rgba(7,6,10,.15); margin-top: 22px; }
+  .folder .stat:nth-child(n) { margin-top: 0; padding-left: 0; border-top: 1px solid rgba(7,6,10,.4); }
   .menu__inner { grid-template-columns: 1fr; }
   .menu__side { display: none; }
   .irchart__head { flex-direction: column; align-items: flex-start; }
@@ -1415,6 +1459,12 @@ section, footer { position: relative; }
   .ride .otcard { width: 84vw; }
   .ride__stats .kteaser__stats b { font-size: 52px; }
   .ride__hint { display: none; }
+  .ride__pull { width: 86vw; grid-template-columns: 1fr; gap: 14px; }
+  .ride__pull-quote { font-size: 23px; }
+  .ride__pull-body { grid-column: 1; grid-template-columns: 40% 1fr; gap: 14px; margin-top: 4px; }
+  .ride__pull-text p { font-size: 14px; margin-bottom: 10px; }
+  .zoom__ph { --zw: 42vw; }
+  .zoom__caps { bottom: 26px; font-size: 14px; height: 2.8em; }
   .lightbox { padding: 70px 16px 90px; }
   .lightbox__fig { grid-template-columns: 1fr; gap: 18px; }
   .lightbox__fig img { max-width: 100%; max-height: 52vh; justify-self: center; }
@@ -1423,11 +1473,17 @@ section, footer { position: relative; }
   .hero__stage { grid-template-columns: 1fr; justify-items: center; gap: 6vh; padding: 0 var(--gutter) 8vh; }
   .hero__logo { order: -1; width: min(58vw, 30vh); }
   .hero__name { font-size: min(19vw, 15vh); align-items: center; }
-  .roadmap { grid-template-columns: 1fr; gap: 0; padding-left: 34px; }
-  .roadmap li { padding: 0 0 28px; }
-  .roadmap li::before { left: -34px; top: 2px; }
-  .roadmap__line { left: 9px; right: auto; top: 12px; bottom: 30px; width: 2px; height: auto; }
-  .roadmap__line i { transform-origin: top; transform: scaleY(var(--p, 0)); }
+  .roadmap { grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 130px; }
+  .roadmap li:nth-child(n) { margin-top: 0; }
+  .roadmap li:nth-child(even) { transform: translateY(34px); }
+  .rcard { padding: 10px 10px 18px; }
+  .rcard__img { margin-bottom: 10px; }
+  .rcard b { font-size: 24px; }
+  .rcard small { font-size: 12px; }
+  .rcard__go { font-size: 17px; }
+  .folder { padding: 22px 18px 24px; }
+  .folder .stats { gap: 0 18px; }
+  .folder .stat b { font-size: 48px; }
   .vmodal__frame.is-wide { width: 100%; }
 }
 @media (max-width: 560px) {

@@ -222,32 +222,45 @@
       color = getComputedStyle(document.documentElement).getPropertyValue('--contour').trim() || color;
       last = '';
     };
+    // one pass of the map, scaled sc× around the middle of the screen
+    const layer = (cx, cy, sc, alpha) => {
+      if (alpha < 0.01) return;
+      const vw = W / sc, vh = H / sc, x0 = cx + (W - vw) / 2, y0 = cy + (H - vh) / 2; // the part of the map in view
+      ctx.setTransform(dpr * sc, 0, 0, dpr * sc, -x0 * dpr * sc, -y0 * dpr * sc);
+      ctx.globalAlpha = alpha;
+      ctx.lineWidth = 1 / sc;
+      for (let i = Math.floor((x0 - PAD) / CELL); i <= Math.floor((x0 + vw + PAD) / CELL); i++) {
+        for (let j = Math.floor((y0 - PAD) / CELL); j <= Math.floor((y0 + vh + PAD) / CELL); j++) {
+          const h = hill(i, j);
+          if (h && h.x1 > x0 && h.x0 < x0 + vw && h.y1 > y0 && h.y0 < y0 + vh) ctx.stroke(h.path);
+        }
+      }
+      const xs = Math.floor(x0 / 24) * 24 - 24;
+      for (let j = Math.floor((y0 - 140) / ROW); j <= Math.floor((y0 + vh + 140) / ROW); j++) {
+        const a = 40 + hash(j, 7, 9) * 50, f = 260 + hash(j, 7, 10) * 200, ph = hash(j, 7, 11) * 6.28, yb = j * ROW + hash(j, 7, 12) * ROW * 0.5;
+        ctx.beginPath();
+        for (let x = xs; x <= x0 + vw + 24; x += 24) {
+          const y = yb + a * Math.sin(x / f + ph) + a * 0.4 * Math.sin(x / (f * 0.37) + ph * 2);
+          if (x === xs) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+    };
     const draw = () => {
-      let cx = 0, cy = scrollY;
-      for (const r of RIDES) { const o = r.shift(); cx += o.x; cy -= o.y; }
-      const key = `${cx.toFixed(1)},${cy.toFixed(1)},${W},${H}`;
+      let cx = 0, cy = scrollY, z = 0;
+      for (const r of RIDES) { const o = r.shift(); cx += o.x; cy -= o.y; z += o.z || 0; }
+      const key = `${cx.toFixed(1)},${cy.toFixed(1)},${z.toFixed(4)},${W},${H}`;
       if (key === last) return; // nothing moved
       last = key;
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, cv.width, cv.height);
-      ctx.setTransform(dpr, 0, 0, dpr, -cx * dpr, -cy * dpr);
       ctx.strokeStyle = color;
-      ctx.lineWidth = 1;
-      for (let i = Math.floor((cx - PAD) / CELL); i <= Math.floor((cx + W + PAD) / CELL); i++) {
-        for (let j = Math.floor((cy - PAD) / CELL); j <= Math.floor((cy + H + PAD) / CELL); j++) {
-          const h = hill(i, j);
-          if (h && h.x1 > cx && h.x0 < cx + W && h.y1 > cy && h.y0 < cy + H) ctx.stroke(h.path);
-        }
-      }
-      for (let j = Math.floor((cy - 140) / ROW); j <= Math.floor((cy + H + 140) / ROW); j++) {
-        const a = 40 + hash(j, 7, 9) * 50, f = 260 + hash(j, 7, 10) * 200, ph = hash(j, 7, 11) * 6.28, y0 = j * ROW + hash(j, 7, 12) * ROW * 0.5;
-        ctx.beginPath();
-        for (let x = Math.floor(cx / 24) * 24 - 24; x <= cx + W + 24; x += 24) {
-          const y = y0 + a * Math.sin(x / f + ph) + a * 0.4 * Math.sin(x / (f * 0.37) + ph * 2);
-          if (x === Math.floor(cx / 24) * 24 - 24) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-        }
-        ctx.stroke();
-      }
+      // zooming in forever: the map at 2^f fades out while a copy at half that size fades in, so each
+      // doubling lands exactly where it started (f = 0 is the plain map)
+      const f = z - Math.floor(z);
+      layer(cx, cy, Math.pow(2, f), 1 - f);
+      layer(cx, cy, Math.pow(2, f - 1), f);
+      ctx.globalAlpha = 1;
     };
     resize();
     addEventListener('resize', resize);
@@ -407,11 +420,8 @@
     [['.dout__title .outline', '.dout', 10], ['.evolution__title .outline', '.evolution__intro', 12], ['.ontrack__title .outline', '.ontrack__head', 10], ['.kpage__title .outline', '.kpage__hero', 10], ['.partners__title .outline', '.partners__head', 14]]
       .forEach(([el, trigger, x]) => has(el) && gsap.to(el, { xPercent: x, ease: 'none', scrollTrigger: { trigger, scrub: true } }));
 
-    // Road to Racing roadmap: the line fills up to where Kiryl is now
-    if (has('#roadmap')) {
-      gsap.fromTo('#roadmap', { '--p': 0 }, { '--p': 0.3, duration: 1.8, ease: 'expo.inOut', scrollTrigger: { trigger: '#roadmap', start: 'top 80%' } });
-      gsap.from('#roadmap li', { y: 30, opacity: 0, duration: 1, ease: 'expo.out', stagger: 0.12, scrollTrigger: { trigger: '#roadmap', start: 'top 80%' } });
-    }
+    // Road to Racing: the four step cards deal in one after another
+    if (has('#roadmap')) gsap.from('#roadmap .rcard', { y: 60, opacity: 0, duration: 1.1, ease: 'expo.out', stagger: 0.12, scrollTrigger: { trigger: '#roadmap', start: 'top 80%' } });
 
     // giant KV23 rises letter by letter
     if (has('.finish__big')) gsap.from('.finish__big span', {
@@ -1408,7 +1418,7 @@
     const track = $('.ride__track, .evo__track', panel);
     const dir = o.dir < 0 ? -1 : 1;
     const DIVE = Math.tan(((o.dive || 0) * Math.PI) / 180);
-    const floaters = $$('[data-speed]', track);
+    const floaters = $$('[data-speed], [data-outro]', track); // the outro too, so it's laid along the slope
     const autoItems = o.auto ? $$(':scope > .ride__item', track) : [];
     const focusEls = o.focus ? $$(o.focus, track) : [];
     let centers = [], fwd = [], lay = [], dist = 0, bend = 0, lastS = NaN, trackW = 0, left0 = 0, pinTop = 0;
@@ -1555,6 +1565,77 @@
       hint: $('.ride__hint', p), focus: '.ride__ph',
     }));
   }
+
+  /* ------------------------------------------------------------------------
+     Race weekend: the scroll flies the camera forward. Photos start small in the distance, fade in as
+     they come closer and pass by on the left and right, never through the middle; the map zooms in too.
+     ------------------------------------------------------------------------ */
+  function weekendZoom() {
+    const z = $('[data-zoom]');
+    if (!z) return;
+    const sec = z.parentElement, intro = $('.zoom__intro', z), phs = $$('.zoom__ph', z), caps = $$('.zoom__caps li', z);
+    const vids = phs.map((p) => $('video', p));
+    const smooth = (t) => (t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t));
+    const SC = (t) => 0.14 * Math.pow(22, t); // depth → size: tiny far away, life-size at t ≈ 0.62, 3× as it passes
+    let W = 0, H = 0, STEP = 1, LIFE = 1, LEAD = 0, len = 1, top = 0, cyc = 1, lastS = NaN, cap = -1;
+
+    const measure = () => {
+      W = innerWidth; H = z.offsetHeight;
+      STEP = H * (W < 760 ? 0.5 : 0.42); // scroll between one photo and the next
+      LIFE = H * 1.9; // scroll a photo takes from the distance to past the camera
+      LEAD = H * 0.55; // the title flies past first
+      len = Math.round(LEAD + STEP * (phs.length - 1) + LIFE * 0.9);
+      sec.style.setProperty('--zlen', len + 'px');
+      cyc = Math.max(1, Math.round(len / (H * 1.5))); // whole doublings, so the map ends where it started
+      lastS = NaN;
+      requestAnimationFrame(() => (top = sec.getBoundingClientRect().top + scrollY));
+    };
+
+    const tick = () => {
+      const s = -sec.getBoundingClientRect().top;
+      if (s === lastS) return;
+      if (s < -H * 1.2 || s > len + H * 1.2) { // off screen: just make sure nothing keeps playing
+        if (lastS === lastS) { vids.forEach((v) => v && v.pause()); lastS = NaN; }
+        return;
+      }
+      lastS = s;
+      // the title: you fly through it
+      const p = clamp(s / (LEAD + H * 0.35), 0, 1);
+      intro.style.transform = `scale(${(1 + p * p * 2.4).toFixed(3)})`;
+      intro.style.opacity = (1 - smooth(p * 1.15)).toFixed(3);
+      intro.style.visibility = p >= 1 ? 'hidden' : '';
+      const gap = W * (W < 760 ? 0.03 : 0.05);
+      let best = -1, bestD = 1;
+      phs.forEach((el, i) => {
+        const t = (s - LEAD - i * STEP + LIFE * 0.1) / LIFE;
+        const op = t <= 0 || t >= 1 ? 0 : smooth(t / 0.3) * (1 - smooth((t - 0.82) / 0.16));
+        el.style.opacity = op.toFixed(3);
+        el.style.visibility = op < 0.01 ? 'hidden' : 'visible';
+        const v = vids[i];
+        if (op < 0.01) { if (v && !v.paused) v.pause(); return; }
+        if (v && v.paused && !reduced) v.play().catch(() => {});
+        const sc = SC(t), w = el.offsetWidth, side = +el.dataset.x || 1, dy = parseFloat(el.dataset.y) || 0;
+        const x = side * (gap + w / 2) * sc, y = dy * H * 0.42 * sc;
+        el.style.transform = `translate3d(-50%,-50%,0) translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) scale(${sc.toFixed(4)})`;
+        el.style.zIndex = Math.round(sc * 100);
+        const d = Math.abs(t - 0.6);
+        if (t > 0.28 && t < 0.92 && d < bestD) { bestD = d; best = +el.dataset.group; }
+      });
+      if (best !== cap) { cap = best; caps.forEach((c, i) => c.classList.toggle('is-on', i === cap)); }
+    };
+
+    // the background camera: holds still while the section is pinned, and zooms in instead
+    RIDES.push({ shift: () => { const s = clamp(scrollY - top, 0, len); return { x: 0, y: s, z: (s / len) * cyc }; } });
+
+    measure();
+    if (window.ScrollTrigger) {
+      ScrollTrigger.addEventListener('refreshInit', measure);
+      ScrollTrigger.addEventListener('refresh', () => (top = sec.getBoundingClientRect().top + scrollY));
+    } else addEventListener('resize', measure);
+    if (window.ResizeObserver) new ResizeObserver(() => (top = sec.getBoundingClientRect().top + scrollY)).observe(document.body);
+    if (hasGSAP) gsap.ticker.add(tick);
+    else { const loop = () => { tick(); requestAnimationFrame(loop); }; requestAnimationFrame(loop); }
+  }
   function lightbox(items) {
     const lb = $('#lightbox'), img = $('img', lb), stage = $('.lightbox__stage', lb), h3 = $('h3', lb), ul = $('ul', lb), count = $('.lightbox__count', lb);
     const pad = (n) => String(n).padStart(2, '0');
@@ -1624,7 +1705,7 @@
      like the Evolution lightbox, with its caption; arrows step through the photos on that page
      ------------------------------------------------------------------------ */
   function photoViewer() {
-    const imgs = $$('.kwall img, .pphoto img, .bpage__photo img, .kleague__img img, .dout__ph img, .ride__ph img');
+    const imgs = $$('.kwall img, .pphoto img, .bpage__photo img, .kleague__img img, .dout__ph img, .ride__ph img, .ride__pull-ph img, .zoom__ph img');
     if (!imgs.length) return;
     const lb = document.createElement('div');
     lb.className = 'lightbox pview';
@@ -1717,6 +1798,7 @@
   counters();
 
   Promise.all([runLoader(), youtubeFeed()]).then(() => {
+    weekendZoom();
     homeRides(); // the rides create their pins first, so every trigger below them accounts for the pin spacing
     evolution();
     intro();
