@@ -420,8 +420,13 @@
     [['.dout__title .outline', '.dout', 10], ['.evolution__title .outline', '.evolution__intro', 12], ['.ontrack__title .outline', '.ontrack__head', 10], ['.kpage__title .outline', '.kpage__hero', 10], ['.partners__title .outline', '.partners__head', 14]]
       .forEach(([el, trigger, x]) => has(el) && gsap.to(el, { xPercent: x, ease: 'none', scrollTrigger: { trigger, scrub: true } }));
 
-    // Road to Racing: the four step cards deal in one after another
-    if (has('#roadmap')) gsap.from('#roadmap .rcard', { y: 60, opacity: 0, duration: 1.1, ease: 'expo.out', stagger: 0.12, scrollTrigger: { trigger: '#roadmap', start: 'top 80%' } });
+    // Road to Racing roadmap: the line fills up to where Kiryl is now
+    if (has('#roadmap')) {
+      gsap.fromTo('#roadmap', { '--p': 0 }, { '--p': 0.3, duration: 1.8, ease: 'expo.inOut', scrollTrigger: { trigger: '#roadmap', start: 'top 80%' } });
+      gsap.from('#roadmap li', { y: 30, opacity: 0, duration: 1, ease: 'expo.out', stagger: 0.12, scrollTrigger: { trigger: '#roadmap', start: 'top 80%' } });
+    }
+    // the page shortcuts deal in one after another
+    if (has('#pagecards')) gsap.from('#pagecards .rcard', { y: 60, opacity: 0, duration: 1.1, ease: 'expo.out', stagger: 0.1, scrollTrigger: { trigger: '#pagecards', start: 'top 80%' } });
 
     // giant KV23 rises letter by letter
     if (has('.finish__big')) gsap.from('.finish__big span', {
@@ -1567,8 +1572,8 @@
   }
 
   /* ------------------------------------------------------------------------
-     Race weekend: the scroll flies the camera forward. Photos start small in the distance, fade in as
-     they come closer and pass by on the left and right, never through the middle; the map zooms in too.
+     Race weekend: the scroll flies the camera forward. Photos take turns on the left and the right: each
+     slides in from its edge as it fades in, then zooms and leaves by the same edge; the map zooms in too.
      ------------------------------------------------------------------------ */
   function weekendZoom() {
     const z = $('[data-zoom]');
@@ -1576,13 +1581,12 @@
     const sec = z.parentElement, intro = $('.zoom__intro', z), phs = $$('.zoom__ph', z), caps = $$('.zoom__caps li', z);
     const vids = phs.map((p) => $('video', p));
     const smooth = (t) => (t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t));
-    const SC = (t) => 0.14 * Math.pow(22, t); // depth → size: tiny far away, life-size at t ≈ 0.62, 3× as it passes
     let W = 0, H = 0, STEP = 1, LIFE = 1, LEAD = 0, len = 1, top = 0, cyc = 1, lastS = NaN, cap = -1;
 
     const measure = () => {
       W = innerWidth; H = z.offsetHeight;
-      STEP = H * (W < 760 ? 0.5 : 0.42); // scroll between one photo and the next
-      LIFE = H * 1.9; // scroll a photo takes from the distance to past the camera
+      STEP = H * 0.65; // scroll between one photo and the next (they alternate sides)
+      LIFE = H * 1.3; // scroll a photo is on screen: two steps, so the next one on its side waits for it to leave
       LEAD = H * 0.55; // the title flies past first
       len = Math.round(LEAD + STEP * (phs.length - 1) + LIFE * 0.9);
       sec.style.setProperty('--zlen', len + 'px');
@@ -1604,22 +1608,27 @@
       intro.style.transform = `scale(${(1 + p * p * 2.4).toFixed(3)})`;
       intro.style.opacity = (1 - smooth(p * 1.15)).toFixed(3);
       intro.style.visibility = p >= 1 ? 'hidden' : '';
-      const gap = W * (W < 760 ? 0.03 : 0.05);
+      const gap = W * (W < 760 ? 0.03 : 0.06);
       let best = -1, bestD = 1;
       phs.forEach((el, i) => {
         const t = (s - LEAD - i * STEP + LIFE * 0.1) / LIFE;
-        const op = t <= 0 || t >= 1 ? 0 : smooth(t / 0.3) * (1 - smooth((t - 0.82) / 0.16));
+        const e = smooth(t / 0.35), k = smooth((t - 0.55) / 0.45); // sliding in · zooming out
+        const op = t <= 0 || t >= 1 ? 0 : e * (1 - smooth((t - 0.8) / 0.2));
         el.style.opacity = op.toFixed(3);
         el.style.visibility = op < 0.01 ? 'hidden' : 'visible';
         const v = vids[i];
         if (op < 0.01) { if (v && !v.paused) v.pause(); return; }
         if (v && v.paused && !reduced) v.play().catch(() => {});
-        const sc = SC(t), w = el.offsetWidth, side = +el.dataset.x || 1, dy = parseFloat(el.dataset.y) || 0;
-        const x = side * (gap + w / 2) * sc, y = dy * H * 0.42 * sc;
+        // each photo keeps to its own side: it slides in from that edge as it fades in, settles, then
+        // grows and leaves by the same edge, so the middle of the screen stays clear
+        const w = el.offsetWidth, side = +el.dataset.x || 1, dy = parseFloat(el.dataset.y) || 0;
+        const rest = gap + w / 2, edge = W / 2 + w * 0.3;
+        const sc = 0.8 + 0.2 * e + 0.12 * smooth((t - 0.35) / 0.2) + 1.6 * k * k;
+        const x = side * (rest + (edge - rest) * (1 - e) + W * 0.55 * k), y = dy * H * 0.3 * sc;
         el.style.transform = `translate3d(-50%,-50%,0) translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) scale(${sc.toFixed(4)})`;
         el.style.zIndex = Math.round(sc * 100);
-        const d = Math.abs(t - 0.6);
-        if (t > 0.28 && t < 0.92 && d < bestD) { bestD = d; best = +el.dataset.group; }
+        const d = Math.abs(t - 0.45);
+        if (t > 0.2 && t < 0.8 && d < bestD) { bestD = d; best = +el.dataset.group; }
       });
       if (best !== cap) { cap = best; caps.forEach((c, i) => c.classList.toggle('is-on', i === cap)); }
     };
@@ -1705,7 +1714,7 @@
      like the Evolution lightbox, with its caption; arrows step through the photos on that page
      ------------------------------------------------------------------------ */
   function photoViewer() {
-    const imgs = $$('.kwall img, .pphoto img, .bpage__photo img, .kleague__img img, .dout__ph img, .ride__ph img, .ride__pull-ph img, .zoom__ph img');
+    const imgs = $$('.kwall img, .pphoto img, .bpage__photo img, .kleague__img img, .dout__ph img, .ride__ph img, .collage__ph img, .zoom__ph img');
     if (!imgs.length) return;
     const lb = document.createElement('div');
     lb.className = 'lightbox pview';
