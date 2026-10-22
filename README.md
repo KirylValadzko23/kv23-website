@@ -13,6 +13,10 @@ Six pages, sharing `css/style.css` and `js/main.js` (which skips whatever a page
 
 Plain HTML, CSS and JavaScript with no build step. Animation by [GSAP](https://gsap.com/) + ScrollTrigger and smooth scrolling by [Lenis](https://lenis.darkroom.engineering/), both loaded from CDNs. The cream background's terrain lines are drawn in `main.js`.
 
+## The hidden chapter
+
+`happiness.html` (The Pursuit of Happiness) is deliberately off the homepage and out of the menu. The only ways in are the small "There's one more page" links at the end of `paddock.html` and `outside.html`, and it's marked `noindex` so search engines leave it out.
+
 ## Homepage rides
 
 On the homepage, Outside the Track (→), Why I Race (↖, it climbs while you scroll down), the Evolution (↘) and On Track (←) are *rides*: the vertical scroll turns into travel in one direction (`ride()` in `js/main.js`; set per section with `data-dir` and `data-dive`, a negative dive goes up). Their photos sit in *collages* (`.collage`, with variants `--a` to `--d` for where the big frame goes), each next to the text it belongs to. Race Weekend, between Why I Race and the Evolution, flies forward instead: its photos take turns on the left and right, each sliding in from its edge and zooming out by the same edge (`weekendZoom()`; each photo's `data-x` is its side, `data-group` picks the caption). Road to Racing ends with shortcut cards to the five other pages. The contour-line background is one endless map on a canvas whose camera follows the same direction, and zooms in during Race Weekend.

@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Pursuit of Happiness — KV23 · Kiryl Valadzko</title>
+  <meta name="description" content="A hidden chapter: what Kiryl Valadzko is really chasing, beyond the seat and the results." />
+  <meta name="robots" content="noindex" />
+  <meta name="theme-color" content="#f4f7e6" />
+  <link rel="icon" href="assets/img/kv23-logo.png" />
+  <link rel="canonical" href="https://kirylvaladzko23.github.io/kv23-website/happiness.html" />
+
+  <!-- link previews (Instagram, iMessage, Discord, X...) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="KV23" />
+  <meta property="og:title" content="The pursuit of happiness — KV23" />
+  <meta property="og:description" content="A hidden chapter: what Kiryl is really chasing, beyond the seat and the results." />
+  <meta property="og:url" content="https://kirylvaladzko23.github.io/kv23-website/happiness.html" />
+  <meta property="og:image" content="https://kirylvaladzko23.github.io/kv23-website/assets/img/og-home.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="The KV23 logo on a dark red background" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <script>document.documentElement.classList.add('js');</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;600;800;900&family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css?v=5753765c" />
+  <style>
+    /* this page only: softer, warmer, more like a journal than a stats page */
+    .hpage .karting__title em { font-family: "Instrument Serif", Georgia, serif; font-style: italic; font-weight: 400; text-transform: none; color: var(--red); }
+
+    .hlist { list-style: none; margin: 56px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 clamp(30px, 5vw, 90px); counter-reset: h; }
+    .hlist li { counter-increment: h; display: grid; grid-template-columns: 44px 1fr; align-items: baseline; padding: 18px 0; border-top: 1px solid rgba(21,24,15,.16); font-family: "Instrument Serif", Georgia, serif; font-size: clamp(22px, 2.1vw, 32px); line-height: 1.15; }
+    .hlist li::before { content: counter(h, decimal-leading-zero); font-family: var(--f-mono); font-size: 11px; color: var(--red); }
+
+    .hletter { position: relative; max-width: 720px; margin: 56px auto 0; padding: clamp(34px, 5vw, 64px) clamp(26px, 5vw, 70px) clamp(40px, 5vw, 64px); background: #fffdf5; border-radius: 6px; rotate: -1deg; box-shadow: 0 40px 80px -50px rgba(7,6,10,.55), 0 2px 0 rgba(7,6,10,.04); }
+    .hletter::before { content: ""; position: absolute; top: -14px; left: 50%; width: 110px; height: 28px; transform: translateX(-50%) rotate(2deg); background: rgba(193,0,31,.18); border-radius: 2px; }
+    .hletter__to { margin: 0 0 26px; font-family: var(--f-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--red); }
+    .hletter p { margin: 0 0 18px; font-family: "Instrument Serif", Georgia, serif; font-size: clamp(21px, 1.9vw, 27px); line-height: 1.35; color: #241f1a; }
+    .hletter__sign { margin-top: 30px !important; font-style: italic; font-size: clamp(30px, 3vw, 42px) !important; color: var(--red) !important; }
+    .hletter--future { rotate: 1deg; background: #f7f3e6; }
+
+    .hpage .pwall--2 { margin-top: 56px; }
+    .hshot { max-width: 880px; margin: 110px auto 0; text-align: center; }    @media (max-width: 760px) {
+      .hlist { grid-template-columns: 1fr; }
+      .hlist li { grid-template-columns: 36px 1fr; padding: 14px 0; }
+      .hletter { rotate: 0deg; }
+    }
+  </style>
+</head>
+<body class="kpage-body">
+
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="header" id="header">
+    <a href="index.html" class="header__logo" aria-label="KV23 home">
+      <img src="assets/img/kv23-logo.png" alt="KV23" width="539" height="389" />
+    </a>
+    <nav class="header__nav" aria-label="Site">
+      <a href="index.html#driver" data-roll>The Driver</a>
+      <a href="index.html#evolution" data-roll>Evolution</a>
+      <a href="sim.html" data-roll>On Track</a>
+      <a href="index.html#r2r" data-roll>Road to Racing</a>
+      <a href="karting.html" data-roll>Karting</a>
+      <a href="index.html#partners" data-roll>Partners</a>
+    </nav>
+    <button class="header__lang mono" id="langBtn" type="button" aria-label="Passer en français">FR</button>
+    <button class="header__menu" id="menuBtn" aria-expanded="false" aria-controls="menu">
+      <span data-roll>Chapters</span>
+      <span class="burger"><i></i><i></i></span>
+    </button>
+  </header>
+
+  <!-- ============ FULLSCREEN MENU (this page isn't listed: it's only reached from Why I Race and Outside the Track) ============ -->
+  <div class="menu" id="menu" aria-hidden="true">
+    <div class="menu__bg"></div>
+    <div class="menu__inner">
+      <ol class="menu__list">
+        <li><a href="index.html"><small>00</small><span data-roll>Grid</span></a></li>
+        <li><a href="index.html#driver"><small>01</small><span data-roll>The Driver</span></a></li>
+        <li><a href="outside.html"><small>↗</small><span data-roll>Outside the Track</span></a></li>
+        <li><a href="paddock.html"><small>↗</small><span data-roll>Why I Race</span></a></li>
+        <li><a href="index.html#evolution"><small>02</small><span data-roll>Evolution</span></a></li>
+        <li><a href="build.html"><small>↗</small><span data-roll>The Build</span></a></li>
+        <li><a href="sim.html"><small>↗</small><span data-roll>On Track</span></a></li>
+        <li><a href="index.html#r2r"><small>04</small><span data-roll>Road to Racing</span></a></li>
+        <li><a href="karting.html"><small>↗</small><span data-roll>Karting</span></a></li>
+        <li><a href="index.html#partners"><small>05</small><span data-roll>Partners</span></a></li>
+        <li><a href="#finish"><small>06</small><span data-roll>Chequered Flag</span></a></li>
+      </ol>
+      <div class="menu__side">
+        <div class="menu__preview"><img src="assets/outside/young-sim.jpg" alt="" /></div>
+        <p class="mono">KV23 · A HIDDEN CHAPTER<br />PEACE · PEOPLE · PURPOSE</p>
+      </div>
+    </div>
+  </div>
+
+  <main id="smooth">
+
+    <!-- ============ HERO ============ -->
+    <section class="kpage__hero" id="top">
+      <a class="kpage__back mono" href="outside.html">← Back to Outside the Track</a>
+      <div class="chapter-tag mono" data-intro><span>✦</span> A hidden chapter · you read all the way here</div>
+      <h1 class="kpage__title" aria-label="The pursuit of happiness">
+        <span data-split>THE PURSUIT OF</span>
+        <span class="outline" data-split>HAPPINESS</span>
+      </h1>
+      <div class="kpage__intro">
+        <p class="kpage__lead" data-intro>I'm chasing a seat in GT3. But if I'm honest with myself, that isn't the real finish line. This page is about what I'm actually chasing.</p>
+        <ul class="kpage__stats kpage__stats--words" data-intro>
+          <li><b>Peace</b><small class="mono">Faith first</small></li>
+          <li><b>People</b><small class="mono">Never alone</small></li>
+          <li><b>Purpose</b><small class="mono">Who I become</small></li>
+        </ul>
+      </div>
+      <a class="kpage__jump mono" href="#question">Scroll<span></span></a>
+    </section>
+
+    <section class="ppage hpage">
+
+      <!-- 01 · the question -->
+      <div class="kpage__sec" id="question">
+        <p class="mono karting__kicker" data-reveal><span>01</span> The question</p>
+        <h2 class="karting__title" data-split>More isn't<br /><em>the answer.</em></h2>
+      </div>
+      <div class="pstory">
+        <blockquote class="pquote" data-reveal>
+          <p>For 225 days I was building something that was <b>working</b>, and I still wasn't happy.</p>
+        </blockquote>
+        <div class="pstory__side" data-reveal>
+          <p>The channel was growing. The numbers were going up. And every night I was splitting myself in two, then jumping in the rig with whatever was left.</p>
+          <p>That's when I understood something: results, views and iRating can make a good day better, but they can't make a life feel full. If I wait for a trophy to be happy, I'll be waiting forever, because there will always be a next one.</p>
+        </div>
+      </div>
+      <ul class="kwall pwall pwall--2" aria-label="Photos: where it started">
+        <li style="--r:-3deg"><img src="assets/outside/young-sim.jpg" width="1200" height="1600" loading="lazy" alt="Kiryl as a kid in a VR headset, hands on the wheel of a racing simulator" /><span class="mono">Where it started</span><small>Happy with a headset and a wheel. Nothing to prove yet.</small></li>
+        <li style="--r:2deg"><img src="assets/paddock/editing.jpg" width="900" height="1600" loading="lazy" alt="A laptop with a video-editing timeline open, by a window with snowy trees" /><span class="mono">225 days</span><small>Working, growing, and running on empty.</small></li>
+      </ul>
+
+      <!-- 02 · peace -->
+      <div class="kpage__sec" id="peace">
+        <p class="mono karting__kicker" data-reveal><span>02</span> Peace</p>
+        <h2 class="karting__title" data-split>Calm in<br /><em>the cockpit.</em></h2>
+      </div>
+      <div class="pstory pstory--flip">
+        <div class="pstory__side" data-reveal>
+          <p>My faith is where my happiness starts. As an Orthodox Christian, I don't have to carry every result on my own shoulders. I do the work, and I trust God with the rest.</p>
+          <p>That doesn't make the pressure disappear. It changes what the pressure means. A bad race is a bad race, not a verdict on who I am.</p>
+        </div>
+        <blockquote class="pquote" data-reveal>
+          <p>Peace isn't the absence of pressure. It's knowing <b>who holds it.</b></p>
+        </blockquote>
+      </div>
+
+      <!-- 03 · people -->
+      <div class="kpage__sec" id="people">
+        <p class="mono karting__kicker" data-reveal><span>03</span> People</p>
+        <h2 class="karting__title" data-split>Nobody wins<br /><em>alone.</em></h2>
+      </div>
+      <div class="pstory pstory--text">
+        <p class="pstory__lead" data-reveal>Some of my happiest nights didn't happen on track. They happened after: helmets on the table, steak and fries, and everyone arguing about who braked too late.</p>
+        <p class="pstory__lead" data-reveal>My family believed in this before there was anything to believe in. My friends show up when there's nothing to celebrate. If I ever make it, the best part will be turning around and seeing them there.</p>
+      </div>
+      <ul class="kwall pwall pwall--3" aria-label="Photos: the people around the racing">
+        <li style="--r:-2deg"><img src="assets/karting/boys-helmets.jpg" width="675" height="1200" loading="lazy" alt="Four helmets on a round table at the track, including Kiryl's red-and-black Fanatec helmet" /><span class="mono">The boys</span><small>Four helmets, one table.</small></li>
+        <li style="--r:3deg"><img src="assets/karting/boys-night.jpg" width="675" height="1200" loading="lazy" alt="Steak and fries at a table with friends after a karting night" /><span class="mono">After the race</span><small>The best debrief is over dinner.</small></li>
+        <li style="--r:-3deg"><img src="assets/outside/habs.jpg" width="900" height="1600" loading="lazy" alt="Kiryl in a Montreal Canadiens jersey in the stands at a hockey game" /><span class="mono">Habs game night</span><small>Loud crowd, good company.</small></li>
+      </ul>
+
+      <!-- 04 · discipline -->
+      <div class="kpage__sec" id="discipline">
+        <p class="mono karting__kicker" data-reveal><span>04</span> Discipline</p>
+        <h2 class="karting__title" data-split>Freedom in<br /><em>saying no.</em></h2>
+      </div>
+      <div class="pstory">
+        <blockquote class="pquote" data-reveal>
+          <p>I want the kind of happiness that <b>doesn't cost me tomorrow.</b></p>
+        </blockquote>
+        <div class="pstory__side" data-reveal>
+          <p>Living sober, keeping my word, going to bed when I should: none of it sounds exciting. But every promise I keep to myself makes me trust myself a little more.</p>
+          <p>That's a quiet kind of happy, and it lasts longer than any night out.</p>
+        </div>
+      </div>
+
+      <!-- 05 · the little things -->
+      <div class="kpage__sec" id="little">
+        <p class="mono karting__kicker" data-reveal><span>05</span> The little things</p>
+        <h2 class="karting__title" data-split>Things that<br /><em>make me happy.</em></h2>
+      </div>
+      <ol class="hlist" data-reveal>
+        <li>A clean lap with zero incidents.</li>
+        <li>Steak and fries after a kart night.</li>
+        <li>An empty pit lane before anyone else arrives.</li>
+        <li>A white cap with fresh signatures on it.</li>
+        <li>Finishing an edit at 2 a.m. and liking it.</li>
+        <li>The Habs winning at home.</li>
+        <li>A book that changes how I think.</li>
+        <li>Sitting in a race car that finally fits.</li>
+        <li>A long dinner with family, phones away.</li>
+        <li>Knowing I gave it everything today.</li>
+      </ol>
+      <ul class="kwall pwall" aria-label="Photos: small happy moments">
+        <li style="--r:-3deg"><img src="assets/paddock/pitlane.jpg" width="900" height="1600" loading="lazy" alt="The empty pit lane and garages at Circuit Gilles Villeneuve a few weeks before the Grand Prix" /><span class="mono">Before anyone else</span><small>An empty pit lane, all mine.</small></li>
+        <li style="--r:2deg"><img src="assets/paddock/larsen.jpg" width="1200" height="1600" loading="lazy" alt="Alba Larsen smiling at Kiryl as she hands back his signed white cap in front of her F1 Academy garage" /><span class="mono">After the signature</span><small>She handed the cap back and looked right at me. I'm keeping that moment.</small></li>
+        <li style="--r:-2deg"><img src="assets/outside/books.jpg" width="900" height="1600" loading="lazy" alt="The Holy Bible and The Psychology of Money held side by side" /><span class="mono">Reading</span><small>Two books, two kinds of wisdom.</small></li>
+        <li style="--r:3deg"><img src="assets/outside/formula-car.jpg" width="1600" height="900" loading="lazy" alt="Kiryl smiling in the cockpit of a white single-seater race car on display at a show" /><span class="mono">That smile</span><small>A single-seater, finally my size.</small></li>
+      </ul>
+
+      <!-- 06 · someone to share it with -->
+      <div class="kpage__sec" id="you">
+        <p class="mono karting__kicker" data-reveal><span>06</span> Someone to share it with</p>
+        <h2 class="karting__title" data-split>To the one<br /><em>I haven't met yet.</em></h2>
+      </div>
+      <article class="hletter" data-reveal>
+        <p class="hletter__to">To you, whoever you are</p>
+        <p>I don't know your name yet. Maybe we've already crossed paths: somewhere in the crowd, a few steps away, in the garages or on the grid, and neither of us knew.</p>
+        <p>By the time you read this, I hope I'm closer to that seat. But I want you to know what I'm really hoping for: someone to share the ordinary days with, not just the podiums.</p>
+        <p>I want a love built on faith, honesty and patience. Someone who prays with me, laughs at my worst jokes, and tells me the truth when I need to hear it.</p>
+        <p>I promise to show up. To keep my word. To give you my full attention, not whatever is left after the rig and the edits. You will never come second to a lap time.</p>
+        <p>And when the big moments come, I want to turn around and see you there.</p>
+        <p class="hletter__sign">— K.</p>
+      </article>
+      <blockquote class="pquote hshot" data-reveal>
+        <p>I'd rather miss the shot than <b>wonder what would have happened.</b></p>
+      </blockquote>
+
+      <!-- 07 · a note to future me -->
+      <div class="kpage__sec" id="future">
+        <p class="mono karting__kicker" data-reveal><span>07</span> A note to future me</p>
+        <h2 class="karting__title" data-split>Dear Kiryl,<br /><em>ten years from now.</em></h2>
+      </div>
+      <article class="hletter hletter--future" data-reveal>
+        <p class="hletter__to">2036</p>
+        <p>I hope you're still racing. But more than that, I hope you're still kind, still sober, still curious, and still close to God and to the people who were there before anyone was watching.</p>
+        <p>If you made it to GT3, enjoy every lap. If you didn't, I hope you know the chase was still worth it, because of who it turned you into.</p>
+        <p>Don't forget the kid with the VR headset. He was happy before he had anything to show for it.</p>
+        <p class="hletter__sign">— You, at 2026</p>
+      </article>
+
+      <!-- closing -->
+      <div class="pclose" data-reveal>
+        <p class="pclose__words"><span>Peace.</span> <span>People.</span> <span>Purpose.</span> <span>Happiness.</span></p>
+        <p class="pstory__lead">Happiness isn't something I'll find at the end of the Road to Racing. It's how I want to drive it.</p>
+      </div>
+
+      <div class="pnext" data-reveal>
+        <p>Now, back<br />to the chase.</p>
+        <div class="pnext__links">
+          <a class="kteaser__cta" href="paddock.html">Why I race <span aria-hidden="true">→</span></a>
+          <a class="kteaser__cta pnext__ghost" href="outside.html">Outside the track <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CHEQUERED FLAG / FOOTER ============ -->
+    <footer class="finish" id="finish">
+      <div class="finish__flag" aria-hidden="true"></div>
+      <div class="chapter-tag mono" data-reveal><span>06</span> Chequered Flag</div>
+      <p class="finish__kicker" data-reveal>Follow the Road to Racing, or get in touch about a race, a partnership or a seat.</p>
+      <h2 class="finish__big" aria-label="KV23"><span>K</span><span>V</span><span>2</span><span>3</span></h2>
+      <div class="finish__row">
+        <ul class="finish__links">
+          <li><a href="https://www.instagram.com/kirylvaladzkoracing/" target="_blank" rel="noopener noreferrer" data-roll>Instagram</a></li>
+          <li><a href="https://www.youtube.com/@KirylValadzko" target="_blank" rel="noopener noreferrer" data-roll>YouTube</a></li>
+        </ul>
+      </div>
+      <div class="finish__legal mono">
+        <span>© <span id="year">2026</span> Kiryl Valadzko · KV23</span>
+        <span class="finish__build">build e3cdaff5</span>
+      </div>
+    </footer>
+  </main>
+
+  <!-- libs -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+  <script src="js/i18n.js?v=0c4908c6"></script>
+  <script src="js/main.js?v=72d52ebb"></script>
+</body>
+</html>

@@ -16,6 +16,10 @@ foreach ($a in $assets) {
 # the footer's "build xxxxxxxx" shows which version a visitor is running: one code for the whole site,
 # from the CSS, the JS and every page's own text (ignoring the version tags and build codes themselves)
 $pages = Get-ChildItem $root -Filter *.html | Sort-Object Name
+# local drafts that git ignores aren't part of the site
+if (Get-Command git -ErrorAction SilentlyContinue) {
+  $pages = $pages | Where-Object { & git -C $root check-ignore -q $_.Name; $LASTEXITCODE -ne 0 }
+}
 $sb = New-Object Text.StringBuilder
 foreach ($a in $assets) { [void]$sb.Append($tags[$a]) }
 foreach ($page in $pages) {

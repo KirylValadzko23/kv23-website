@@ -1267,6 +1267,11 @@ a.rcard:hover .rcard__go { transform: translateX(5px); }
 .pnext__links .kteaser__cta { margin-top: 0; }
 .pnext__ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--ink); }
 .pnext__ghost:hover { color: #f4f1ec; box-shadow: none; }
+/* the quiet way into the hidden chapter (The Pursuit of Happiness), under the last links of two pages */
+.psecret { display: inline-flex; gap: 8px; margin-top: 56px; padding-bottom: 3px; font-size: 11px; color: rgba(21,24,15,.5); text-decoration: none; border-bottom: 1px solid transparent; transition: color .3s, border-color .3s; }
+.psecret span { transition: transform .4s var(--ease-out); }
+.psecret:hover { color: var(--red); border-color: var(--red); }
+.psecret:hover span { transform: translateX(4px); }
 
 /* ---------- outside the track (outside.html) ---------- */
 .kpage__stats--words b { font-size: clamp(40px, 4.4vw, 72px); }
