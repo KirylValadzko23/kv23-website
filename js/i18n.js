@@ -211,7 +211,7 @@ window.KV_I18N = {
     "<span>02</span> The Evolution": "<span>02</span> L'évolution",
     "THE": "L'",
     "EVOLUTION": "ÉVOLUTION",
-    "From a wheel clamped to a desk to a full aluminium cockpit. Five years, six setups. Keep scrolling and the garage drives sideways.": "D'un volant fixé à un bureau à un cockpit complet en aluminium. Cinq ans, six montages. Continue de défiler et le garage roule de côté.",
+    "From a wheel clamped to a desk to a full aluminium cockpit. Five years, six setups.<span class=\"evolution__side\"> Keep scrolling and the garage drives sideways.</span>": "D'un volant fixé à un bureau à un cockpit complet en aluminium. Cinq ans, six montages.<span class=\"evolution__side\"> Continue de défiler et le garage roule de côté.</span>",
     "Six setups. <b>One</b> obsession: finding the <b>next tenth</b>, then building the rig to chase it.": "Six montages. <b>Une</b> obsession : trouver le <b>dixième</b> suivant, puis bâtir le simulateur pour aller le chercher.",
     "<b>2022</b> · Stage 01 — The desk": "<b>2022</b> · Étape 01 — Le bureau",
     "Where it started": "Là où tout a commencé",

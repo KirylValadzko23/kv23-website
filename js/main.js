@@ -72,6 +72,9 @@
   translatePage();
 
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // phone-sized screens scroll straight down: no sideways rides (decided once, when the page loads)
+  const PHONE = matchMedia('(max-width: 760px)').matches;
+  document.documentElement.classList.toggle('is-phone', PHONE);
   const hasGSAP = typeof window.gsap !== 'undefined';
   if (hasGSAP && window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
 
@@ -1603,13 +1606,23 @@
     const evo = $('#evo');
     if (!evo) return;
     const items = $$('.evo__item', evo), sign = $('.evo__sign', evo);
-    ride(evo, { dir: 1, dive: 30, sway: true, items, outro: $('.evo__outro', evo), hint: $('.evo__hint', evo), focus: '.evo__item', pinClass: 'evo-pin' });
+    if (PHONE) { // phones: the rigs stack and scroll straight down, each one fading up into place
+      evo.classList.add('evo--stack');
+      $$('.evo__quote, .evo__item, .evo__outro', evo).forEach((el) => el.setAttribute('data-reveal', ''));
+    } else ride(evo, { dir: 1, dive: 30, sway: true, items, outro: $('.evo__outro', evo), hint: $('.evo__hint', evo), focus: '.evo__item', pinClass: 'evo-pin' });
     new IntersectionObserver(([e], io) => { if (e.isIntersecting) { sign.classList.add('is-signed'); io.disconnect(); } }, { threshold: 0.6 }).observe(sign);
     lightbox(items);
   }
 
   // the homepage rides: each section travels its own way (set on the panel: data-dir, data-dive)
   function homeRides() {
+    if (PHONE) { // phones: no sideways travel, the sections read top to bottom with small reveals
+      $$('[data-ride]').forEach((p) => {
+        p.classList.add('ride--stack');
+        $$(':scope > .ride__track > .ride__item', p).forEach((el) => el.setAttribute('data-reveal', ''));
+      });
+      return;
+    }
     $$('[data-ride]').forEach((p) => ride(p, {
       dir: +p.dataset.dir || 1, dive: +p.dataset.dive || 0, auto: true,
       hint: $('.ride__hint', p), focus: '.ride__ph',

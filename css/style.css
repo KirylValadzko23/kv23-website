@@ -1418,6 +1418,23 @@ a.rcard:hover .rcard__go { transform: translateX(5px); }
 .collage__text .ride__num { font-size: clamp(52px, 5vw, 96px) !important; }
 .collage__stats { margin-top: 12px; grid-template-columns: repeat(2, auto); gap: 14px 34px; }
 .collage__stats b { font-size: clamp(36px, 3.4vw, 60px); }
+
+/* phones (decided once at load, so a phone turned sideways stays stacked): the rides and the Evolution read top to bottom; main.js adds --stack instead of pinning them */
+.ride.ride--stack { height: auto; min-height: 0; overflow: visible; padding: 100px var(--gutter) 30px; }
+.ride--stack .ride__track { position: static; width: auto !important; height: auto; display: flex; flex-direction: column; gap: 64px; will-change: auto; }
+.ride--stack .ride__item { position: relative; left: auto !important; top: auto !important; will-change: auto; }
+.ride--stack .ride__intro, .ride--stack .collage, .ride--stack .ride__text, .ride--stack .ride__outro { width: 100%; }
+.ride--stack .ride__ph { --w: min(78vw, 340px); }
+.ride--stack .ride__ph:nth-child(even) { align-self: flex-end; }
+.ride--stack .ride__hint { display: none; }
+.evo.evo--stack { height: auto; min-height: 0; overflow: visible; }
+.evo--stack .evo__track { width: auto; height: auto; display: flex; flex-direction: column; gap: 72px; padding: 30px var(--gutter) 110px; will-change: auto; }
+.evo--stack .evo__item, .evo--stack .evo__quote, .evo--stack .evo__outro { position: relative; left: auto; top: auto; will-change: auto; }
+.evo--stack .evo__quote { width: 100%; }
+.evo--stack .evo__item { --focus: 1; width: min(80vw, 360px); }
+.evo--stack .evo__item:nth-of-type(even) { align-self: flex-end; }
+.evo--stack .evo__ghost { font-size: 30vw; right: -6%; top: -9%; }
+.is-phone .evolution__side { display: none; }
 /* ==========================================================================
    RACE WEEKEND (zoom: the scroll flies the camera forward)
    ========================================================================== */
