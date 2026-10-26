@@ -710,6 +710,7 @@ window.KV_I18N = {
     "build.html|THE": "LE",
   },
   js: {
+    "Video · {d}": "Vidéo · {d}",
     "Play video": "Lire la vidéo",
     "Pause video": "Mettre la vidéo en pause",
     "Wins": "Victoires",

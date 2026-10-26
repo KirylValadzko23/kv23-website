@@ -1356,7 +1356,7 @@
     const load = fetch('data/youtube.json', { cache: 'no-cache' })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => d && renderYouTube(d))
-      .catch(() => {});
+      .catch((e) => console.warn('YouTube data not applied:', e)); // the HTML cards stay
     return Promise.race([load, new Promise((r) => setTimeout(r, 4000))]); // never hold up the intro
   }
 
@@ -1364,6 +1364,7 @@
     const isId = (id) => /^[\w-]{11}$/.test(id);
     const safeSrc = (s) => (/^(assets\/|https:\/\/i\.ytimg\.com\/)/.test(s) ? s : '');
     const views = new Intl.NumberFormat(LOCALE, { notation: 'compact', maximumFractionDigits: 1 });
+    const when = new Intl.DateTimeFormat(LOCALE, { month: 'short', day: 'numeric', year: 'numeric' });
     const isNew = (list, v) => v === list[0] && Date.now() - new Date(v.published).getTime() < 7 * 864e5; // only the latest, if it's this week's
     const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
     const img = (src, w, h, alt) => { const i = el('img'); i.src = src; i.width = w; i.height = h; i.loading = 'lazy'; i.decoding = 'async'; i.alt = alt; return i; };
@@ -1380,7 +1381,9 @@
         frame.lastChild.setAttribute('aria-hidden', 'true');
         if (v.duration) frame.append(el('span', 'mono ep__dur', v.duration));
         if (isNew(eps, v)) frame.append(el('span', 'mono ep__new', L('New')));
-        const no = L('Road to Racing · Episode {n}', { n: String(v.no).padStart(2, '0') }) + (v.views ? ' · ' + L('{n} views', { n: views.format(v.views) }) : '');
+        // a Road to Racing episode shows its number; any other long-form video shows its date
+        const tag = v.no ? L('Road to Racing · Episode {n}', { n: String(v.no).padStart(2, '0') }) : L('Video · {d}', { d: when.format(new Date(v.published)) });
+        const no = tag + (v.views ? ' · ' + L('{n} views', { n: views.format(v.views) }) : '');
         b.append(frame, el('span', 'mono ep__no', no), el('b', 'ep__title', v.title));
         box.append(b);
       });
@@ -1557,16 +1560,19 @@
       if (o.hint) o.hint.style.opacity = dist && Math.abs(x) / dist > 0.03 ? 0 : '';
     };
 
-    let wasNear = true;
+    let wasNear = true, shown = 0;
     const tick = () => {
       const s = -pin.getBoundingClientRect().top;
       if (s === lastS) return;
       const near = s > -innerHeight && s < dist + innerHeight;
       if (!near && !wasNear) return; // off screen: leave it as it was left
       lastS = s; wasNear = near;
-      // position: sticky holds the panel for the run; the transform only bends the corners
-      const stuck = Math.max(-s, Math.min(0, dist - s));
-      panel.style.transform = `translate3d(0,${(screenTop(s) - stuck).toFixed(2)}px,0)`;
+      // position: sticky normally holds the panel for the run, and the transform only bends the corners.
+      // Some phone browsers let it scroll away instead (older iOS, where the page's sideways clip falls
+      // back to overflow: hidden), so measure where it actually sits and make up the difference.
+      const own = panel.getBoundingClientRect().top - shown;
+      shown = screenTop(s) - own;
+      panel.style.transform = `translate3d(0,${shown.toFixed(2)}px,0)`;
       const { x, y } = offset(s);
       track.style.transform = `translate3d(${x.toFixed(2)}px,${y.toFixed(2)}px,0)`;
       update(x);
@@ -1621,7 +1627,7 @@
     const vids = phs.map((p) => $('video', p));
     vids.forEach((v) => v && clip(v)); // their buttons exist from the start
     const smooth = (t) => (t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t));
-    let W = 0, H = 0, STEP = 1, LIFE = 1, LEAD = 0, len = 1, top = 0, cyc = 1, lastS = NaN, cap = -1;
+    let W = 0, H = 0, STEP = 1, LIFE = 1, LEAD = 0, len = 1, top = 0, cyc = 1, lastS = NaN, cap = -1, zShown = 0;
 
     const measure = () => {
       W = innerWidth; H = z.offsetHeight;
@@ -1643,6 +1649,12 @@
         return;
       }
       lastS = s;
+      // hold the stage at the top for the run: position: sticky does it, and where a phone browser lets
+      // it scroll away instead (see ride()), the measured difference is made up here
+      const own = z.getBoundingClientRect().top - zShown;
+      zShown = -s + clamp(s, 0, len) - own;
+      z.style.transform = Math.abs(zShown) < 0.5 ? '' : `translate3d(0,${zShown.toFixed(2)}px,0)`;
+      if (!z.style.transform) zShown = 0;
       // the title: you fly through it
       const p = clamp(s / (LEAD + H * 0.35), 0, 1);
       intro.style.transform = `scale(${(1 + p * p * 2.4).toFixed(3)})`;

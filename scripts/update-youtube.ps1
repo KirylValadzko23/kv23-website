@@ -1,7 +1,11 @@
-# Pulls the latest Road to Racing episodes and Shorts from YouTube's public RSS feeds (no API key needed)
+# Pulls the latest long-form videos and Shorts from YouTube's public RSS feeds (no API key needed)
 # and writes data/youtube.json, which the site renders on load.
 # Usage: powershell -ExecutionPolicy Bypass -File scripts/update-youtube.ps1
 # Runs on Windows PowerShell 5.1 and PowerShell 7 (the GitHub Action uses pwsh on Linux).
+#
+# YouTube's feeds sometimes answer 404 for a while (often the long-form one, early in the morning UTC).
+# A feed that still fails after a few tries keeps its part of the last good data file, and the run
+# ends without an error: a missed update isn't worth a failed job, the next run catches up.
 param(
   [string]$ChannelId = 'UCG50aSgRv2N9RkMl0kXY_2Q', # @KirylValadzko
   [int]$MaxShorts = 12,
@@ -20,26 +24,41 @@ $ell = [string][char]0x2026 # "..." (kept out of the source so 5.1 reads this fi
 $titleOverrides = @{
   'JhWwEKcYf4E' = 'Is My Racing Dream Even Realistic?'
   '9CaiRlim-jY' = "This Started Worse Than I Expected$ell"
+  '6NggvLsq8vk' = 'Does Studying Actually Make You Faster? (Rain Test)'
 }
 
-# durations from the last run, in case YouTube refuses the watch-page lookup (it sometimes does for cloud IPs)
-$known = @{}
+# the last good data: durations for when YouTube refuses the watch-page lookup (it sometimes does for
+# cloud IPs), and whole lists for when a feed is down
+$old = $null; $known = @{}
 if (Test-Path $out) {
-  try { (Get-Content $out -Raw -Encoding UTF8 | ConvertFrom-Json).episodes | ForEach-Object { if ($_.duration) { $known[$_.id] = $_.duration } } } catch {}
+  try { $old = Get-Content $out -Raw -Encoding UTF8 | ConvertFrom-Json } catch {}
+  if ($old) { @($old.episodes) | ForEach-Object { if ($_ -and $_.duration) { $known[$_.id] = $_.duration } } }
 }
 
-# uploads split by type: UUSH = Shorts, UULF = long-form videos
+function Note([string]$msg) {
+  if ($env:GITHUB_ACTIONS) { Write-Host "::warning::$msg" } else { Write-Warning $msg }
+}
+
+# uploads split by type: UUSH = Shorts, UULF = long-form videos. $null means the feed couldn't be read.
 function Get-Feed([string]$playlist) {
-  [xml]$x = (Invoke-WebRequest -UseBasicParsing -Uri "https://www.youtube.com/feeds/videos.xml?playlist_id=$playlist").Content
-  Select-Xml -Xml $x -XPath '//a:entry' -Namespace $ns | ForEach-Object {
-    $e = $_.Node
-    [pscustomobject]@{
-      id        = [string]$e.videoId
-      raw       = [string]$e.title
-      published = [datetime]::Parse($e.published).ToUniversalTime()
-      views     = [int]$e.group.community.statistics.views
-    }
+  $waits = 0, 10, 30, 60
+  foreach ($w in $waits) {
+    if ($w) { Start-Sleep -Seconds $w }
+    try {
+      [xml]$x = (Invoke-WebRequest -UseBasicParsing -Uri "https://www.youtube.com/feeds/videos.xml?playlist_id=$playlist").Content
+      return @(Select-Xml -Xml $x -XPath '//a:entry' -Namespace $ns | ForEach-Object {
+        $e = $_.Node
+        [pscustomobject]@{
+          id        = [string]$e.videoId
+          raw       = [string]$e.title
+          published = [datetime]::Parse($e.published).ToUniversalTime()
+          views     = [int]$e.group.community.statistics.views
+        }
+      })
+    } catch { $err = $_.Exception.Message }
   }
+  Note "Feed $playlist unreadable after $($waits.Count) tries ($err); keeping its last good data."
+  return $null
 }
 
 function Get-CleanTitle($v) {
@@ -72,32 +91,48 @@ function Get-Duration([string]$id) {
 
 $iso = { param($d) $d.ToString('yyyy-MM-ddTHH:mm:ssZ') }
 
-# Road to Racing episodes: numbered oldest-first, listed newest-first
-$long = @(Get-Feed "UULF$tail" | Where-Object { $_.raw -match 'Road to Racing' } | Sort-Object published)
-$episodes = @(for ($i = 0; $i -lt $long.Count; $i++) {
-  $v = $long[$i]
-  [ordered]@{
-    id = $v.id; no = $i + 1; title = Get-CleanTitle $v; published = & $iso $v.published; views = $v.views
-    duration = Get-Duration $v.id
-    thumb = Get-Thumb $v.id "https://i.ytimg.com/vi/$($v.id)/maxresdefault.jpg"
-  }
-})
-[array]::Reverse($episodes)
+# long-form videos, newest first. Road to Racing ones keep their episode number (counted oldest-first
+# within the series); every other long-form video has no: null and shows its date instead.
+$longFeed = Get-Feed "UULF$tail"
+if ($null -ne $longFeed) {
+  $series = @($longFeed | Where-Object { $_.raw -match 'Road to Racing' } | Sort-Object published)
+  $epNo = @{}; for ($i = 0; $i -lt $series.Count; $i++) { $epNo[$series[$i].id] = $i + 1 }
+  $episodes = @($longFeed | Sort-Object published -Descending | Select-Object -First $MaxEpisodes | ForEach-Object {
+    [ordered]@{
+      id = $_.id; no = $epNo[$_.id]; title = Get-CleanTitle $_; published = & $iso $_.published; views = $_.views
+      duration = Get-Duration $_.id
+      thumb = Get-Thumb $_.id "https://i.ytimg.com/vi/$($_.id)/maxresdefault.jpg"
+    }
+  })
+} else { $episodes = @(if ($old) { $old.episodes }) }
 
-$shorts = Get-Feed "UUSH$tail" | Sort-Object published -Descending | Select-Object -First $MaxShorts | ForEach-Object {
-  [ordered]@{
-    id = $_.id; title = Get-CleanTitle $_; published = & $iso $_.published; views = $_.views
-    thumb = Get-Thumb $_.id "https://i.ytimg.com/vi/$($_.id)/oardefault.jpg"
-  }
+$shortFeed = Get-Feed "UUSH$tail"
+if ($null -ne $shortFeed) {
+  $shorts = @($shortFeed | Sort-Object published -Descending | Select-Object -First $MaxShorts | ForEach-Object {
+    [ordered]@{
+      id = $_.id; title = Get-CleanTitle $_; published = & $iso $_.published; views = $_.views
+      thumb = Get-Thumb $_.id "https://i.ytimg.com/vi/$($_.id)/oardefault.jpg"
+    }
+  })
+} else { $shorts = @(if ($old) { $old.shorts }) }
+
+if (($null -eq $longFeed -and $null -eq $shortFeed) -or (-not $episodes.Count -and -not $shorts.Count)) {
+  Note 'No fresh data this run; the site keeps the last good data file.'
+  exit 0
 }
 
-if (-not $shorts -and -not $episodes) { throw 'Both feeds came back empty; keeping the existing data file.' }
+# only touch the file (and its "updated" time) when the videos or their numbers changed
+$body = { param($e, $s) (@{ episodes = @($e); shorts = @($s) } | ConvertTo-Json -Depth 5 -Compress) }
+if ($old -and (& $body $episodes $shorts) -eq (& $body $old.episodes $old.shorts)) {
+  Write-Host 'No change.'
+  exit 0
+}
 
 $data = [ordered]@{
   updated  = & $iso (Get-Date).ToUniversalTime()
-  episodes = @($episodes | Select-Object -First $MaxEpisodes)
+  episodes = @($episodes)
   shorts   = @($shorts)
 }
 New-Item -ItemType Directory -Force (Split-Path $out) | Out-Null
 [IO.File]::WriteAllText($out, ($data | ConvertTo-Json -Depth 5), (New-Object Text.UTF8Encoding $false))
-Write-Host ("Wrote {0}: {1} episodes, {2} shorts" -f $out, $data.episodes.Count, $data.shorts.Count)
+Write-Host ("Wrote {0}: {1} long-form videos, {2} shorts" -f $out, $data.episodes.Count, $data.shorts.Count)
