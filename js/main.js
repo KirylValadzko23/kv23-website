@@ -72,8 +72,10 @@
   translatePage();
 
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  // phone-sized screens scroll straight down: no sideways rides (decided once, when the page loads)
-  const PHONE = matchMedia('(max-width: 760px)').matches;
+  // phones scroll straight down: no sideways rides (decided once, when the page loads). It's the device
+  // that counts, not the window: a touch-only screen that's phone-sized. A computer keeps the rides
+  // however narrow or zoomed in its browser window is; tablets keep them too.
+  const PHONE = matchMedia('(hover: none) and (pointer: coarse)').matches && Math.min(screen.width, screen.height) < 600;
   document.documentElement.classList.toggle('is-phone', PHONE);
   const hasGSAP = typeof window.gsap !== 'undefined';
   if (hasGSAP && window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
