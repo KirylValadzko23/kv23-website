@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-27T22:14:07Z",
+  "updated": "2026-10-28T12:54:31Z",
   "episodes": [
     {
       "id": "6NggvLsq8vk",
@@ -40,10 +40,17 @@
   ],
   "shorts": [
     {
+      "id": "YEvv9Xf_NYQ",
+      "title": "Day 2: 0.35s Faster Thanks To You",
+      "published": "2026-10-28T02:24:47Z",
+      "views": 397,
+      "thumb": "https://i.ytimg.com/vi/YEvv9Xf_NYQ/oardefault.jpg"
+    },
+    {
       "id": "Y1TLvZoiWr4",
       "title": "Day 1: Can I Hit a 1:52 at Monza?",
       "published": "2026-10-27T01:10:49Z",
-      "views": 549,
+      "views": 644,
       "thumb": "https://i.ytimg.com/vi/Y1TLvZoiWr4/oardefault.jpg"
     },
     {
@@ -64,14 +71,14 @@
       "id": "L-xPsbftbpw",
       "title": "What Men Spend Their Money On…",
       "published": "2026-10-14T18:58:33Z",
-      "views": 1689,
+      "views": 1692,
       "thumb": "https://i.ytimg.com/vi/L-xPsbftbpw/oardefault.jpg"
     },
     {
       "id": "2aeMaSzKaiQ",
       "title": "iRacing C License Series Tier List",
       "published": "2026-10-14T14:00:36Z",
-      "views": 2338,
+      "views": 2335,
       "thumb": "assets/content/2aeMaSzKaiQ.jpg"
     },
     {
@@ -99,7 +106,7 @@
       "id": "bx_UrVxNdoI",
       "title": "The Deciding Race…",
       "published": "2026-10-04T20:17:47Z",
-      "views": 1005,
+      "views": 1006,
       "thumb": "assets/content/bx_UrVxNdoI.jpg"
     },
     {
@@ -115,13 +122,6 @@
       "published": "2026-10-03T17:10:00Z",
       "views": 1282,
       "thumb": "https://i.ytimg.com/vi/Fasvwznm3gI/oardefault.jpg"
-    },
-    {
-      "id": "6KasZ1vUFBs",
-      "title": "One Life. One Shot.",
-      "published": "2026-10-02T15:06:45Z",
-      "views": 1285,
-      "thumb": "assets/content/6KasZ1vUFBs.jpg"
     }
   ]
 }
