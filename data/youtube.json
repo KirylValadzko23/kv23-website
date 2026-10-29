@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-28T12:54:31Z",
+  "updated": "2026-10-29T13:00:39Z",
   "episodes": [
     {
       "id": "6NggvLsq8vk",
@@ -40,24 +40,31 @@
   ],
   "shorts": [
     {
+      "id": "ORR2vEYVzq0",
+      "title": "Day 3: Only 0.456s From The 1:52s",
+      "published": "2026-10-28T19:41:50Z",
+      "views": 608,
+      "thumb": "https://i.ytimg.com/vi/ORR2vEYVzq0/oardefault.jpg"
+    },
+    {
       "id": "YEvv9Xf_NYQ",
       "title": "Day 2: 0.35s Faster Thanks To You",
       "published": "2026-10-28T02:24:47Z",
-      "views": 397,
+      "views": 884,
       "thumb": "https://i.ytimg.com/vi/YEvv9Xf_NYQ/oardefault.jpg"
     },
     {
       "id": "Y1TLvZoiWr4",
       "title": "Day 1: Can I Hit a 1:52 at Monza?",
       "published": "2026-10-27T01:10:49Z",
-      "views": 644,
+      "views": 781,
       "thumb": "https://i.ytimg.com/vi/Y1TLvZoiWr4/oardefault.jpg"
     },
     {
       "id": "CnsXcluw_5c",
       "title": "I'm Only Human",
       "published": "2026-10-16T21:08:41Z",
-      "views": 1342,
+      "views": 1343,
       "thumb": "https://i.ytimg.com/vi/CnsXcluw_5c/oardefault.jpg"
     },
     {
@@ -78,7 +85,7 @@
       "id": "2aeMaSzKaiQ",
       "title": "iRacing C License Series Tier List",
       "published": "2026-10-14T14:00:36Z",
-      "views": 2335,
+      "views": 2336,
       "thumb": "assets/content/2aeMaSzKaiQ.jpg"
     },
     {
@@ -115,13 +122,6 @@
       "published": "2026-10-04T07:25:17Z",
       "views": 232,
       "thumb": "https://i.ytimg.com/vi/FX6J50XERh8/oardefault.jpg"
-    },
-    {
-      "id": "Fasvwznm3gI",
-      "title": "POV: You Put Sim Racing On Pause…",
-      "published": "2026-10-03T17:10:00Z",
-      "views": 1282,
-      "thumb": "https://i.ytimg.com/vi/Fasvwznm3gI/oardefault.jpg"
     }
   ]
 }
