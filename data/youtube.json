@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-01T13:24:19Z",
+  "updated": "2026-11-01T22:01:12Z",
   "episodes": [
     {
       "id": "6NggvLsq8vk",
@@ -33,17 +33,24 @@
       "no": 1,
       "title": "Is My Racing Dream Even Realistic?",
       "published": "2026-07-10T23:52:16Z",
-      "views": 112,
+      "views": 113,
       "duration": "4:34",
       "thumb": "assets/content/JhWwEKcYf4E.jpg"
     }
   ],
   "shorts": [
     {
+      "id": "MjV63hoLhkk",
+      "title": "Day 5: I Finally Did It… 1:52 at Monza",
+      "published": "2026-11-01T17:36:17Z",
+      "views": 199,
+      "thumb": "https://i.ytimg.com/vi/MjV63hoLhkk/oardefault.jpg"
+    },
+    {
       "id": "ZCGAoJnmJFg",
       "title": "Day 4: One Tenth Away From The 1:52s",
       "published": "2026-10-29T17:52:04Z",
-      "views": 780,
+      "views": 784,
       "thumb": "https://i.ytimg.com/vi/ZCGAoJnmJFg/oardefault.jpg"
     },
     {
@@ -115,13 +122,6 @@
       "published": "2026-10-06T21:31:13Z",
       "views": 1069,
       "thumb": "assets/content/lAAhOLETuxg.jpg"
-    },
-    {
-      "id": "bx_UrVxNdoI",
-      "title": "The Deciding Race…",
-      "published": "2026-10-04T20:17:47Z",
-      "views": 1007,
-      "thumb": "assets/content/bx_UrVxNdoI.jpg"
     }
   ]
 }
