@@ -431,7 +431,7 @@ window.KV_I18N = {
     "SSD storage": "Stockage SSD",
     "Stage 06 · the current rig": "Étape 06 · le simulateur actuel",
     "01 · Racing equipment": "01 · Équipement de course",
-    "What I touch": "Ce que je touche",
+    "The controls": "Les commandes",
     "Wheel base": "Base",
     "Wheel": "Volant",
     "Pedals": "Pédales",
