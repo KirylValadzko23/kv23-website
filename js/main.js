@@ -455,7 +455,7 @@
       clearProps: 'transform,opacity', scrollTrigger: once(board, 'top 80%'),
       onStart: () => board.classList.add('is-live'),
     });
-    if (has('.irchart')) gsap.from('.irchart__facts li', { y: 24, opacity: 0, duration: 1, ease: 'expo.out', stagger: 0.12, scrollTrigger: once('.irchart', 'top 75%') });
+    $$('.irchart').forEach((c) => gsap.from($$('.irchart__facts li', c), { y: 24, opacity: 0, duration: 1, ease: 'expo.out', stagger: 0.12, scrollTrigger: once(c, 'top 75%') }));
 
     // licences are dealt onto the table, then the promotion gets stamped
     const promo = $('.lic--promo');
@@ -686,17 +686,18 @@
     { d: '2026-11-08', label: L('Class A · 2014'), dy: -22, anchor: 'end' },
   ];
 
-  function iRatingChart() {
-    const plot = $('#irPlot'), svg = $('#irSvg'), tip = $('#irTip');
+  // one rating chart (iRating, the Track Titan rating): root is the .irchart box, o its data and scale
+  function ratingChart(root, o) {
+    const plot = $('.irchart__plot', root), svg = $('svg', plot), tip = $('.irchart__tip', root);
     if (!plot) return;
     const dateFmt = new Intl.DateTimeFormat(LOCALE, { month: 'short', day: 'numeric', year: 'numeric' });
-    const pts = IRATING;
+    const pts = o.pts;
     let geo = null, drawn = false;
 
     const build = () => {
       const W = plot.clientWidth, H = plot.clientHeight;
       const m = { l: 44, r: 18, t: 34, b: 30 };
-      const t0 = pts[0].t, t1 = pts[pts.length - 1].t, vMin = 800, vMax = 2200;
+      const t0 = pts[0].t, t1 = pts[pts.length - 1].t, vMin = o.vMin, vMax = o.vMax;
       const x = (t) => m.l + ((t - t0) / (t1 - t0)) * (W - m.l - m.r);
       const y = (v) => m.t + (1 - (v - vMin) / (vMax - vMin)) * (H - m.t - m.b);
       const xy = pts.map((p) => [x(p.t), y(p.v)]);
@@ -704,12 +705,10 @@
       const area = `${line}L${xy[xy.length - 1][0].toFixed(1)},${H - m.b}L${xy[0][0].toFixed(1)},${H - m.b}Z`;
 
       let grid = '';
-      for (let v = 1000; v <= 2200; v += 200) grid += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(v)}" y2="${y(v)}"/>`;
+      for (let v = o.gridFrom; v <= vMax; v += o.grid) grid += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(v)}" y2="${y(v)}"/>`;
       let axis = '';
-      for (let v = 1000; v <= 2200; v += 400) axis += `<text x="${m.l - 10}" y="${y(v) + 3}" text-anchor="end">${v}</text>`;
-      const months = FR
-        ? [['2025-11-01', 'nov.'], ['2026-01-01', 'janv. 26'], ['2026-03-01', 'mars'], ['2026-05-01', 'mai'], ['2026-07-01', 'juil.'], ['2026-09-01', 'sept.']]
-        : [['2025-11-01', 'Nov'], ['2026-01-01', 'Jan 26'], ['2026-03-01', 'Mar'], ['2026-05-01', 'May'], ['2026-07-01', 'Jul'], ['2026-09-01', 'Sep']];
+      for (let v = o.gridFrom; v <= vMax; v += o.axis) axis += `<text x="${m.l - 10}" y="${y(v) + 3}" text-anchor="end">${v}</text>`;
+      const months = FR ? o.monthsFr : o.months;
       const narrow = W < 520;
       months.forEach(([d, lbl], i) => {
         if (narrow && i % 2) return;
@@ -717,7 +716,7 @@
         axis += `<text x="${tx}" y="${H - 8}" text-anchor="middle">${lbl}</text>`;
       });
       let marks = '';
-      IR_MARKS.forEach((mk) => {
+      o.marks.forEach((mk) => {
         const i = pts.findIndex((p) => p.d === mk.d);
         if (i < 0) return;
         const [a, b] = xy[i];
@@ -729,11 +728,11 @@
 
       svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
       svg.innerHTML = `
-        <defs><linearGradient id="irGrad" x1="0" y1="0" x2="0" y2="1">
+        <defs><linearGradient id="${o.id}Grad" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stop-color="#ff2d55" stop-opacity=".35"/><stop offset="1" stop-color="#ff2d55" stop-opacity="0"/>
         </linearGradient></defs>
         <g class="ir-grid">${grid}</g><g class="ir-axis">${axis}</g>
-        <path class="ir-area" d="${area}"/><path class="ir-line" d="${line}"/>
+        <path class="ir-area" d="${area}" style="fill:url(#${o.id}Grad)"/><path class="ir-line" d="${line}"/>
         <g class="ir-dots">${dots}</g>
         <circle class="ir-live-ring" cx="${lx}" cy="${ly}" r="5"/><circle class="ir-live" cx="${lx}" cy="${ly}" r="5"/>
         <g class="ir-marks">${marks}</g><circle class="ir-pen" r="5" cx="${xy[0][0]}" cy="${xy[0][1]}"/>
@@ -753,7 +752,7 @@
       drawn = true;
       if (!hasGSAP || reduced) { plot.classList.add('is-drawn'); return; }
       const path = $('.ir-line', svg), pen = $('.ir-pen', svg), len = path.getTotalLength();
-      const now = $('#irNow'), when = $('#irNowDate'), finalNow = now.textContent, finalWhen = when.textContent;
+      const now = $('.irchart__now b', root), when = $('.irchart__now b + span', root), finalNow = now.textContent, finalWhen = when.textContent;
       // a glowing pen draws the line, and the big number reads the iRating at its tip as it goes
       const o = { p: 0 }, chart = plot.closest('.irchart');
       let lastNow = '', lastWhen = '';
@@ -812,6 +811,42 @@
       rt = setTimeout(() => { if (plot.clientWidth !== builtW) { builtW = plot.clientWidth; build(); } }, 150);
     });
     new IntersectionObserver(([e], io) => { if (e.isIntersecting) { draw(); io.disconnect(); } }, { threshold: 0.4 }).observe(plot);
+  }
+
+  function iRatingChart() {
+    const plot = $('#irPlot');
+    if (!plot) return;
+    ratingChart(plot.closest('.irchart'), {
+      id: 'ir', pts: IRATING, marks: IR_MARKS, vMin: 800, vMax: 2200, gridFrom: 1000, grid: 200, axis: 400,
+      months: [['2025-11-01', 'Nov'], ['2026-01-01', 'Jan 26'], ['2026-03-01', 'Mar'], ['2026-05-01', 'May'], ['2026-07-01', 'Jul'], ['2026-09-01', 'Sep']],
+      monthsFr: [['2025-11-01', 'nov.'], ['2026-01-01', 'janv. 26'], ['2026-03-01', 'mars'], ['2026-05-01', 'mai'], ['2026-07-01', 'juil.'], ['2026-09-01', 'sept.']],
+    });
+  }
+
+  /* ------------------------------------------------------------------------
+     On Track — Track Titan rating (its global driver rating, all games), traced from the Track Titan chart
+     ------------------------------------------------------------------------ */
+  const TT_RATING = [
+    ['2026-03-24', 328], ['2026-03-27', 420], ['2026-04-25', 420], ['2026-05-01', 435], ['2026-05-31', 428],
+    ['2026-06-04', 585], ['2026-06-08', 580], ['2026-06-11', 640], ['2026-06-18', 630], ['2026-06-24', 470],
+    ['2026-06-28', 455], ['2026-07-04', 490], ['2026-07-08', 525], ['2026-07-31', 520], ['2026-08-02', 492],
+    ['2026-08-09', 707], ['2026-08-12', 675], ['2026-08-25', 670], ['2026-08-29', 540], ['2026-09-12', 530],
+    ['2026-09-22', 470], ['2026-09-29', 440], ['2026-10-06', 495], ['2026-10-28', 495], ['2026-11-01', 520],
+    ['2026-11-04', 820], ['2026-11-09', 928],
+  ].map(([d, v]) => ({ t: new Date(d + 'T12:00:00').getTime(), v, d }));
+  const TT_MARKS = [
+    { d: '2026-03-24', label: L('Start · 328'), dy: 26, anchor: 'start' },
+    { d: '2026-08-09', label: L('Summer peak · 707'), dy: -22 },
+    { d: '2026-11-09', label: L('Top 1% · 928'), dy: -22, anchor: 'end' },
+  ];
+  function trackTitanChart() {
+    const root = $('#ttChart');
+    if (!root) return;
+    ratingChart(root, {
+      id: 'tt', pts: TT_RATING, marks: TT_MARKS, vMin: 200, vMax: 1100, gridFrom: 300, grid: 100, axis: 200,
+      months: [['2026-04-01', 'Apr'], ['2026-05-01', 'May'], ['2026-06-01', 'Jun'], ['2026-07-01', 'Jul'], ['2026-08-01', 'Aug'], ['2026-09-01', 'Sep'], ['2026-10-01', 'Oct'], ['2026-11-01', 'Nov']],
+      monthsFr: [['2026-04-01', 'avr.'], ['2026-05-01', 'mai'], ['2026-06-01', 'juin'], ['2026-07-01', 'juil.'], ['2026-08-01', 'août'], ['2026-09-01', 'sept.'], ['2026-10-01', 'oct.'], ['2026-11-01', 'nov.']],
+    });
   }
 
   /* ------------------------------------------------------------------------
@@ -1866,6 +1901,7 @@
   licence();
   statsBoard();
   iRatingChart();
+  trackTitanChart();
   gt3Progression();
   rails();
   videoModal();

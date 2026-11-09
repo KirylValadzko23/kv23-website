@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;600;800;900&family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=97443d40" />
+  <link rel="stylesheet" href="css/style.css?v=9c31af19" />
 </head>
 <body class="kpage-body">
 
@@ -89,8 +89,8 @@
       <div class="kpage__intro">
         <p class="kpage__lead" data-intro>iRacing · Sports Car. From the Porsche Cup to the GT3 Regional Tour, one split at a time, with every session on the rig logged along the way.</p>
         <ul class="kpage__stats" data-intro>
-          <li><b data-count="4605">0</b><small class="mono">Laps driven</small></li>
-          <li><b data-count="2725">0</b><small class="mono">Sessions driven</small></li>
+          <li><b data-count="4938">0</b><small class="mono">Laps driven</small></li>
+          <li><b data-count="2760">0</b><small class="mono">Sessions driven</small></li>
           <li><b>iRacing</b><small class="mono">Most played game</small></li>
           <li><b>A</b><small class="mono">Licence · Sports Car</small></li>
         </ul>
@@ -102,7 +102,7 @@
 
       <ul class="kwall pwall pwall--2 spage__wall" aria-label="Video and photo: the rig">
         <li class="pwall__video" style="--r:-2deg"><div class="pwall__frame"><video data-inview src="assets/sim/hop-in.mp4#t=0.1" muted loop playsinline preload="metadata" aria-label="Kiryl getting ready and climbing into his sim rig"></video></div><span class="mono">Getting ready</span><small>Gloves on, into the seat.</small></li>
-        <li style="--r:3deg"><img src="assets/rig/2026-cockpit.jpg" width="909" height="1600" loading="lazy" alt="2026 rig: the new Trak Racer aluminium cockpit with a black fiberglass bucket seat, one monitor showing the KV23 logo on a triple-screen stand, a keyboard tray and the McLaren GT3 wheel" /><span class="mono">The office</span><small>Where the 4,605 laps happen.</small></li>
+        <li style="--r:3deg"><img src="assets/rig/2026-cockpit.jpg" width="909" height="1600" loading="lazy" alt="2026 rig: the new Trak Racer aluminium cockpit with a black fiberglass bucket seat, one monitor showing the KV23 logo on a triple-screen stand, a keyboard tray and the McLaren GT3 wheel" /><span class="mono">The office</span><small>Where the 4,938 laps happen.</small></li>
       </ul>
 
       <!-- 01 · the numbers -->
@@ -251,7 +251,50 @@
       </ul>
       <p class="mono gt3__note">Split 10 · strength of field 1,712 · the leaders did 26 laps; I drove 19 of ours. iRacing counts safety rating per corner, and the Nordschleife has a lot of them.</p>
 
-      <!-- 06 · before GT3 -->
+      <!-- 06 · Track Titan (rating chart drawn from TT_RATING in main.js) -->
+      <div class="kpage__sec" id="tracktitan">
+        <p class="mono karting__kicker" data-reveal><span>06</span> Track Titan · Nov 9, 2026</p>
+        <h2 class="karting__title" data-split>Top 1%<br /><em>in the world.</em></h2>
+      </div>
+      <p class="pstory__lead spage__intro" data-reveal>Track Titan is the telemetry coach I use: it records every lap, lines it up against faster drivers corner by corner, and ranks everyone on one global rating. Mine started at 328 in March. In the first week of November I spent five days at the Red Bull Ring in the Formula RSS 4 in Assetto Corsa, took half a second off my best lap and finished second on the hotlap leaderboard. That week took my rating from about 500 to 928: 62nd in the world.</p>
+      <div class="irchart irchart--tt" id="ttChart" data-reveal>
+        <div class="irchart__head">
+          <div class="irchart__now">
+            <span class="mono">Track Titan rating</span>
+            <b>928</b>
+            <span class="mono">Nov 9, 2026</span>
+          </div>
+          <ul class="irchart__facts mono">
+            <li><span>World ranking</span><b>#62</b><small>Top 1% · Gold</small></li>
+            <li><span>Hotlap leaderboard</span><b class="up">P2</b><small>Red Bull Ring · Formula RSS 4</small></li>
+            <li><span>To World Champion level</span><b>73</b><small>Rating points to go</small></li>
+          </ul>
+        </div>
+        <div class="irchart__plot">
+          <svg role="img" aria-label="Track Titan rating from 328 in March 2026, up to 707 in August, down to 440 at the end of September, then up to 928 in the first week of November 2026"></svg>
+          <div class="irchart__tip" aria-hidden="true"><b></b><span></span></div>
+        </div>
+        <p class="irchart__note mono">Traced from the Track Titan rating chart · hover or drag to scrub</p>
+      </div>
+      <ol class="offers pchange offers--4">
+        <li data-reveal><span class="mono">Best lap</span><b>1:30.974</b><small>Red Bull Ring · Formula RSS 4 · Nov 5, 2026</small></li>
+        <li data-reveal><span class="mono">Leaderboard</span><b>P2</b><small>0.554 s off the fastest lap</small></li>
+        <li data-reveal><span class="mono">In five days</span><b>−0.493 s</b><small>From 1:31.467 on Nov 1</small></li>
+        <li data-reveal><span class="mono">That week</span><b>300+ laps</b><small>Hotlaps and races, Nov 1 to 5</small></li>
+      </ol>
+      <div class="ttgap" data-reveal>
+        <p class="mono ttgap__head">Best lap each day · gap to P1 (1:30.420)</p>
+        <ol class="ttgap__list">
+          <li style="--g:1.047"><span class="mono">Nov 1</span><i></i><b>1:31.467</b><small>+1.047</small></li>
+          <li style="--g:1.017"><span class="mono">Nov 2</span><i></i><b>1:31.437</b><small>+1.017</small></li>
+          <li style="--g:0.662"><span class="mono">Nov 3</span><i></i><b>1:31.082</b><small>+0.662</small></li>
+          <li style="--g:0.674"><span class="mono">Nov 4</span><i></i><b>1:31.094</b><small>+0.674</small></li>
+          <li style="--g:0.554" class="is-best"><span class="mono">Nov 5</span><i></i><b>1:30.974</b><small>+0.554</small></li>
+        </ol>
+        <p class="mono gt3__note">Track Titan lifetime: 4,938 laps and 2,760 sessions. Most driven: Monza GP, in the Porsche 911 Cup (992.2).</p>
+      </div>
+
+      <!-- 07 · before GT3 -->
       <p class="pstory__lead spage__intro spage__intro--log" data-reveal>Before GT3 it was the Porsche Cup in the 911 Cup (992.2), at Sebring and Mount Panorama, in fields of 1,700 to 2,000 iRating. My iRating went up in four of those last five races, and that run pushed me over 2000.</p>
       <div class="racelog">
         <div class="racelog__head" data-reveal>
@@ -285,7 +328,7 @@
       </div>
       <div class="finish__legal mono">
         <span>© <span id="year">2026</span> Kiryl Valadzko · KV23</span>
-        <span class="finish__build">build 3f8148ea</span>
+        <span class="finish__build">build c2fad45e</span>
       </div>
     </footer>
   </main>
@@ -294,7 +337,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
-  <script src="js/i18n.js?v=5140403d"></script>
-  <script src="js/main.js?v=8c78ef94"></script>
+  <script src="js/i18n.js?v=ced2fcc4"></script>
+  <script src="js/main.js?v=594e984e"></script>
 </body>
 </html>
