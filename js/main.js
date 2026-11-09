@@ -619,11 +619,12 @@
 
   /* ------------------------------------------------------------------------
      On Track — iRacing stats board (career / 2026 toggle)
-     Numbers from the iRacing profile, Sports Car, as of Oct 15, 2026.
+     Numbers from the iRacing profile, Sports Car, as of Nov 9, 2026. Career = everything before 2026 plus the 2026 season,
+     so when only the season screenshot is new, the career counts move by the same amounts.
      ------------------------------------------------------------------------ */
   const STATS = {
-    career: { starts: 173, wins: 19, top5: 66, poles: 19, avgStart: 6, avgFinish: 9, laps: 1680, led: 276, inc: 5.855, winp: 10.98, top5p: 38.15, ledp: 16.43 },
-    y2026: { starts: 138, wins: 14, top5: 52, poles: 13, avgStart: 7, avgFinish: 9, laps: 1445, led: 201, inc: 6.029, winp: 10.14, top5p: 37.68, ledp: 13.91 },
+    career: { starts: 176, wins: 19, top5: 66, poles: 19, avgStart: 6, avgFinish: 9, laps: 1719, led: 276, inc: 5.858, winp: 10.80, top5p: 37.50, ledp: 16.06 },
+    y2026: { starts: 141, wins: 14, top5: 52, poles: 13, avgStart: 7, avgFinish: 9, laps: 1484, led: 201, inc: 6.029, winp: 9.93, top5p: 36.88, ledp: 13.54 },
   };
 
   function statsBoard() {

@@ -328,6 +328,8 @@ section, footer { position: relative; }
 .driver { padding: 160px var(--gutter) 120px; overflow: hidden; }
 .driver__grid { display: grid; grid-template-columns: minmax(280px, 440px) 1fr; gap: clamp(40px, 7vw, 120px); align-items: center; }
 .driver__copy .lead { color: rgba(7,6,10,.75); }
+.driver__more { margin: 18px 0 0; max-width: 54ch; font-size: clamp(16px, 1.3vw, 19px); line-height: 1.6; color: rgba(7,6,10,.68); }
+.r2r__more { max-width: 66ch; margin: -30px 0 80px; }
 
 .licence-wrap { perspective: 1200px; display: grid; justify-items: center; gap: 16px; }
 .licence {
@@ -568,6 +570,9 @@ section, footer { position: relative; }
 .spage .kpage__sec { margin-top: 120px; }
 .spage .kpage__sec:first-child { margin-top: 0; }
 .spage__wall { margin: 0; }
+/* a short paragraph between a section title and its chart, table or cards */
+.spage__intro { max-width: 64ch; margin: 26px 0 44px; }
+.spage__intro--log { margin-top: 110px; margin-bottom: -60px; }
 .spage .lics { margin-top: 0; }
 .spage .racelog { margin-top: 120px; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -1349,6 +1354,8 @@ a.rcard:hover .rcard__go { transform: translateX(5px); }
 .bspec dd { margin: 0; font-size: clamp(16px, 1.4vw, 19px); font-weight: 600; line-height: 1.35; }
 .bspec dd small { display: block; margin-top: 3px; font-size: 13px; font-weight: 400; color: var(--mute); }
 .bspec .x { font-family: var(--f-mono); font-size: 12px; font-weight: 600; color: var(--red); margin-left: 6px; }
+.bpage__intro { margin: 0 0 46px; max-width: 58ch; }
+.bgroup__note { margin: 16px 0 0; max-width: 62ch; font-size: 15px; line-height: 1.6; color: rgba(21,24,15,.74); }
 .bpage__back { display: inline-flex; align-items: center; gap: 12px; margin-top: 40px; }
 
 /* ---------- homepage rides: each section travels its own way (main.js: ride()) ---------- */
